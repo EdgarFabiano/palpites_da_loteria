@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:palpites_da_loteria/util/Strings.dart';
 import 'package:palpites_da_loteria/widgets/card-concursos.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 
 void main() => runApp(new MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
           return new MaterialApp(
             title: 'Flutter Demo',
             theme: theme,
-            home: new MyHomePage(title: 'Flutter Demo Home Page'),
+            home: new MyHomePage(title: Strings.appName),
           );
         }
     );
