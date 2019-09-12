@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     switchThemeIcon = b == Brightness.dark ? Icons.brightness_3 : Icons.brightness_high;
     DynamicTheme.of(context).setBrightness(b == Brightness.dark ? Brightness.light: Brightness.dark);
   }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -89,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             CardConcursos(
-
+              cardColor: Colors.blue,
             ),
           ],
         ),
