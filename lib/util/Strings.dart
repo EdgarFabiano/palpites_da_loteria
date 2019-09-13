@@ -3,7 +3,7 @@
 class Strings {
 
   ///App name
-  static const String appName = "Flutter Demo Home Page";
+  static const String appName = "Palpites da Loteria";
 
   ///Assets
   //Fonts
