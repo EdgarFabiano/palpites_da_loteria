@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/ui/HomePage.dart';
-import 'package:palpites_da_loteria/util/Strings.dart';
+import 'package:palpites_da_loteria/defaults/Strings.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 
 void main() => runApp(new PalpitesLoteriaApp());
@@ -15,10 +15,12 @@ class PalpitesLoteriaApp extends StatelessWidget {
           brightness: brightness,
         ),
         themedWidgetBuilder: (context, theme) {
+          var homePage = HomePage(title: Strings.appName);
           return new MaterialApp(
             title: Strings.appName,
             theme: theme,
-            home: new HomePage(title: Strings.appName),
+            home:  homePage,
+            debugShowCheckedModeBanner: false,
           );
         }
     );

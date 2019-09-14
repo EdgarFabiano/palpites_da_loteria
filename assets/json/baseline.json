@@ -1,0 +1,102 @@
+{
+  "concursosBean": [
+    {
+      "name": "MEGA-SENA",
+      "colorBean": {
+        "r": 32,
+        "g": 152,
+        "b": 105,
+        "a": 255
+      },
+      "position": 1,
+      "enabled": true,
+      "totalSize": 1,
+      "minSize": 1,
+      "maxSize": 1
+    },
+    {
+      "name": "LOTOFÁCIL",
+      "colorBean": {
+        "r": 149,
+        "g": 67,
+        "b": 137,
+        "a": 255
+      },
+      "position": 2,
+      "enabled": true,
+      "totalSize": 1,
+      "minSize": 1,
+      "maxSize": 1
+    },
+    {
+      "name": "QUINA",
+      "colorBean": {
+        "r": 45,
+        "g": 57,
+        "b": 133,
+        "a": 255
+      },
+      "position": 3,
+      "enabled": true,
+      "totalSize": 1,
+      "minSize": 1,
+      "maxSize": 1
+    },
+    {
+      "name": "LOTOMANIA",
+      "colorBean": {
+        "r": 247,
+        "g": 132,
+        "b": 74,
+        "a": 255
+      },
+      "position": 4,
+      "enabled": true,
+      "totalSize": 1,
+      "minSize": 1,
+      "maxSize": 1
+    },
+    {
+      "name": "TIMEMANIA",
+      "colorBean": {
+        "r": 94,
+        "g": 232,
+        "b": 79,
+        "a": 255
+      },
+      "position": 5,
+      "enabled": true,
+      "totalSize": 1,
+      "minSize": 1,
+      "maxSize": 1
+    },
+    {
+      "name": "DUPLA SENA",
+      "colorBean": {
+        "r": 166,
+        "g": 42,
+        "b": 49,
+        "a": 255
+      },
+      "position": 6,
+      "enabled": true,
+      "totalSize": 1,
+      "minSize": 1,
+      "maxSize": 1
+    },
+    {
+      "name": "DIA DE SORTE",
+      "colorBean": {
+        "r": 203,
+        "g": 133,
+        "b": 59,
+        "a": 255
+      },
+      "position": 7,
+      "enabled": true,
+      "totalSize": 1,
+      "minSize": 1,
+      "maxSize": 1
+    }
+  ]
+}

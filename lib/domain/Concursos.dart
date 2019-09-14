@@ -1,60 +1,154 @@
+/*
+* From JSON
+{
+  "concursosBean": [
+     {
+    "name": "MEGA-SENA",
+    "colorBean": {
+      "r": 1,
+      "g": 1,
+      "b": 1,
+      "a": 1
+    },
+    "position": 1,
+    "enabled": true,
+    "totalSize": 1,
+    "minSize": 1,
+    "maxSize": 1
+  }
+  ]
+}
+* */
+
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:palpites_da_loteria/defaults/Constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Concursos {
-  List<Concurso> concursos;
+  List<ConcursoBean> concursosBean;
 
-  Concursos({this.concursos});
+  Concursos({this.concursosBean});
 
-  Concursos.fromJson(Map<String, dynamic> json) {
-    this.concursos = (json['concursos'] as List) != null
-        ? (json['concursos'] as List).map((i) => Concurso.fromJson(i)).toList()
+  Concursos.fromJson(Map<String, dynamic> jsonMap) {
+    this.concursosBean = (jsonMap['concursosBean'] as List) != null
+        ? (jsonMap['concursosBean'] as List)
+            .map((i) => ConcursoBean.fromJson(i))
+            .toList()
         : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['concursos'] = this.concursos != null
-        ? this.concursos.map((i) => i.toJson()).toList()
+    data['concursosBean'] = this.concursosBean != null
+        ? this.concursosBean.map((i) => i.toJson()).toList()
         : null;
     return data;
   }
+
+  static Map<String, dynamic> toMap(String jsonString) {
+    return json.decode(jsonString);
+  }
+
+  static Future<Concursos> getBaselineFuture(BuildContext context) async {
+    String jsonString = await DefaultAssetBundle.of(context).loadString(Constants.concursosBaselineJson);
+    Map<String, dynamic> map = Concursos.toMap(jsonString);
+    return Concursos.fromJson(map);
+  }
+  
+  static Future<Concursos> getUsersConcursos(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.get(Constants.concursosSharedPreferencesKey);
+    Future<Concursos> baseline = getBaselineFuture(context);
+    
+    
+    return baseline;
+  }
+
 }
 
-class Concurso {
+class ConcursoBean {
   String name;
-  String color;
   bool enabled;
   int position;
   int totalSize;
   int minSize;
   int maxSize;
+  ColorBean colorBean;
 
-  Concurso(
+  ConcursoBean(
       {this.name,
-      this.color,
       this.enabled,
       this.position,
       this.totalSize,
       this.minSize,
-      this.maxSize});
+      this.maxSize,
+      this.colorBean});
 
-  Concurso.fromJson(Map<String, dynamic> json) {
+  ConcursoBean.fromJson(Map<String, dynamic> json) {
     this.name = json['name'];
-    this.color = json['color'];
     this.enabled = json['enabled'];
     this.position = json['position'];
     this.totalSize = json['totalSize'];
     this.minSize = json['minSize'];
     this.maxSize = json['maxSize'];
+    this.colorBean =
+        json['colorBean'] != null ? ColorBean.fromJson(json['colorBean']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
-    data['color'] = this.color;
     data['enabled'] = this.enabled;
     data['position'] = this.position;
     data['totalSize'] = this.totalSize;
     data['minSize'] = this.minSize;
     data['maxSize'] = this.maxSize;
+    if (this.colorBean != null) {
+      data['colorBean'] = this.colorBean.toJson();
+    }
     return data;
   }
+
+  @override
+  String toString() {
+    return 'ConcursoBean{name: $name, enabled: $enabled, position: $position, colorBean: $colorBean}';
+  }
+
+
+}
+
+class ColorBean {
+  int r;
+  int g;
+  int b;
+  int a;
+
+  ColorBean({this.r, this.g, this.b, this.a});
+
+  ColorBean.fromJson(Map<String, dynamic> json) {
+    this.r = json['r'];
+    this.g = json['g'];
+    this.b = json['b'];
+    this.a = json['a'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['r'] = this.r;
+    data['g'] = this.g;
+    data['b'] = this.b;
+    data['a'] = this.a;
+    return data;
+  }
+
+  Color getColor() {
+    return Color.fromARGB(this.a, this.r, this.g, this.b);
+  }
+
+  @override
+  String toString() {
+    return 'ColorBean{r: $r, g: $g, b: $b, a: $a}';
+  }
+
 }
