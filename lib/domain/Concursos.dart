@@ -22,8 +22,6 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/Constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Concursos {
   List<ConcursoBean> concursosBean;
@@ -46,23 +44,12 @@ class Concursos {
     return data;
   }
 
-  static Map<String, dynamic> toMap(String jsonString) {
-    return json.decode(jsonString);
+  String toJsonString() {
+    return json.encode(toJson());
   }
 
-  static Future<Concursos> getBaselineFuture(BuildContext context) async {
-    String jsonString = await DefaultAssetBundle.of(context).loadString(Constants.concursosBaselineJson);
-    Map<String, dynamic> map = Concursos.toMap(jsonString);
-    return Concursos.fromJson(map);
-  }
-  
-  static Future<Concursos> getUsersConcursos(BuildContext context) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.get(Constants.concursosSharedPreferencesKey);
-    Future<Concursos> baseline = getBaselineFuture(context);
-    
-    
-    return baseline;
+  static Map<String, dynamic> toMap(String jsonString) {
+    return json.decode(jsonString);
   }
 
 }

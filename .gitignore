@@ -18,3 +18,5 @@ doc/api/
 android/.gradle/
 
 .flutter-plugins
+
+android/local.properties

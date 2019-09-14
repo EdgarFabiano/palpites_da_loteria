@@ -8,7 +8,6 @@
         "b": 105,
         "a": 255
       },
-      "position": 1,
       "enabled": true,
       "totalSize": 1,
       "minSize": 1,
@@ -22,7 +21,6 @@
         "b": 137,
         "a": 255
       },
-      "position": 2,
       "enabled": true,
       "totalSize": 1,
       "minSize": 1,
@@ -36,7 +34,6 @@
         "b": 133,
         "a": 255
       },
-      "position": 3,
       "enabled": true,
       "totalSize": 1,
       "minSize": 1,
@@ -50,7 +47,6 @@
         "b": 74,
         "a": 255
       },
-      "position": 4,
       "enabled": true,
       "totalSize": 1,
       "minSize": 1,
@@ -64,7 +60,6 @@
         "b": 79,
         "a": 255
       },
-      "position": 5,
       "enabled": true,
       "totalSize": 1,
       "minSize": 1,
@@ -78,7 +73,6 @@
         "b": 49,
         "a": 255
       },
-      "position": 6,
       "enabled": true,
       "totalSize": 1,
       "minSize": 1,
@@ -92,7 +86,6 @@
         "b": 59,
         "a": 255
       },
-      "position": 7,
       "enabled": true,
       "totalSize": 1,
       "minSize": 1,

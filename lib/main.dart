@@ -15,11 +15,10 @@ class PalpitesLoteriaApp extends StatelessWidget {
           brightness: brightness,
         ),
         themedWidgetBuilder: (context, theme) {
-          var homePage = HomePage(title: Strings.appName);
           return new MaterialApp(
             title: Strings.appName,
             theme: theme,
-            home:  homePage,
+            home:  HomePage(),
             debugShowCheckedModeBanner: false,
           );
         }
