@@ -40,39 +40,45 @@ class _HomePageState extends State<HomePage> {
     var reorderableWrap = FutureBuilder(
       future: ConcursoService.getUsersConcursosFuture(context),
       builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
-        print("AQUi");
+        print("AQUI");
         print(snapshot.connectionState);
-        _concursos = snapshot.data;
-        _cards = _concursos.concursosBean
-            .map((concurso) => CardConcursos(
-                concurso, snapshot.connectionState != ConnectionState.done))
-            .toList();
 
-        return Center(
-          child: ReorderableWrap(
-            spacing: 8.0,
-            runSpacing: 8.0,
-            padding: EdgeInsets.only(top: 10, bottom: 10),
-            children: _cards,
-            onReorder: _onReorder,
-          ),
-        );
+        if (snapshot.hasData) {
+          _concursos = snapshot.data;
+          _cards = _concursos.concursosBean
+              .map((concurso) => CardConcursos(
+              concurso, snapshot.connectionState != ConnectionState.done))
+              .toList();
+
+          return Center(
+            child: ReorderableWrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              padding: EdgeInsets.only(top: 10, bottom: 10),
+              children: _cards,
+              onReorder: _onReorder,
+            ),
+          );
+        } else {
+          return Text("");
+        }
       },
     );
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(Strings.appName),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(switchThemeIcon),
-              onPressed: switchTheme,
-            ),
-          ],
-        ),
-        drawer: Drawer(
-          child: AppDrawer(),
-        ),
-        body: reorderableWrap);
+      appBar: AppBar(
+        title: Text(Strings.appName),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(switchThemeIcon),
+            onPressed: switchTheme,
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: AppDrawer(),
+      ),
+      body: reorderableWrap,
+    );
   }
 }

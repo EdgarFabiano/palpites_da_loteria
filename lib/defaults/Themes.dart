@@ -23,9 +23,6 @@ class DefaultThemes {
       return Colors.black12;
     }
   }
-  static Color getCardColor(BuildContext context, Color color) {
-    return color.withAlpha(Theme.of(context).brightness == Brightness.light ? 255 : 100);
-  }
 
   static ThemeData appTheme(BuildContext context) {
     return ThemeData(

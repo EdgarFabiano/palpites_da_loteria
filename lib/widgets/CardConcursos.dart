@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/Constants.dart';
-import 'package:palpites_da_loteria/defaults/Themes.dart';
 import 'package:palpites_da_loteria/domain/Concursos.dart';
+import 'package:palpites_da_loteria/ui/SorteioPage.dart';
 
 class CardConcursos extends StatefulWidget {
   const CardConcursos(this._concursoBean, this._isRefreshing, {Key key})
@@ -18,10 +18,17 @@ class CardConcursos extends StatefulWidget {
 
 class _CardConcursosState extends State<CardConcursos> {
   Widget build(BuildContext context) {
-    var cardColor =  DefaultThemes.getCardColor(context, widget._concursoBean.colorBean.getColor());
+    var cardColor =  widget._concursoBean.colorBean.getColor(context);
     var loteriasIconAssetPath = Constants.loteriasIconAssetPath;
     var name = widget._concursoBean.name;
-    return Card(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SorteioPage(widget._concursoBean)),
+        );
+      },
+      child: Card(
         color: cardColor,
         child: SizedBox(
           width: 162,
@@ -30,14 +37,14 @@ class _CardConcursosState extends State<CardConcursos> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                 loteriasIconAssetPath,
+                loteriasIconAssetPath,
                 height: 80,
                 width: 80,
               ),
               Padding(
                 padding: EdgeInsets.only(top: 12),
                 child: Text(
-                   name,
+                  name,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -46,6 +53,8 @@ class _CardConcursosState extends State<CardConcursos> {
               ),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

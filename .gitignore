@@ -20,3 +20,7 @@ android/.gradle/
 .flutter-plugins
 
 android/local.properties
+
+android/android.iml
+
+android/app/app.iml

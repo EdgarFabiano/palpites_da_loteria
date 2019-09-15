@@ -51,13 +51,11 @@ class Concursos {
   static Map<String, dynamic> toMap(String jsonString) {
     return json.decode(jsonString);
   }
-
 }
 
 class ConcursoBean {
   String name;
   bool enabled;
-  int position;
   int totalSize;
   int minSize;
   int maxSize;
@@ -66,7 +64,6 @@ class ConcursoBean {
   ConcursoBean(
       {this.name,
       this.enabled,
-      this.position,
       this.totalSize,
       this.minSize,
       this.maxSize,
@@ -75,19 +72,18 @@ class ConcursoBean {
   ConcursoBean.fromJson(Map<String, dynamic> json) {
     this.name = json['name'];
     this.enabled = json['enabled'];
-    this.position = json['position'];
     this.totalSize = json['totalSize'];
     this.minSize = json['minSize'];
     this.maxSize = json['maxSize'];
-    this.colorBean =
-        json['colorBean'] != null ? ColorBean.fromJson(json['colorBean']) : null;
+    this.colorBean = json['colorBean'] != null
+        ? ColorBean.fromJson(json['colorBean'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['enabled'] = this.enabled;
-    data['position'] = this.position;
     data['totalSize'] = this.totalSize;
     data['minSize'] = this.minSize;
     data['maxSize'] = this.maxSize;
@@ -99,10 +95,8 @@ class ConcursoBean {
 
   @override
   String toString() {
-    return 'ConcursoBean{name: $name, enabled: $enabled, position: $position, colorBean: $colorBean}';
+    return 'ConcursoBean{name: $name, enabled: $enabled, colorBean: $colorBean}';
   }
-
-
 }
 
 class ColorBean {
@@ -129,13 +123,13 @@ class ColorBean {
     return data;
   }
 
-  Color getColor() {
-    return Color.fromARGB(this.a, this.r, this.g, this.b);
+  Color getColor(BuildContext context) {
+    var alpha = Theme.of(context).brightness == Brightness.light ? 255 : 100;
+    return Color.fromARGB(this.a, this.r, this.g, this.b).withAlpha(alpha);
   }
 
   @override
   String toString() {
     return 'ColorBean{r: $r, g: $g, b: $b, a: $a}';
   }
-
 }

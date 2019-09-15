@@ -9,9 +9,9 @@
         "a": 255
       },
       "enabled": true,
-      "totalSize": 1,
-      "minSize": 1,
-      "maxSize": 1
+      "totalSize": 60,
+      "minSize": 6,
+      "maxSize": 15
     },
     {
       "name": "LOTOFÁCIL",
@@ -22,9 +22,9 @@
         "a": 255
       },
       "enabled": true,
-      "totalSize": 1,
-      "minSize": 1,
-      "maxSize": 1
+      "totalSize": 25,
+      "minSize": 15,
+      "maxSize": 18
     },
     {
       "name": "QUINA",
@@ -35,9 +35,9 @@
         "a": 255
       },
       "enabled": true,
-      "totalSize": 1,
-      "minSize": 1,
-      "maxSize": 1
+      "totalSize": 80,
+      "minSize": 5,
+      "maxSize": 15
     },
     {
       "name": "LOTOMANIA",
@@ -48,9 +48,9 @@
         "a": 255
       },
       "enabled": true,
-      "totalSize": 1,
-      "minSize": 1,
-      "maxSize": 1
+      "totalSize": 99,
+      "minSize": 50,
+      "maxSize": 50
     },
     {
       "name": "TIMEMANIA",
@@ -61,9 +61,9 @@
         "a": 255
       },
       "enabled": true,
-      "totalSize": 1,
-      "minSize": 1,
-      "maxSize": 1
+      "totalSize": 80,
+      "minSize": 10,
+      "maxSize": 10
     },
     {
       "name": "DUPLA SENA",
@@ -74,9 +74,9 @@
         "a": 255
       },
       "enabled": true,
-      "totalSize": 1,
-      "minSize": 1,
-      "maxSize": 1
+      "totalSize": 50,
+      "minSize": 6,
+      "maxSize": 15
     },
     {
       "name": "DIA DE SORTE",
@@ -87,9 +87,9 @@
         "a": 255
       },
       "enabled": true,
-      "totalSize": 1,
-      "minSize": 1,
-      "maxSize": 1
+      "totalSize": 31,
+      "minSize": 7,
+      "maxSize": 15
     }
   ]
 }
