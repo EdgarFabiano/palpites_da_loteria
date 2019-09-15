@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  IconData switchThemeIcon = Icons.brightness_3;
   List<CardConcursos> _cards;
   Concursos _concursos;
 
@@ -29,8 +28,6 @@ class _HomePageState extends State<HomePage> {
 
   void switchTheme() {
     var b = Theme.of(context).brightness;
-    switchThemeIcon =
-        b == Brightness.dark ? Icons.brightness_3 : Icons.brightness_high;
     DynamicTheme.of(context).setBrightness(
         b == Brightness.dark ? Brightness.light : Brightness.dark);
   }
@@ -40,14 +37,10 @@ class _HomePageState extends State<HomePage> {
     var reorderableWrap = FutureBuilder(
       future: ConcursoService.getUsersConcursosFuture(context),
       builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
-        print("AQUI");
-        print(snapshot.connectionState);
-
         if (snapshot.hasData) {
           _concursos = snapshot.data;
           _cards = _concursos.concursosBean
-              .map((concurso) => CardConcursos(
-              concurso, snapshot.connectionState != ConnectionState.done))
+              .map((concurso) => CardConcursos(concurso))
               .toList();
 
           return Center(
@@ -70,7 +63,9 @@ class _HomePageState extends State<HomePage> {
         title: Text(Strings.appName),
         actions: <Widget>[
           IconButton(
-            icon: Icon(switchThemeIcon),
+            icon: Icon(Theme.of(context).brightness == Brightness.light
+                ? Icons.brightness_3
+                : Icons.brightness_high),
             onPressed: switchTheme,
           ),
         ],

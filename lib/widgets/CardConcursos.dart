@@ -5,10 +5,8 @@ import 'package:palpites_da_loteria/domain/Concursos.dart';
 import 'package:palpites_da_loteria/ui/SorteioPage.dart';
 
 class CardConcursos extends StatefulWidget {
-  const CardConcursos(this._concursoBean, this._isRefreshing, {Key key})
-      : super(key: key);
+  const CardConcursos(this._concursoBean, {Key key}) : super(key: key);
   final ConcursoBean _concursoBean;
-  final bool _isRefreshing;
 
   ConcursoBean get concursoBean => _concursoBean;
 
@@ -18,14 +16,16 @@ class CardConcursos extends StatefulWidget {
 
 class _CardConcursosState extends State<CardConcursos> {
   Widget build(BuildContext context) {
-    var cardColor =  widget._concursoBean.colorBean.getColor(context);
+    var cardColor = widget._concursoBean.colorBean.getColor(context);
     var loteriasIconAssetPath = Constants.loteriasIconAssetPath;
     var name = widget._concursoBean.name;
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SorteioPage(widget._concursoBean)),
+          MaterialPageRoute(
+            builder: (context) => SorteioPage(widget._concursoBean),
+          ),
         );
       },
       child: Card(

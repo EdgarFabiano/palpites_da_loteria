@@ -5,11 +5,11 @@
       "colorBean": {
         "r": 32,
         "g": 152,
-        "b": 105,
-        "a": 255
+        "b": 105
       },
       "enabled": true,
-      "totalSize": 60,
+      "spaceStart":1,
+      "spaceEnd": 60,
       "minSize": 6,
       "maxSize": 15
     },
@@ -18,11 +18,11 @@
       "colorBean": {
         "r": 149,
         "g": 67,
-        "b": 137,
-        "a": 255
+        "b": 137
       },
       "enabled": true,
-      "totalSize": 25,
+      "spaceStart": 1,
+      "spaceEnd": 25,
       "minSize": 15,
       "maxSize": 18
     },
@@ -31,11 +31,11 @@
       "colorBean": {
         "r": 45,
         "g": 57,
-        "b": 133,
-        "a": 255
+        "b": 133
       },
       "enabled": true,
-      "totalSize": 80,
+      "spaceStart": 1,
+      "spaceEnd": 80,
       "minSize": 5,
       "maxSize": 15
     },
@@ -44,11 +44,11 @@
       "colorBean": {
         "r": 247,
         "g": 132,
-        "b": 74,
-        "a": 255
+        "b": 74
       },
       "enabled": true,
-      "totalSize": 99,
+      "spaceStart": 0,
+      "spaceEnd": 99,
       "minSize": 50,
       "maxSize": 50
     },
@@ -57,11 +57,11 @@
       "colorBean": {
         "r": 94,
         "g": 232,
-        "b": 79,
-        "a": 255
+        "b": 79
       },
       "enabled": true,
-      "totalSize": 80,
+      "spaceStart": 1,
+      "spaceEnd": 80,
       "minSize": 10,
       "maxSize": 10
     },
@@ -70,11 +70,11 @@
       "colorBean": {
         "r": 166,
         "g": 42,
-        "b": 49,
-        "a": 255
+        "b": 49
       },
       "enabled": true,
-      "totalSize": 50,
+      "spaceStart": 1,
+      "spaceEnd": 50,
       "minSize": 6,
       "maxSize": 15
     },
@@ -83,11 +83,11 @@
       "colorBean": {
         "r": 203,
         "g": 133,
-        "b": 59,
-        "a": 255
+        "b": 59
       },
       "enabled": true,
-      "totalSize": 31,
+      "spaceStart": 1,
+      "spaceEnd": 31,
       "minSize": 7,
       "maxSize": 15
     }

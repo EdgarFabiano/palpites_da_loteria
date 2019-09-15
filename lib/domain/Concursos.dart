@@ -3,19 +3,18 @@
 {
   "concursosBean": [
      {
-    "name": "MEGA-SENA",
-    "colorBean": {
-      "r": 1,
-      "g": 1,
-      "b": 1,
-      "a": 1
-    },
-    "position": 1,
-    "enabled": true,
-    "totalSize": 1,
-    "minSize": 1,
-    "maxSize": 1
-  }
+      "name": "MEGA-SENA",
+      "colorBean": {
+        "r": 32,
+        "g": 152,
+        "b": 105
+      },
+      "enabled": true,
+      "spaceStart":1,
+      "spaceEnd": 60,
+      "minSize": 6,
+      "maxSize": 15
+    }
   ]
 }
 * */
@@ -28,19 +27,13 @@ class Concursos {
 
   Concursos({this.concursosBean});
 
-  Concursos.fromJson(Map<String, dynamic> jsonMap) {
-    this.concursosBean = (jsonMap['concursosBean'] as List) != null
-        ? (jsonMap['concursosBean'] as List)
-            .map((i) => ConcursoBean.fromJson(i))
-            .toList()
-        : null;
+  Concursos.fromJson(Map<String, dynamic> json) {    
+    this.concursosBean = (json['concursosBean'] as List)!=null?(json['concursosBean'] as List).map((i) => ConcursoBean.fromJson(i)).toList():null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['concursosBean'] = this.concursosBean != null
-        ? this.concursosBean.map((i) => i.toJson()).toList()
-        : null;
+    data['concursosBean'] = this.concursosBean != null?this.concursosBean.map((i) => i.toJson()).toList():null;
     return data;
   }
 
@@ -51,40 +44,36 @@ class Concursos {
   static Map<String, dynamic> toMap(String jsonString) {
     return json.decode(jsonString);
   }
+
 }
 
 class ConcursoBean {
   String name;
   bool enabled;
-  int totalSize;
+  int spaceStart;
+  int spaceEnd;
   int minSize;
   int maxSize;
   ColorBean colorBean;
 
-  ConcursoBean(
-      {this.name,
-      this.enabled,
-      this.totalSize,
-      this.minSize,
-      this.maxSize,
-      this.colorBean});
+  ConcursoBean({this.name, this.enabled, this.spaceStart, this.spaceEnd, this.minSize, this.maxSize, this.colorBean});
 
   ConcursoBean.fromJson(Map<String, dynamic> json) {
     this.name = json['name'];
     this.enabled = json['enabled'];
-    this.totalSize = json['totalSize'];
+    this.spaceStart = json['spaceStart'];
+    this.spaceEnd = json['spaceEnd'];
     this.minSize = json['minSize'];
     this.maxSize = json['maxSize'];
-    this.colorBean = json['colorBean'] != null
-        ? ColorBean.fromJson(json['colorBean'])
-        : null;
+    this.colorBean = json['colorBean'] != null ? ColorBean.fromJson(json['colorBean']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['enabled'] = this.enabled;
-    data['totalSize'] = this.totalSize;
+    data['spaceStart'] = this.spaceStart;
+    data['spaceEnd'] = this.spaceEnd;
     data['minSize'] = this.minSize;
     data['maxSize'] = this.maxSize;
     if (this.colorBean != null) {
@@ -103,15 +92,13 @@ class ColorBean {
   int r;
   int g;
   int b;
-  int a;
 
-  ColorBean({this.r, this.g, this.b, this.a});
+  ColorBean({this.r, this.g, this.b});
 
   ColorBean.fromJson(Map<String, dynamic> json) {
     this.r = json['r'];
     this.g = json['g'];
     this.b = json['b'];
-    this.a = json['a'];
   }
 
   Map<String, dynamic> toJson() {
@@ -119,17 +106,16 @@ class ColorBean {
     data['r'] = this.r;
     data['g'] = this.g;
     data['b'] = this.b;
-    data['a'] = this.a;
     return data;
   }
 
   Color getColor(BuildContext context) {
     var alpha = Theme.of(context).brightness == Brightness.light ? 255 : 100;
-    return Color.fromARGB(this.a, this.r, this.g, this.b).withAlpha(alpha);
+    return Color.fromARGB(alpha, this.r, this.g, this.b);
   }
 
   @override
   String toString() {
-    return 'ColorBean{r: $r, g: $g, b: $b, a: $a}';
+    return 'ColorBean{r: $r, g: $g, b: $b}';
   }
 }
