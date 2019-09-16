@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/ui/HomePage.dart';
-import 'package:palpites_da_loteria/defaults/Strings.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:palpites_da_loteria/defaults/Strings.dart';
+import 'package:palpites_da_loteria/ui/HomePage.dart';
 
 void main() => runApp(new PalpitesLoteriaApp());
 

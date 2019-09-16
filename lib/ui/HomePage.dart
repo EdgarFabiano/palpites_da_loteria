@@ -1,4 +1,3 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/Strings.dart';
 import 'package:palpites_da_loteria/domain/Concursos.dart';
@@ -24,12 +23,6 @@ class _HomePageState extends State<HomePage> {
     var movedConcurso = _concursos.concursosBean.removeAt(oldIndex);
     _concursos.concursosBean.insert(newIndex, movedConcurso);
     ConcursoService.save(_concursos);
-  }
-
-  void switchTheme() {
-    var b = Theme.of(context).brightness;
-    DynamicTheme.of(context).setBrightness(
-        b == Brightness.dark ? Brightness.light : Brightness.dark);
   }
 
   @override
@@ -61,14 +54,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(Strings.appName),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Theme.of(context).brightness == Brightness.light
-                ? Icons.brightness_3
-                : Icons.brightness_high),
-            onPressed: switchTheme,
-          ),
-        ],
       ),
       drawer: Drawer(
         child: AppDrawer(),
