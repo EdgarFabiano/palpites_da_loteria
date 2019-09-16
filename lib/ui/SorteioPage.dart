@@ -4,6 +4,7 @@ import 'package:palpites_da_loteria/domain/Concursos.dart';
 import 'package:palpites_da_loteria/service/generator/AbstractSorteioGenerator.dart';
 import 'package:palpites_da_loteria/service/generator/RandomSorteioGenerator.dart';
 import 'package:palpites_da_loteria/widgets/Dezena.dart';
+import 'package:palpites_da_loteria/widgets/PopUpMenu.dart';
 
 class SorteioPage extends StatefulWidget {
   final ConcursoBean _concurso;
@@ -17,6 +18,7 @@ class SorteioPage extends StatefulWidget {
 class _SorteioPageState extends State<SorteioPage> {
   List<Dezena> _dezenas = List();
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
+  bool _favorited = false;
 
   void _sortear() {
     var concurso = widget._concurso;
@@ -30,9 +32,8 @@ class _SorteioPageState extends State<SorteioPage> {
 
     var dezenas = GridView(
       padding: EdgeInsets.all(20),
-
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 55,
+        maxCrossAxisExtent: 60,
       ),
       children: _dezenas.toList(),
     );
@@ -45,8 +46,29 @@ class _SorteioPageState extends State<SorteioPage> {
         ),
         backgroundColor: widget._concurso.colorBean.getColor(context),
         title: Text(widget._concurso.name),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(!_favorited ? Icons.favorite_border : Icons.favorite),
+            onPressed: () {
+              setState(() {
+                _favorited = !_favorited;
+              });
+            },
+          ),
+          PopUpMenu(),
+        ],
       ),
       body: dezenas,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: widget._concurso.colorBean.getColor(context),
+        child: Icon(
+          Icons.refresh,
+          color: Colors.white,
+        ),
+        onPressed: () {
+          setState(() {});
+        },
+      ),
     );
   }
 }

@@ -12,7 +12,6 @@ class Dezena extends StatefulWidget {
 }
 
 class _DezenaState extends State<Dezena> {
-
   bool tapped = false;
 
   Widget _getDezenaDisplayWidget() {
@@ -32,24 +31,16 @@ class _DezenaState extends State<Dezena> {
     );
   }
 
-  void _switch() {
-    setState(() {
-      tapped = !tapped;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    double size = 50.0;
     Widget circle = GestureDetector(
-      onTap: () => _switch(),
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: widget._color,
-          shape: BoxShape.circle,
-        ),
+      onTap: () => setState(() {
+        tapped = !tapped;
+      }),
+      child: Card(
+        elevation: 2,
+        color: widget._color,
+        shape: CircleBorder(),
         child: Center(
           child: _getDezenaDisplayWidget(),
         ),

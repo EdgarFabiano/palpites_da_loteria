@@ -11,18 +11,20 @@ class PalpitesLoteriaApp extends StatelessWidget {
     return new DynamicTheme(
         defaultBrightness: Brightness.light,
         data: (brightness) => new ThemeData(
-          primarySwatch: Colors.indigo,
-          brightness: brightness,
-        ),
+              primarySwatch: Colors.indigo,
+              brightness: brightness,
+              pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              }),
+            ),
         themedWidgetBuilder: (context, theme) {
           return new MaterialApp(
             title: Strings.appName,
             theme: theme,
-            home:  HomePage(),
+            home: HomePage(),
             debugShowCheckedModeBanner: false,
           );
-        }
-    );
+        });
   }
 }
-

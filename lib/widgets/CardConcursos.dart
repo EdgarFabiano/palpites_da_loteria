@@ -23,7 +23,7 @@ class _CardConcursosState extends State<CardConcursos> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => SorteioPage(widget._concursoBean),
           ),
         );
