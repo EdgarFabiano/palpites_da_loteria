@@ -1,4 +1,6 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
+import 'package:palpites_da_loteria/defaults/AdUnits.dart';
 import 'package:palpites_da_loteria/defaults/Strings.dart';
 import 'package:palpites_da_loteria/domain/Concursos.dart';
 import 'package:palpites_da_loteria/service/ConcursoService.dart';
@@ -13,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  BannerAd _concursosBanner;
   List<CardConcursos> _cards;
   Concursos _concursos;
 
@@ -26,7 +29,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+     _concursosBanner = BannerAd(
+      size: AdSize.smartBanner,
+      adUnitId: AdUnits.getConcursosBannerId(),
+      targetingInfo: MobileAdTargetingInfo(testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _concursosBanner.load();
+    _concursosBanner.show();
     var reorderableWrap = FutureBuilder(
       future: ConcursoService.getUsersConcursosFuture(context),
       builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
@@ -46,7 +60,7 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         } else {
-          return Text("");
+          return Text("Recarregar para preencher");
         }
       },
     );
@@ -61,4 +75,5 @@ class _HomePageState extends State<HomePage> {
       body: reorderableWrap,
     );
   }
+
 }

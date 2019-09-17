@@ -1,5 +1,7 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:palpites_da_loteria/defaults/AdUnits.dart';
 import 'package:palpites_da_loteria/domain/Concursos.dart';
 import 'package:palpites_da_loteria/service/generator/AbstractSorteioGenerator.dart';
 import 'package:palpites_da_loteria/service/generator/RandomSorteioGenerator.dart';
@@ -19,6 +21,7 @@ class _SorteioPageState extends State<SorteioPage> {
   List<Dezena> _dezenas = List();
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
   bool _favorited = false;
+  InterstitialAd _sorteioInterstitial;
 
   void _sortear() {
     var concurso = widget._concurso;
@@ -27,9 +30,17 @@ class _SorteioPageState extends State<SorteioPage> {
   }
 
   @override
+  void initState() {
+    _sorteioInterstitial = InterstitialAd(
+      adUnitId: AdUnits.getSorteioInterstitialId(),
+      targetingInfo: MobileAdTargetingInfo(testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]),
+    );
+    _sorteioInterstitial.load();
+  }
+
+  @override
   Widget build(BuildContext context) {
     _sortear();
-
     var dezenas = GridView(
       padding: EdgeInsets.all(20),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -66,7 +77,11 @@ class _SorteioPageState extends State<SorteioPage> {
           color: Colors.white,
         ),
         onPressed: () {
-          setState(() {});
+          setState(() {
+            _sortear();
+            _sorteioInterstitial.show();
+            initState();
+          });
         },
       ),
     );

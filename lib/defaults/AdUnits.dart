@@ -1,12 +1,9 @@
 import 'dart:io';
 
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:palpites_da_loteria/defaults/Constants.dart';
 
 class AdUnits {
-  static final String bannerTest = "ca-app-pub-3940256099942544/6300978111";
-  static final String interstitialTest = "ca-app-pub-3940256099942544/1033173712";
-  static final String interstitialVideoTest = "ca-app-pub-3940256099942544/8691691433";
-  static final String rewardVideoTest = "ca-app-pub-3940256099942544/5224354917";
 
   static final String androidApiKey = "ca-app-pub-9921693044196842~4393626727";
   static final String androidConcursosBanner = "ca-app-pub-9921693044196842/2888973360";
@@ -24,7 +21,7 @@ class AdUnits {
     } else if (Platform.isAndroid) {
       return androidApiKey;
     }
-    return null;
+    return FirebaseAdMob.testAppId;
   }
 
   static String getConcursosBannerId() {
@@ -35,7 +32,7 @@ class AdUnits {
         return androidConcursosBanner;
       }
     }
-    return bannerTest;
+    return BannerAd.testAdUnitId;
   }
 
   static String getSorteioBannerId() {
@@ -46,7 +43,7 @@ class AdUnits {
         return androidSorteioBanner;
       }
     }
-    return bannerTest;
+    return BannerAd.testAdUnitId;
   }
 
   static String getSorteioInterstitialId() {
@@ -57,6 +54,6 @@ class AdUnits {
         return androidSorteioInterstitial;
       }
     }
-    return interstitialTest;
+    return InterstitialAd.testAdUnitId;
   }
 }

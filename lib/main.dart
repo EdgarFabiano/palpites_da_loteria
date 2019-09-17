@@ -1,9 +1,13 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/Strings.dart';
 import 'package:palpites_da_loteria/ui/HomePage.dart';
 
-void main() => runApp(new PalpitesLoteriaApp());
+void main()  {
+  FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-9921693044196842~4393626727');
+  runApp(new PalpitesLoteriaApp());
+}
 
 class PalpitesLoteriaApp extends StatelessWidget {
   @override
