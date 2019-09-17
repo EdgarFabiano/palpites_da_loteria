@@ -1,12 +1,12 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/AdUnits.dart';
-import 'package:palpites_da_loteria/domain/Concursos.dart';
-import 'package:palpites_da_loteria/service/generator/AbstractSorteioGenerator.dart';
-import 'package:palpites_da_loteria/service/generator/RandomSorteioGenerator.dart';
-import 'package:palpites_da_loteria/widgets/Dezena.dart';
-import 'package:palpites_da_loteria/widgets/PopUpMenu.dart';
+import 'package:palpites_da_loteria/defaults/ad-units.dart';
+import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator.dart';
+import 'package:palpites_da_loteria/service/generator/random-sorteio-generator.dart';
+import 'package:palpites_da_loteria/widgets/dezena.dart';
+import 'package:palpites_da_loteria/widgets/popup-menu.dart';
 
 class SorteioPage extends StatefulWidget {
   final ConcursoBean _concurso;

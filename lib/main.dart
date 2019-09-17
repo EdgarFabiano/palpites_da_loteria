@@ -1,8 +1,8 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/Strings.dart';
-import 'package:palpites_da_loteria/ui/HomePage.dart';
+import 'package:palpites_da_loteria/defaults/strings.dart';
+import 'package:palpites_da_loteria/ui/home-page.dart';
 
 void main()  {
   FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-9921693044196842~4393626727');

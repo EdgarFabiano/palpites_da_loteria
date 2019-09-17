@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/Constants.dart';
-import 'package:palpites_da_loteria/domain/Concursos.dart';
+import 'package:palpites_da_loteria/defaults/constants.dart';
+import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConcursoService {

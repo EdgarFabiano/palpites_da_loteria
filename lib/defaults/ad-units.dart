@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_admob/firebase_admob.dart';
-import 'package:palpites_da_loteria/defaults/Constants.dart';
+import 'package:palpites_da_loteria/defaults/constants.dart';
 
 class AdUnits {
 

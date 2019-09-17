@@ -1,8 +1,8 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/Constants.dart';
-import 'package:palpites_da_loteria/ui/HomePage.dart';
+import 'package:palpites_da_loteria/defaults/constants.dart';
+import 'package:palpites_da_loteria/ui/home-page.dart';
 
 class AppDrawer extends StatefulWidget {
   @override

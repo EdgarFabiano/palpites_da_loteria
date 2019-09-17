@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/Constants.dart';
-import 'package:palpites_da_loteria/domain/Concursos.dart';
-import 'package:palpites_da_loteria/ui/SorteioPage.dart';
+import 'package:palpites_da_loteria/defaults/constants.dart';
+import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:palpites_da_loteria/ui/sorteio-page.dart';
 
 class CardConcursos extends StatefulWidget {
   const CardConcursos(this._concursoBean, {Key key}) : super(key: key);

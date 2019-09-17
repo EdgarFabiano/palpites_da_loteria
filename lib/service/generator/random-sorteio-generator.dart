@@ -2,9 +2,9 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:palpites_da_loteria/domain/Concursos.dart';
-import 'package:palpites_da_loteria/service/generator/AbstractSorteioGenerator.dart';
-import 'package:palpites_da_loteria/widgets/Dezena.dart';
+import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator.dart';
+import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 class RandomSorteioGenerator implements AbstractSorteioGenerator {
 

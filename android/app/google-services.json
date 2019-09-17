@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "662670439503",
+    "firebase_url": "https://palpites-da-loteria.firebaseio.com",
+    "project_id": "palpites-da-loteria",
+    "storage_bucket": "palpites-da-loteria.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662670439503:android:c087805236ebdec547263a",
+        "android_client_info": {
+          "package_name": "com.example.palpites_da_loteria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662670439503-tfs0dfcbs03cd5m1nfjd096rujbsvcru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4bH_5BQdwRyNqbCXcc4-MDKUq-E3227c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662670439503-tfs0dfcbs03cd5m1nfjd096rujbsvcru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
