@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -7,11 +5,12 @@ class PopUpMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
+      tooltip: "Estrategia de geração",
       itemBuilder: (context) {
         var list = List<PopupMenuEntry<Object>>();
         list.add(
           PopupMenuItem(
-            child: Text("Estratégia"),
+            child: Text("Estratégia de geração"),
             enabled: false,
           ),
         );
@@ -57,5 +56,4 @@ class PopUpMenu extends StatelessWidget {
       },
     );
   }
-
 }

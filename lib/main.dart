@@ -3,6 +3,7 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/ui/home-page.dart';
+import 'package:palpites_da_loteria/ui/settings-page.dart';
 
 void main()  {
   FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-9921693044196842~4393626727');
@@ -28,6 +29,10 @@ class PalpitesLoteriaApp extends StatelessWidget {
             theme: theme,
             home: HomePage(),
             debugShowCheckedModeBanner: false,
+              initialRoute: '/',
+              routes: {
+                Strings.configuracoesRoute: (context) => SettingsPage(),
+              }
           );
         });
   }

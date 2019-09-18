@@ -1,8 +1,9 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
+import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/ui/home-page.dart';
+import 'package:palpites_da_loteria/ui/settings-page.dart';
 
 class AppDrawer extends StatefulWidget {
   @override
@@ -10,16 +11,9 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-  void _switchTheme(BuildContext context) {
-    var b = Theme.of(context).brightness;
-    DynamicTheme.of(context).setBrightness(
-        b == Brightness.dark ? Brightness.light : Brightness.dark);
-  }
 
   @override
   Widget build(BuildContext context) {
-    bool isSwitched = Theme.of(context).brightness == Brightness.dark;
-
     return ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
@@ -46,33 +40,31 @@ class _AppDrawerState extends State<AppDrawer> {
           leading: Icon(Icons.view_list),
           title: Text("Concursos"),
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.of(context).pop();
+            if (ModalRoute.of(context).settings.name !=
+                Strings.concursosRoute) {
+              Navigator.push(context,
+                  CupertinoPageRoute(builder: (context) => HomePage()));
+            }
           },
         ),
         ListTile(
           leading: Icon(Icons.settings),
           title: Text("Configurações"),
           onTap: () {
-            // Update the state of the app.
-            // ...
+            Navigator.of(context).pop();
+            Navigator.push(context,
+                CupertinoPageRoute(builder: (context) => SettingsPage()));
           },
         ),
         ListTile(
-          leading: Icon(Theme.of(context).brightness == Brightness.dark
-              ? Icons.brightness_3
-              : Icons.brightness_high),
-          title: Row(
-            children: <Widget>[
-              Text("Modo noturno"),
-              Switch(
-                value: isSwitched,
-                onChanged: (value) {
-                  _switchTheme(context);
-                },
-              ),
-            ],
-          ),
+          leading: Icon(Icons.favorite),
+          title: Text("Jogos salvos"),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.push(context,
+                CupertinoPageRoute(builder: (context) => SettingsPage()));
+          },
         ),
       ],
     );

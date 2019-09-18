@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<Concursos> _usersConcursosFuture;
   BannerAd _concursosBanner;
   List<CardConcursos> _cards;
   Concursos _concursos;
@@ -35,6 +36,7 @@ class _HomePageState extends State<HomePage> {
       adUnitId: AdUnits.getConcursosBannerId(),
       targetingInfo: MobileAdTargetingInfo(testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]),
     );
+     _usersConcursosFuture = ConcursoService.getUsersConcursosFuture(context);
   }
 
   @override
@@ -42,7 +44,7 @@ class _HomePageState extends State<HomePage> {
     _concursosBanner.load();
     _concursosBanner.show();
     var reorderableWrap = FutureBuilder(
-      future: ConcursoService.getUsersConcursosFuture(context),
+      future: _usersConcursosFuture,
       builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           _concursos = snapshot.data;
@@ -72,7 +74,10 @@ class _HomePageState extends State<HomePage> {
       drawer: Drawer(
         child: AppDrawer(),
       ),
-      body: reorderableWrap,
+      body: Padding(
+        padding: EdgeInsets.only(bottom: 50),
+        child: reorderableWrap,
+      ),
     );
   }
 

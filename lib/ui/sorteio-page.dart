@@ -21,6 +21,7 @@ class _SorteioPageState extends State<SorteioPage> {
   List<Dezena> _dezenas = List();
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
   bool _favorited = false;
+  bool _firstTime = true;
   InterstitialAd _sorteioInterstitial;
 
   void _sortear() {
@@ -40,7 +41,10 @@ class _SorteioPageState extends State<SorteioPage> {
 
   @override
   Widget build(BuildContext context) {
-    _sortear();
+    if (_firstTime) {
+      _sortear();
+      _firstTime = false;
+    }
     var dezenas = GridView(
       padding: EdgeInsets.all(20),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -59,6 +63,7 @@ class _SorteioPageState extends State<SorteioPage> {
         title: Text(widget._concurso.name),
         actions: <Widget>[
           IconButton(
+            tooltip: "Salvar jogo",
             icon: Icon(!_favorited ? Icons.favorite_border : Icons.favorite),
             onPressed: () {
               setState(() {
@@ -69,20 +74,27 @@ class _SorteioPageState extends State<SorteioPage> {
           PopUpMenu(),
         ],
       ),
-      body: dezenas,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: widget._concurso.colorBean.getColor(context),
-        child: Icon(
-          Icons.refresh,
-          color: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 50),
+        child: dezenas,
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 50),
+        child: FloatingActionButton(
+          tooltip: "Gerar novamente",
+          backgroundColor: widget._concurso.colorBean.getColor(context),
+          child: Icon(
+            Icons.refresh,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            setState(() {
+              _sortear();
+              _sorteioInterstitial.show();
+              initState();
+            });
+          },
         ),
-        onPressed: () {
-          setState(() {
-            _sortear();
-            _sorteioInterstitial.show();
-            initState();
-          });
-        },
       ),
     );
   }

@@ -4,6 +4,7 @@ class Strings {
 
   ///App name
   static const String appName = "Palpites da Loteria";
+  static const String settings = "Configurações";
 
   ///Assets
   //Fonts
@@ -11,11 +12,9 @@ class Strings {
   static const String fontRobotoRegular = "MajorMonoDisplay-Regular.ttf";
 
   ///routes
-  static const String defaultExampleRoute = "/Default Example";
-  static const String appBarExampleRoute = "/App Bar";
-  static const String tabBarExampleRoute = "/Tab Bar with Tab Bar View";
-  static const String navigationDrawerExampleRoute = "/Navigation Drawer";
-  static const String bottomNavigationExampleRoute = "/Bottom Navigation with PageView";
+  static const String concursosRoute = "/";
+  static const String sorteioRoute = "/Sorteio";
+  static const String configuracoesRoute = "/Configuracoes";
 
 
   ///Strings
