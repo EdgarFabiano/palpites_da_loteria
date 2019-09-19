@@ -23,20 +23,28 @@ class _SorteioPageState extends State<SorteioPage> {
   bool _favorited = false;
   bool _firstTime = true;
   InterstitialAd _sorteioInterstitial;
+  double _sliderValue;
+  int _chance = 0;
 
   void _sortear() {
-    var concurso = widget._concurso;
-    _dezenas =
-        _sorteioGenerator.sortear(concurso.minSize, concurso, context).toList();
+    _dezenas = _sorteioGenerator
+        .sortear(_sliderValue.toInt(), widget._concurso, context)
+        .toList();
+  }
+
+  void _loadInterstitial() {
+    _sorteioInterstitial = InterstitialAd(
+      adUnitId: AdUnits.getSorteioInterstitialId(),
+      targetingInfo: MobileAdTargetingInfo(
+          testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]),
+    );
+    _sorteioInterstitial.load();
   }
 
   @override
   void initState() {
-    _sorteioInterstitial = InterstitialAd(
-      adUnitId: AdUnits.getSorteioInterstitialId(),
-      targetingInfo: MobileAdTargetingInfo(testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]),
-    );
-    _sorteioInterstitial.load();
+    _sliderValue = widget._concurso.minSize.toDouble();
+    _loadInterstitial();
   }
 
   @override
@@ -52,6 +60,34 @@ class _SorteioPageState extends State<SorteioPage> {
       ),
       children: _dezenas.toList(),
     );
+
+    var minSize = widget._concurso.minSize.toDouble();
+    var maxSize = widget._concurso.maxSize.toDouble();
+
+    var slider = Center();
+
+    if (maxSize != minSize) {
+      slider = Center(
+        child: Slider.adaptive(
+          activeColor: widget._concurso.colorBean.getColor(context),
+          divisions: (maxSize - minSize).toInt(),
+          min: minSize,
+          max: maxSize,
+          value: _sliderValue,
+          onChangeEnd: (value) {
+            setState(() {
+              _sortear();
+            });
+          },
+          onChanged: (value) {
+            setState(() {
+              _sliderValue = value;
+            });
+          },
+        ),
+      );
+    }
+
 
     return Scaffold(
       appBar: AppBar(
@@ -76,7 +112,15 @@ class _SorteioPageState extends State<SorteioPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(bottom: 50),
-        child: dezenas,
+        child: Flex(
+          children: <Widget>[
+            slider,
+            Flexible(
+              child: dezenas,
+            ),
+          ],
+          direction: Axis.vertical,
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 50),
@@ -90,8 +134,12 @@ class _SorteioPageState extends State<SorteioPage> {
           onPressed: () {
             setState(() {
               _sortear();
-              _sorteioInterstitial.show();
-              initState();
+              _chance++;
+              if (_chance == 2) {
+                _sorteioInterstitial.show();
+                _loadInterstitial();
+                _chance = 0;
+              }
             });
           },
         ),

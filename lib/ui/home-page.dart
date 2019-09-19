@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   BannerAd _concursosBanner;
   List<CardConcursos> _cards;
   Concursos _concursos;
+  double _bannerPadding = 50;
 
   void _onReorder(int oldIndex, int newIndex) {
     Widget movedCard = _cards.removeAt(oldIndex);
@@ -29,20 +30,41 @@ class _HomePageState extends State<HomePage> {
     ConcursoService.save(_concursos);
   }
 
-  @override
-  void initState() {
-     _concursosBanner = BannerAd(
+  void _instatiateBannerAd() {
+    _concursosBanner = BannerAd(
       size: AdSize.smartBanner,
       adUnitId: AdUnits.getConcursosBannerId(),
-      targetingInfo: MobileAdTargetingInfo(testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]),
+      targetingInfo: MobileAdTargetingInfo(
+    //          testDevices: [/*"30B81A47E3005ADC205D4BCECC4450E1"*/]
+      ),
     );
-     _usersConcursosFuture = ConcursoService.getUsersConcursosFuture(context);
+  }
+
+  void _showBannerAd() {
+    _concursosBanner.isLoaded().then((isLoaded) {
+        if (isLoaded) {
+          _bannerPadding = 50;
+          _concursosBanner.show();
+        } else {
+          _bannerPadding = 0;
+          _instatiateBannerAd();
+          _concursosBanner.load();
+        }
+    });
+
+  }
+
+  @override
+  void initState() {
+    _instatiateBannerAd();
+    _concursosBanner.load();
+    _showBannerAd();
+    _usersConcursosFuture = ConcursoService.getUsersConcursosFuture(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    _concursosBanner.load();
-    _concursosBanner.show();
+    _showBannerAd();
     var reorderableWrap = FutureBuilder(
       future: _usersConcursosFuture,
       builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
@@ -75,10 +97,9 @@ class _HomePageState extends State<HomePage> {
         child: AppDrawer(),
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: 50),
+        padding: EdgeInsets.only(bottom: _bannerPadding),
         child: reorderableWrap,
       ),
     );
   }
-
 }
