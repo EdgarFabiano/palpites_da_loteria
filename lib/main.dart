@@ -5,8 +5,10 @@ import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/ui/home-page.dart';
 import 'package:palpites_da_loteria/ui/settings-page.dart';
 
+import 'defaults/ad-units.dart';
+
 void main()  {
-  FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-9921693044196842~4393626727');
+  FirebaseAdMob.instance.initialize(appId: AdUnits.getAppId());
   runApp(new PalpitesLoteriaApp());
 }
 

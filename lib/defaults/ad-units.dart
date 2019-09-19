@@ -15,6 +15,36 @@ class AdUnits {
   static final String iosSorteioBanner = "ca-app-pub-9921693044196842/3859515509";
   static final String iosSorteioInterstitial = "ca-app-pub-9921693044196842/3623071156";
 
+  static BannerAd _concursosBanner;
+  static BannerAd get concursosBanner => _concursosBanner;
+
+  static double _bannerPadding = 50;
+  static double get bannerPadding => _bannerPadding;
+
+  static void instatiateBannerAd() {
+    _concursosBanner = BannerAd(
+      size: AdSize.smartBanner,
+      adUnitId: AdUnits.getConcursosBannerId(),
+      targetingInfo: MobileAdTargetingInfo(
+        //          testDevices: [/*"30B81A47E3005ADC205D4BCECC4450E1"*/]
+      ),
+    );
+  }
+
+  static void showBannerAd() {
+    _concursosBanner.isLoaded().then((isLoaded) {
+      if (isLoaded) {
+        _concursosBanner.show();
+        _bannerPadding = 50;
+      } else {
+        instatiateBannerAd();
+        _concursosBanner.load();
+        _bannerPadding = 0;
+      }
+    });
+
+  }
+
   static String getAppId() {
     if (Platform.isIOS) {
       return iosApiKey;

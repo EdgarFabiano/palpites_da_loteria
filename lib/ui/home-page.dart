@@ -1,4 +1,3 @@
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/ad-units.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
@@ -16,10 +15,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Future<Concursos> _usersConcursosFuture;
-  BannerAd _concursosBanner;
   List<CardConcursos> _cards;
   Concursos _concursos;
-  double _bannerPadding = 50;
 
   void _onReorder(int oldIndex, int newIndex) {
     Widget movedCard = _cards.removeAt(oldIndex);
@@ -30,41 +27,17 @@ class _HomePageState extends State<HomePage> {
     ConcursoService.save(_concursos);
   }
 
-  void _instatiateBannerAd() {
-    _concursosBanner = BannerAd(
-      size: AdSize.smartBanner,
-      adUnitId: AdUnits.getConcursosBannerId(),
-      targetingInfo: MobileAdTargetingInfo(
-    //          testDevices: [/*"30B81A47E3005ADC205D4BCECC4450E1"*/]
-      ),
-    );
-  }
-
-  void _showBannerAd() {
-    _concursosBanner.isLoaded().then((isLoaded) {
-        if (isLoaded) {
-          _bannerPadding = 50;
-          _concursosBanner.show();
-        } else {
-          _bannerPadding = 0;
-          _instatiateBannerAd();
-          _concursosBanner.load();
-        }
-    });
-
-  }
-
   @override
   void initState() {
-    _instatiateBannerAd();
-    _concursosBanner.load();
-    _showBannerAd();
+    AdUnits.instatiateBannerAd();
+    AdUnits.concursosBanner.load();
+    AdUnits.showBannerAd();
     _usersConcursosFuture = ConcursoService.getUsersConcursosFuture(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    _showBannerAd();
+    AdUnits.showBannerAd();
     var reorderableWrap = FutureBuilder(
       future: _usersConcursosFuture,
       builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
@@ -97,7 +70,7 @@ class _HomePageState extends State<HomePage> {
         child: AppDrawer(),
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: _bannerPadding),
+        padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
         child: reorderableWrap,
       ),
     );

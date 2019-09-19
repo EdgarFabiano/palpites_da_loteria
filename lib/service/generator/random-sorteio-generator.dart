@@ -12,7 +12,7 @@ class RandomSorteioGenerator implements AbstractSorteioGenerator {
   List<Dezena> sortear(int gameSize, ConcursoBean concurso, BuildContext context) {
     Set<int> set = SplayTreeSet();
     for (int i = 0; i < gameSize; i++) {
-      do {} while (!set.add(concurso.spaceStart + Random().nextInt(concurso.spaceEnd - concurso.spaceStart)));
+      while (!set.add(concurso.spaceStart + Random().nextInt(concurso.spaceEnd - concurso.spaceStart)));
     }
     return set.map((value) => Dezena(value, concurso.colorBean.getColor(context))).toList();
   }

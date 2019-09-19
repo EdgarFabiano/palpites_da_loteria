@@ -36,7 +36,8 @@ class _SorteioPageState extends State<SorteioPage> {
     _sorteioInterstitial = InterstitialAd(
       adUnitId: AdUnits.getSorteioInterstitialId(),
       targetingInfo: MobileAdTargetingInfo(
-          testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]),
+//          testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]
+          ),
     );
     _sorteioInterstitial.load();
   }
@@ -111,7 +112,7 @@ class _SorteioPageState extends State<SorteioPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.only(bottom: 50),
+        padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
         child: Flex(
           children: <Widget>[
             slider,
@@ -123,7 +124,7 @@ class _SorteioPageState extends State<SorteioPage> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 50),
+        padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
         child: FloatingActionButton(
           tooltip: "Gerar novamente",
           backgroundColor: widget._concurso.colorBean.getColor(context),
