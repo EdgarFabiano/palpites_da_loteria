@@ -34,6 +34,7 @@ class PopUpMenu extends StatelessWidget {
               "Histórico",
             ),
             value: 2,
+            enabled: false,
           ),
         );
         list.add(
@@ -42,6 +43,7 @@ class PopUpMenu extends StatelessWidget {
               "Mais frequentes",
             ),
             value: 3,
+            enabled: false,
           ),
         );
         list.add(
@@ -50,6 +52,7 @@ class PopUpMenu extends StatelessWidget {
               "Menos frequentes",
             ),
             value: 4,
+            enabled: false,
           ),
         );
         return list;

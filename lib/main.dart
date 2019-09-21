@@ -31,7 +31,7 @@ class PalpitesLoteriaApp extends StatelessWidget {
             theme: theme,
             home: HomePage(),
             debugShowCheckedModeBanner: false,
-              initialRoute: '/',
+              initialRoute: Strings.concursosRoute,
               routes: {
                 Strings.configuracoesRoute: (context) => SettingsPage(),
               }
