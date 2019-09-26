@@ -18,7 +18,7 @@ class ConcursoService {
     String usersConcursos = await prefs.get(Constants.concursosSharedPreferencesKey);
 
     if (usersConcursos == null) {
-      getBaselineFuture(context).then((onValue) => prefs.setString(
+      await getBaselineFuture(context).then((onValue) => prefs.setString(
           Constants.concursosSharedPreferencesKey,
           json.encode(onValue.toJson())));
     }

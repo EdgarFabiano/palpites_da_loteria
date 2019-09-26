@@ -11,15 +11,32 @@ class Dezena extends StatefulWidget {
   _DezenaState createState() => _DezenaState();
 }
 
-class _DezenaState extends State<Dezena> {
+class _DezenaState extends State<Dezena> with SingleTickerProviderStateMixin {
   bool tapped = false;
+  Animation<double> animation;
+  AnimationController controller;
+
+  @override
+  void initState() {
+    controller = AnimationController(
+        duration: Duration(milliseconds: widget._dezena * 20), vsync: this);
+    animation = Tween<double>(begin: 0, end: widget._dezena.truncateToDouble())
+        .animate(controller)
+      ..addListener(() {
+        setState(() {
+          // The state that has changed here is the animation object’s value.
+        });
+      });
+    controller.forward();
+  }
 
   Widget _getDezenaDisplayWidget() {
-    String text = widget._dezena.toString();
+    var animationValue = animation.value.toInt();
+    String text = animationValue.toString();
     if (tapped) {
       text = "X";
-    } else if (widget._dezena < 10) {
-      text = "0" + widget._dezena.toString();
+    } else if (animationValue < 10) {
+      text = "0" + animationValue.toString();
     }
     return Text(
       text,
@@ -48,5 +65,11 @@ class _DezenaState extends State<Dezena> {
     );
 
     return circle;
+  }
+
+  @override
+  void dispose() {
+//    controller.dispose();
+    super.dispose();
   }
 }
