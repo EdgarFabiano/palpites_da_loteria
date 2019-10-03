@@ -49,13 +49,13 @@ class _HomePageState extends State<HomePage> {
               .toList();
 
           return Center(
-            child: ReorderableWrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              padding: EdgeInsets.only(top: 10, bottom: 10),
+            child: GridView(
+              padding: EdgeInsets.all(20),
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+              ),
               children: _cards,
-              onReorder: _onReorder,
-            ),
+            )
           );
         } else {
           return Text("Recarregar para preencher");

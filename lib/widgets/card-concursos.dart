@@ -31,15 +31,13 @@ class _CardConcursosState extends State<CardConcursos> {
       child: Card(
         color: cardColor,
         child: SizedBox(
-          width: 162,
-          height: 162,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
                 loteriasIconAssetPath,
-                height: 80,
-                width: 80,
+                height: 60,
+                width:  60,
               ),
               Padding(
                 padding: EdgeInsets.only(top: 12),
