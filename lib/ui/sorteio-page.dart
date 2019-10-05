@@ -2,6 +2,7 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/ad-units.dart';
+import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator.dart';
 import 'package:palpites_da_loteria/service/generator/random-sorteio-generator.dart';
@@ -23,13 +24,26 @@ class _SorteioPageState extends State<SorteioPage> {
   bool _favorited = false;
   bool _firstTime = true;
   InterstitialAd _sorteioInterstitial;
-  double _sliderValue;
+  double _sorteioValue;
   int _chance = 0;
 
   void _sortear() {
     _dezenas = _sorteioGenerator
-        .sortear(_sliderValue.toInt(), widget._concurso, context)
+        .sortear(_sorteioValue.toInt(), widget._concurso, context)
         .toList();
+  }
+
+  void _sortearComAnuncio(double increment) {
+    _sorteioValue += increment;
+    setState(() {
+      _sortear();
+      _chance++;
+      if (_chance == 2 && !Constants.isDevMode) {
+        _sorteioInterstitial.show();
+        _loadInterstitial();
+        _chance = 0;
+      }
+    });
   }
 
   void _loadInterstitial() {
@@ -44,7 +58,7 @@ class _SorteioPageState extends State<SorteioPage> {
 
   @override
   void initState() {
-    _sliderValue = widget._concurso.minSize.toDouble();
+    _sorteioValue = widget._concurso.minSize.toDouble();
     _loadInterstitial();
   }
 
@@ -65,30 +79,36 @@ class _SorteioPageState extends State<SorteioPage> {
     var minSize = widget._concurso.minSize.toDouble();
     var maxSize = widget._concurso.maxSize.toDouble();
 
-    var slider = Center();
+    var refreshButton = SizedBox(
+      width: double.infinity,
+      child: RaisedButton.icon(
+          icon: Icon(Icons.refresh),
+          label: Text("Gerar novamente"),
+          color: widget._concurso.colorBean.getColor(context),
+          onPressed: () => _sortearComAnuncio(0)),
+    );
+
+    Widget controlsButton = Center();
 
     if (maxSize != minSize) {
-      slider = Center(
-        child: Slider.adaptive(
-          activeColor: widget._concurso.colorBean.getColor(context),
-          divisions: (maxSize - minSize).toInt(),
-          min: minSize,
-          max: maxSize,
-          value: _sliderValue,
-          onChangeEnd: (value) {
-            setState(() {
-              _sortear();
-            });
-          },
-          onChanged: (value) {
-            setState(() {
-              _sliderValue = value;
-            });
-          },
+      controlsButton = Padding(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            FlatButton.icon(
+                onPressed: () => (_sorteioValue > widget._concurso.minSize ? _sortearComAnuncio(-1) : null),
+                icon: Icon(Icons.exposure_neg_1),
+                label: Text("")),
+            Text(_sorteioValue.toInt().toString()),
+            FlatButton.icon(
+                onPressed: () => (_sorteioValue < widget._concurso.maxSize ? _sortearComAnuncio(1) : null),
+                icon: Icon(Icons.exposure_plus_1),
+                label: Text("")),
+          ],
         ),
+        padding: EdgeInsets.only(top: 5),
       );
     }
-
 
     return Scaffold(
       appBar: AppBar(
@@ -115,34 +135,15 @@ class _SorteioPageState extends State<SorteioPage> {
         padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
         child: Flex(
           children: <Widget>[
-            slider,
+            controlsButton,
             Flexible(
               child: dezenas,
             ),
+            Column(
+              children: <Widget>[refreshButton],
+            ),
           ],
           direction: Axis.vertical,
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
-        child: FloatingActionButton(
-          tooltip: "Gerar novamente",
-          backgroundColor: widget._concurso.colorBean.getColor(context),
-          child: Icon(
-            Icons.refresh,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            setState(() {
-              _sortear();
-              _chance++;
-              if (_chance == 2) {
-                _sorteioInterstitial.show();
-                _loadInterstitial();
-                _chance = 0;
-              }
-            });
-          },
         ),
       ),
     );
