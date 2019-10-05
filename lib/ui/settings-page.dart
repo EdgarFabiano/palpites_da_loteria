@@ -68,6 +68,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ? Icons.brightness_3
               : Icons.brightness_high),
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text("Modo noturno"),
               Switch(

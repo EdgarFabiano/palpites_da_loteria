@@ -14,4 +14,6 @@ class Constants {
   static const String refreshWhiteAssetPath = 'assets/images/refresh-white.png';
   static const String refreshDarkAssetPath = 'assets/images/refresh-dark.png';
 
+  static const double tileMaxSize = 260.0;
+
 }

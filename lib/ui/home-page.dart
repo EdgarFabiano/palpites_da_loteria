@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/ad-units.dart';
+import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:palpites_da_loteria/service/concurso-service.dart';
 import 'package:palpites_da_loteria/widgets/card-concursos.dart';
-import 'package:reorderables/reorderables.dart';
+import 'package:palpites_da_loteria/widgets/termos-de-uso-form.dart';
 
 import 'app-drawer.dart';
 
@@ -19,15 +20,6 @@ class _HomePageState extends State<HomePage> {
   List<CardConcursos> _cards;
   Concursos _concursos;
 
-  void _onReorder(int oldIndex, int newIndex) {
-    Widget movedCard = _cards.removeAt(oldIndex);
-    _cards.insert(newIndex, movedCard);
-
-    var movedConcurso = _concursos.concursosBean.removeAt(oldIndex);
-    _concursos.concursosBean.insert(newIndex, movedConcurso);
-    ConcursoService.save(_concursos);
-  }
-
   @override
   void initState() {
     AdUnits.instatiateBannerAd();
@@ -39,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     AdUnits.showBannerAd();
-    var reorderableWrap = FutureBuilder(
+    var gridView = FutureBuilder(
       future: _usersConcursosFuture,
       builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
@@ -48,17 +40,29 @@ class _HomePageState extends State<HomePage> {
               .map((concurso) => CardConcursos(concurso))
               .toList();
 
+          var mediaQueryData = MediaQuery.of(context);
+          var isPortrait = mediaQueryData.orientation == Orientation.portrait;
+
+          var screenWidth = mediaQueryData.size.width;
+          var portraitSize = screenWidth / 2;
+          var landscapeSize = screenWidth / 4;
+          var tileSize = isPortrait ?
+          (portraitSize > Constants.tileMaxSize ? Constants.tileMaxSize: portraitSize)
+              : (landscapeSize > Constants.tileMaxSize ? Constants.tileMaxSize: landscapeSize) ;
+
+          var spacing = mediaQueryData.size.height / 100;
           return Center(
-            child: GridView(
-              padding: EdgeInsets.all(20),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-              ),
-              children: _cards,
-            )
-          );
+              child: GridView(
+            padding: EdgeInsets.all(spacing),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              crossAxisSpacing: spacing,
+              mainAxisSpacing: spacing,
+              maxCrossAxisExtent: tileSize,
+            ),
+            children: _cards,
+          ));
         } else {
-          return Text("Recarregar para preencher");
+          return TermosDeUsoForm();
         }
       },
     );
@@ -72,7 +76,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Padding(
         padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
-        child: reorderableWrap,
+        child: gridView,
       ),
     );
   }

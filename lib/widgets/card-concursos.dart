@@ -19,16 +19,19 @@ class _CardConcursosState extends State<CardConcursos> {
     var cardColor = widget._concursoBean.colorBean.getColor(context);
     var loteriasIconAssetPath = Constants.loteriasIconAssetPath;
     var name = widget._concursoBean.name;
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => SorteioPage(widget._concursoBean),
-          ),
-        );
-      },
-      child: Card(
+    return GestureDetector(onTap: () {
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => SorteioPage(widget._concursoBean),
+        ),
+      );
+    }, child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      var maxWidth = constraints.maxWidth;
+      var maxHeight = constraints.maxHeight;
+
+      return Card(
         color: cardColor,
         child: SizedBox(
           child: Column(
@@ -36,14 +39,15 @@ class _CardConcursosState extends State<CardConcursos> {
             children: <Widget>[
               Image.asset(
                 loteriasIconAssetPath,
-                height: 60,
-                width:  60,
+                height: maxWidth / 2,
+                width: maxWidth / 2,
               ),
               Padding(
-                padding: EdgeInsets.only(top: 12),
+                padding: EdgeInsets.only(top: maxHeight/10),
                 child: Text(
                   name,
                   style: TextStyle(
+                    fontSize: maxHeight / 11,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -52,7 +56,7 @@ class _CardConcursosState extends State<CardConcursos> {
             ],
           ),
         ),
-      ),
-    );
+      );
+    }));
   }
 }
