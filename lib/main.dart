@@ -9,7 +9,7 @@ import 'defaults/ad-units.dart';
 
 void main()  {
   FirebaseAdMob.instance.initialize(appId: AdUnits.getAppId());
-  runApp(new PalpitesLoteriaApp());
+  runApp(PalpitesLoteriaApp());
 }
 
 class PalpitesLoteriaApp extends StatelessWidget {

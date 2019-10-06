@@ -37,18 +37,6 @@ class _AppDrawerState extends State<AppDrawer> {
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
         ),
         ListTile(
-          leading: Icon(Icons.view_list),
-          title: Text("Concursos"),
-          onTap: () {
-            Navigator.of(context).pop();
-            if (ModalRoute.of(context).settings.name !=
-                Strings.concursosRoute) {
-              Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => HomePage()));
-            }
-          },
-        ),
-        ListTile(
           leading: Icon(Icons.settings),
           title: Text("Configurações"),
           onTap: () {
@@ -57,15 +45,15 @@ class _AppDrawerState extends State<AppDrawer> {
                 CupertinoPageRoute(builder: (context) => SettingsPage()));
           },
         ),
-        ListTile(
-          leading: Icon(Icons.favorite),
-          title: Text("Jogos salvos"),
-          onTap: () {
-            Navigator.of(context).pop();
-            Navigator.push(context,
-                CupertinoPageRoute(builder: (context) => SettingsPage()));
-          },
-        ),
+//        ListTile(
+//          leading: Icon(Icons.favorite),
+//          title: Text("Jogos salvos"),
+//          onTap: () {
+//            Navigator.of(context).pop();
+//            Navigator.push(context,
+//                CupertinoPageRoute(builder: (context) => SettingsPage()));
+//          },
+//        ),
         ListTile(
           leading: Icon(Icons.beenhere),
           title: Text("Termos de uso"),

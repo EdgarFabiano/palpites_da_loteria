@@ -19,12 +19,9 @@ class _TermosDeUsoPageState extends State<TermosDeUsoPage> {
       appBar: AppBar(
         title: Text(Strings.appName),
       ),
-      drawer: Drawer(
-        child: AppDrawer(),
-      ),
       body: Padding(
         padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
-        child: TermosDeUsoForm(),
+        child: TermosDeUsoForm(false),
       ),
     );
   }

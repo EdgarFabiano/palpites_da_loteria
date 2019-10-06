@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
             children: _cards,
           ));
         } else {
-          return TermosDeUsoForm();
+          return TermosDeUsoForm(true);
         }
       },
     );

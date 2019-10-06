@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/ui/home-page.dart';
 
 class TermosDeUsoForm extends StatefulWidget {
+  bool _showEntendi;
+  TermosDeUsoForm(this._showEntendi);
+
   @override
   _TermosDeusoState createState() => _TermosDeusoState();
 }
@@ -59,21 +62,24 @@ class _TermosDeusoState extends State<TermosDeUsoForm> {
               _switchTheme(context);
             },
           ),
-          ButtonBar(
-            children: <Widget>[
-              FlatButton(
-                child: Text("Entendi!"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(),
-                    ),
-                  );
-                },
-              )
-            ],
+          Visibility(
+            visible: widget._showEntendi,
+            child: ButtonBar(
+              children: <Widget>[
+                FlatButton(
+                  child: Text("Entendi!"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
+                      ),
+                    );
+                  },
+                )
+              ],
+            ),
           )
         ],
       ),
