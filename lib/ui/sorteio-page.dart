@@ -27,18 +27,18 @@ class _SorteioPageState extends State<SorteioPage> {
   double _sorteioValue;
   int _chance = 0;
 
-  void _sortear() {
+  void _sortear(double increment) {
+    _sorteioValue += increment;
     _dezenas = _sorteioGenerator
         .sortear(_sorteioValue.toInt(), widget._concurso, context)
         .toList();
   }
 
   void _sortearComAnuncio(double increment) {
-    _sorteioValue += increment;
     setState(() {
-      _sortear();
+      _sortear(increment);
       _chance++;
-      if (_chance == 2 && !Constants.isDevMode) {
+      if (_chance == 3 && !Constants.isDevMode) {
         _sorteioInterstitial.show();
         _loadInterstitial();
         _chance = 0;
@@ -50,7 +50,7 @@ class _SorteioPageState extends State<SorteioPage> {
     _sorteioInterstitial = InterstitialAd(
       adUnitId: AdUnits.getSorteioInterstitialId(),
       targetingInfo: MobileAdTargetingInfo(
-//          testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]
+          testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]
           ),
     );
     _sorteioInterstitial.load();
@@ -65,7 +65,7 @@ class _SorteioPageState extends State<SorteioPage> {
   @override
   Widget build(BuildContext context) {
     if (_firstTime) {
-      _sortear();
+      _sortear(0);
       _firstTime = false;
     }
     var dezenas = GridView(
@@ -87,28 +87,6 @@ class _SorteioPageState extends State<SorteioPage> {
           color: widget._concurso.colorBean.getColor(context),
           onPressed: () => _sortearComAnuncio(0)),
     );
-
-    Widget controlsButton = Center();
-
-    if (maxSize != minSize) {
-      controlsButton = Padding(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            FlatButton.icon(
-                onPressed: () => (_sorteioValue > widget._concurso.minSize ? _sortearComAnuncio(-1) : null),
-                icon: Icon(Icons.exposure_neg_1),
-                label: Text("")),
-            Text(_sorteioValue.toInt().toString()),
-            FlatButton.icon(
-                onPressed: () => (_sorteioValue < widget._concurso.maxSize ? _sortearComAnuncio(1) : null),
-                icon: Icon(Icons.exposure_plus_1),
-                label: Text("")),
-          ],
-        ),
-        padding: EdgeInsets.only(top: 5),
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -135,7 +113,46 @@ class _SorteioPageState extends State<SorteioPage> {
         padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
         child: Flex(
           children: <Widget>[
-            controlsButton,
+            Visibility(
+              visible: maxSize != minSize,
+              child: Padding(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Visibility(
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      visible: _sorteioValue > widget._concurso.minSize,
+                      child: FlatButton.icon(
+                          onPressed: () => setState(() {
+                                _sortear(-1);
+                              }),
+                          icon: Icon(Icons.exposure_neg_1),
+                          label: Text("")),
+                    ),
+                    Text(
+                      _sorteioValue.toInt().toString(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Visibility(
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      visible: _sorteioValue < widget._concurso.maxSize,
+                      child: FlatButton.icon(
+                          onPressed: () => setState(() {
+                                _sortear(1);
+                              }),
+                          icon: Icon(Icons.exposure_plus_1),
+                          label: Text("")),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.only(top: 5, left: 12, right: 12),
+              ),
+            ),
+            Visibility(visible: maxSize != minSize, child: Divider()),
             Flexible(
               child: dezenas,
             ),
