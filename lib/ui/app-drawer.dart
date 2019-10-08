@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
-import 'package:palpites_da_loteria/defaults/strings.dart';
-import 'package:palpites_da_loteria/ui/home-page.dart';
 import 'package:palpites_da_loteria/ui/settings-page.dart';
 import 'package:palpites_da_loteria/ui/termos-de-uso-page.dart';
 
@@ -23,7 +21,7 @@ class _AppDrawerState extends State<AppDrawer> {
               children: <Widget>[
                 Image.asset(
                   Constants.logoTransparentAssetPath,
-                  width: 100,
+                  width: 120,
                 ),
                 Text(
                   "Palpites da loteria",

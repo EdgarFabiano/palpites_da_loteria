@@ -1,4 +1,4 @@
-package com.example.palpites_da_loteria;
+package com.efs.palpites_da_loteria;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

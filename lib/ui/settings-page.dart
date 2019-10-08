@@ -83,11 +83,11 @@ class _SettingsPageState extends State<SettingsPage> {
             _switchTheme(context);
           },
         ),
-        Divider(),
-        ListTile(
-          title: Text("Tela inicial"),
-        ),
-        Divider(),
+//        Divider(),
+//        ListTile(
+//          title: Text("Tela inicial"),
+//        ),
+//        Divider(),
 //        reorderableListView
       ]),
     );

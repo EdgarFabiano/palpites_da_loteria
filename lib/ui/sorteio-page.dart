@@ -82,8 +82,11 @@ class _SorteioPageState extends State<SorteioPage> {
     var refreshButton = SizedBox(
       width: double.infinity,
       child: RaisedButton.icon(
-          icon: Icon(Icons.refresh),
-          label: Text("Gerar novamente"),
+          icon: Icon(Icons.refresh, color: Colors.white,),
+          label: Text("Gerar novamente",
+            style: TextStyle(
+                color: Colors.white
+            ),),
           color: widget._concurso.colorBean.getColor(context),
           onPressed: () => _sortearComAnuncio(0)),
     );
@@ -97,15 +100,15 @@ class _SorteioPageState extends State<SorteioPage> {
         backgroundColor: widget._concurso.colorBean.getColor(context),
         title: Text(widget._concurso.name),
         actions: <Widget>[
-          IconButton(
-            tooltip: "Salvar jogo",
-            icon: Icon(!_favorited ? Icons.favorite_border : Icons.favorite),
-            onPressed: () {
-              setState(() {
-                _favorited = !_favorited;
-              });
-            },
-          ),
+//          IconButton(
+//            tooltip: "Salvar jogo",
+//            icon: Icon(!_favorited ? Icons.favorite_border : Icons.favorite),
+//            onPressed: () {
+//              setState(() {
+//                _favorited = !_favorited;
+//              });
+//            },
+//          ),
           PopUpMenu(),
         ],
       ),

@@ -2,13 +2,12 @@
 
 class Constants {
 
-  static bool isTesting = true;
+  static bool isTesting = false;
   static bool isDevMode = false;
 
   static const String concursosSharedPreferencesKey = 'concursos';
   static const String concursosBaselineJson = 'assets/json/baseline.json';
 
-  static const String logoAssetPath = 'assets/images/logo.png';
   static const String logoTransparentAssetPath = 'assets/images/logo-transparent.png';
   static const String loteriasIconAssetPath = 'assets/images/loterias.png';
 
