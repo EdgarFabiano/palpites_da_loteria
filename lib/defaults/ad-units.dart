@@ -23,10 +23,13 @@ class AdUnits {
 
   static void instatiateBannerAd() {
     _concursosBanner = BannerAd(
-      size: AdSize.smartBanner,
+      size: AdSize.banner,
       adUnitId: AdUnits.getConcursosBannerId(),
       targetingInfo: MobileAdTargetingInfo(
-        //          testDevices: [/*"30B81A47E3005ADC205D4BCECC4450E1"*/]
+          testDevices: [
+            "30B81A47E3005ADC205D4BCECC4450E1",
+            "F2EFF4F833C2BA2BE93D3A4A1098A125"
+          ]
       ),
     );
   }

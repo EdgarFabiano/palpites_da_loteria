@@ -15,7 +15,8 @@ class ConcursoService {
 
   static Future<Concursos> getUsersConcursosFuture(BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String usersConcursos = await prefs.get(Constants.concursosSharedPreferencesKey);
+    String usersConcursos =
+    await prefs.get(Constants.concursosSharedPreferencesKey);
 
     if (usersConcursos == null) {
       await getBaselineFuture(context).then((onValue) => prefs.setString(
@@ -28,8 +29,24 @@ class ConcursoService {
     return Concursos.fromJson(map);
   }
 
-  static void save(Concursos concursos) async {
+  static void saveConcursos(Concursos concursos) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(Constants.concursosSharedPreferencesKey, concursos.toJsonString());
+    prefs.setString(
+        Constants.concursosSharedPreferencesKey, concursos.toJsonString());
+  }
+
+  static void saveConcurso(ConcursoBean concurso) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String usersConcursos =
+    await prefs.get(Constants.concursosSharedPreferencesKey);
+    Map<String, dynamic> map = Concursos.toMap(usersConcursos);
+    Concursos concursos = Concursos.fromJson(map);
+    concursos.concursosBean.forEach((element) {
+      if (element.name == concurso.name) {
+        element.enabled = concurso.enabled;
+      }
+    });
+    prefs.setString(
+        Constants.concursosSharedPreferencesKey, concursos.toJsonString());
   }
 }

@@ -7,6 +7,7 @@ import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:palpites_da_loteria/service/concurso-service.dart';
 import 'package:palpites_da_loteria/widgets/card-concursos.dart';
 import 'package:palpites_da_loteria/widgets/termos-de-uso-form.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app-drawer.dart';
 
@@ -28,8 +29,21 @@ class _HomePageState extends State<HomePage> {
     _usersConcursosFuture = ConcursoService.getUsersConcursosFuture(context);
   }
 
+  void checkUpdate() {
+    Future<SharedPreferences> preferences = SharedPreferences.getInstance();
+    preferences.then((onValue) {
+      if (onValue.getBool(Constants.updateHomeSharedPreferencesKey)) {
+        setState(() {
+          initState();
+          onValue.setBool(Constants.updateHomeSharedPreferencesKey, false);
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkUpdate();
     AdUnits.showBannerAd();
     var gridView = FutureBuilder(
       future: _usersConcursosFuture,
@@ -37,6 +51,7 @@ class _HomePageState extends State<HomePage> {
         if (snapshot.hasData) {
           _concursos = snapshot.data;
           _cards = _concursos.concursosBean
+              .where((element) => element.enabled)
               .map((concurso) => CardConcursos(concurso))
               .toList();
 
@@ -53,14 +68,14 @@ class _HomePageState extends State<HomePage> {
           var spacing = mediaQueryData.size.height / 100;
           return Center(
               child: GridView(
-            padding: EdgeInsets.all(spacing),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              crossAxisSpacing: spacing,
-              mainAxisSpacing: spacing,
-              maxCrossAxisExtent: tileSize,
-            ),
-            children: _cards,
-          ));
+                padding: EdgeInsets.all(spacing),
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  crossAxisSpacing: spacing,
+                  mainAxisSpacing: spacing,
+                  maxCrossAxisExtent: tileSize,
+                ),
+                children: _cards,
+              ));
         } else {
           return TermosDeUsoForm(true);
         }

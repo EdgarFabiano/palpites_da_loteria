@@ -2,7 +2,6 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/ad-units.dart';
-import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator.dart';
 import 'package:palpites_da_loteria/service/generator/random-sorteio-generator.dart';
@@ -38,7 +37,7 @@ class _SorteioPageState extends State<SorteioPage> {
     setState(() {
       _sortear(increment);
       _chance++;
-      if (_chance == 3 && !Constants.isDevMode) {
+      if (_chance == 3) {
         _sorteioInterstitial.show();
         _loadInterstitial();
         _chance = 0;
@@ -50,7 +49,10 @@ class _SorteioPageState extends State<SorteioPage> {
     _sorteioInterstitial = InterstitialAd(
       adUnitId: AdUnits.getSorteioInterstitialId(),
       targetingInfo: MobileAdTargetingInfo(
-          testDevices: ["30B81A47E3005ADC205D4BCECC4450E1"]
+          testDevices: [
+            "30B81A47E3005ADC205D4BCECC4450E1",
+            "F2EFF4F833C2BA2BE93D3A4A1098A125"
+          ]
           ),
     );
     _sorteioInterstitial.load();
