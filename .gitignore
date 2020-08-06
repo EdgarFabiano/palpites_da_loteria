@@ -24,3 +24,9 @@ android/local.properties
 android/android.iml
 
 android/app/app.iml
+
+ios/Flutter/Generated.xcconfig
+
+ios/Flutter/flutter_export_environment.sh
+
+.flutter-plugins-dependencies
