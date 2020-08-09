@@ -30,3 +30,15 @@ ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 
 .flutter-plugins-dependencies
+
+.gradle/5.2.1/fileChanges/last-build.bin
+
+.gradle/5.2.1/fileHashes/fileHashes.lock
+
+.gradle/5.2.1/gc.properties
+
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+
+.gradle/buildOutputCleanup/cache.properties
+
+.gradle/vcs-1/gc.properties

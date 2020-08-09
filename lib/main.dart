@@ -4,12 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/ui/home-page.dart';
 import 'package:palpites_da_loteria/ui/settings-page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'defaults/ad-units.dart';
+import 'defaults/constants.dart';
 
-void main()  {
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   FirebaseAdMob.instance.initialize(appId: AdUnits.getAppId());
   runApp(PalpitesLoteriaApp());
+
+  Future<SharedPreferences> preferences = SharedPreferences.getInstance();
+  preferences.then((onValue) {
+    onValue.setBool(Constants.updateHomeSharedPreferencesKey, false);
+  });
 }
 
 class PalpitesLoteriaApp extends StatelessWidget {
@@ -27,15 +35,14 @@ class PalpitesLoteriaApp extends StatelessWidget {
             ),
         themedWidgetBuilder: (context, theme) {
           return new MaterialApp(
-            title: Strings.appName,
-            theme: theme,
-            home: HomePage(),
-            debugShowCheckedModeBanner: false,
+              title: Strings.appName,
+              theme: theme,
+              home: HomePage(),
+              debugShowCheckedModeBanner: false,
               initialRoute: Strings.concursosRoute,
               routes: {
                 Strings.configuracoesRoute: (context) => SettingsPage(),
-              }
-          );
+              });
         });
   }
 }

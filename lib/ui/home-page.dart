@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/ad-units.dart';
@@ -32,7 +34,8 @@ class _HomePageState extends State<HomePage> {
   void checkUpdate() {
     Future<SharedPreferences> preferences = SharedPreferences.getInstance();
     preferences.then((onValue) {
-      if (onValue.getBool(Constants.updateHomeSharedPreferencesKey)) {
+      var mustUpdate = onValue.getBool(Constants.updateHomeSharedPreferencesKey);
+      if (mustUpdate != null && mustUpdate) {
         setState(() {
           initState();
           onValue.setBool(Constants.updateHomeSharedPreferencesKey, false);
