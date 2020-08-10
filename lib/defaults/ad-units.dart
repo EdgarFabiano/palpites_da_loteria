@@ -16,7 +16,7 @@ class AdUnits {
   static BannerAd _concursosBanner;
   static BannerAd get concursosBanner => _concursosBanner;
 
-  static double _bannerPadding = 50;
+  static double _bannerPadding = 0;
   static double get bannerPadding => _bannerPadding;
 
   static void instatiateBannerAd() {

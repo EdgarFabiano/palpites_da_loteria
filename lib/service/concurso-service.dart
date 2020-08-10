@@ -6,18 +6,19 @@ import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:flutter/services.dart' show rootBundle;
+
 class ConcursoService {
   static String className = "ConcursoService";
 
-  static Future<Concursos> getBaselineFuture(BuildContext context) async {
+  static Future<Concursos> getBaselineFuture() async {
     developer.log("Awaiting '" + Constants.concursosBaselineJson + "'", name: className);
-    String jsonString = await DefaultAssetBundle.of(context)
-        .loadString(Constants.concursosBaselineJson);
+    String jsonString = await rootBundle.loadString(Constants.concursosBaselineJson);
     Map<String, dynamic> map = Concursos.toMap(jsonString);
     return Concursos.fromJson(map);
   }
 
-  static Future<Concursos> getUsersConcursosFuture(BuildContext context) async {
+  static Future<Concursos> getUsersConcursosFuture() async {
     developer.log("Awaiting 'Shared Preferences'", name: className);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     developer.log("Awaiting '" + Constants.concursosSharedPreferencesKey + "'", name: className);
@@ -25,8 +26,7 @@ class ConcursoService {
     await prefs.get(Constants.concursosSharedPreferencesKey);
 
     if (usersConcursos == null) {
-      developer.log("Awaiting 'baseline'", name: className);
-      await getBaselineFuture(context).then((onValue) => prefs.setString(
+      await getBaselineFuture().then((onValue) => prefs.setString(
           Constants.concursosSharedPreferencesKey,
           json.encode(onValue.toJson())));
     }
@@ -51,7 +51,7 @@ class ConcursoService {
     await prefs.get(Constants.concursosSharedPreferencesKey);
     Map<String, dynamic> map = Concursos.toMap(usersConcursos);
     Concursos concursos = Concursos.fromJson(map);
-    concursos.concursosBean.forEach((element) {
+    concursos.concursosBeanList.forEach((element) {
       if (element.name == concurso.name) {
         element.enabled = concurso.enabled;
       }

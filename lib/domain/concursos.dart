@@ -23,17 +23,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class Concursos {
-  List<ConcursoBean> concursosBean;
+  List<ConcursoBean> concursosBeanList;
 
-  Concursos({this.concursosBean});
+  Concursos({this.concursosBeanList});
 
   Concursos.fromJson(Map<String, dynamic> json) {    
-    this.concursosBean = (json['concursosBean'] as List)!=null?(json['concursosBean'] as List).map((i) => ConcursoBean.fromJson(i)).toList():null;
+    this.concursosBeanList = (json['concursosBean'] as List)!=null?(json['concursosBean'] as List).map((i) => ConcursoBean.fromJson(i)).toList():null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['concursosBean'] = this.concursosBean != null?this.concursosBean.map((i) => i.toJson()).toList():null;
+    data['concursosBean'] = this.concursosBeanList != null?this.concursosBeanList.map((i) => i.toJson()).toList():null;
     return data;
   }
 

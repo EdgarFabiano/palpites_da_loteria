@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:palpites_da_loteria/service/concurso-service.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'concursos-settings-change-notifier.dart';
 
 class ListItemConcurso extends StatefulWidget {
   final ConcursoBean _concursoBean;
+  final Concursos _concursos;
 
-  ListItemConcurso(this._concursoBean, {Key key}) : super(key: key);
+  ListItemConcurso(this._concursoBean, this._concursos, {Key key}) : super(key: key);
 
   ConcursoBean get concursoBean => _concursoBean;
 
@@ -18,6 +22,7 @@ class ListItemConcurso extends StatefulWidget {
 class _ListItemConcursoState extends State<ListItemConcurso> {
   @override
   Widget build(BuildContext context) {
+    var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
     return ListTile(
       key: Key(widget._concursoBean.name),
       leading: Icon(Icons.reorder),
@@ -42,13 +47,9 @@ class _ListItemConcursoState extends State<ListItemConcurso> {
             onChanged: (value) {
               setState(() {
                 widget._concursoBean.enabled = value;
-                ConcursoService.saveConcurso(widget._concursoBean);
-                Future<SharedPreferences> preferences = SharedPreferences
-                    .getInstance();
-                preferences.then((onValue) {
-                  onValue.setBool(
-                      Constants.updateHomeSharedPreferencesKey, true);
-                });
+                var index = widget._concursos.concursosBeanList.indexOf(widget.concursoBean);
+                widget._concursos.concursosBeanList.fillRange(index, index, widget.concursoBean);
+                concursosProvider.setConcursos(widget._concursos);
               });
             },
           )
