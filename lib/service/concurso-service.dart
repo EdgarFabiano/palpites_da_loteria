@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'dart:developer' as developer;
 
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:flutter/services.dart' show rootBundle;
-
 class ConcursoService {
+  static bool updated = false;
   static String className = "ConcursoService";
 
   static Future<Concursos> getBaselineFuture() async {
@@ -18,17 +17,27 @@ class ConcursoService {
 
   static Future<Concursos> getUsersConcursosFuture() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String usersConcursos =
+    String stringConcursos =
     await prefs.get(Constants.concursosSharedPreferencesKey);
 
-    if (usersConcursos == null) {
+    if (stringConcursos == null) {
       await getBaselineFuture().then((onValue) => prefs.setString(
           Constants.concursosSharedPreferencesKey,
           json.encode(onValue.toJson())));
+      stringConcursos =
+      await prefs.get(Constants.concursosSharedPreferencesKey);
+      updated = true;
     }
-    Map<String, dynamic> map = Concursos.toMap(usersConcursos);
 
-    return Concursos.fromJson(map);
+    Map<String, dynamic> map = Concursos.toMap(stringConcursos);
+    Concursos concursos = Concursos.fromJson(map);
+
+    if(!updated) {
+      _updateBaselineChanges(concursos, prefs);
+      updated = true;
+    }
+
+    return concursos;
   }
 
   static void saveConcursos(Concursos concursos) async {
@@ -50,5 +59,15 @@ class ConcursoService {
     });
     prefs.setString(
         Constants.concursosSharedPreferencesKey, concursos.toJsonString());
+  }
+
+  /*This method is used to update user concursos list attributes due to permanent changes in baseline.json for older installations only*/
+  static void _updateBaselineChanges(Concursos concursos, SharedPreferences prefs) {
+    /*This is needed because the last version baseline.json contained 18 as maxSize for "LOTOFÁCIL" contest*/
+    concursos.concursosBeanList
+        .where((element) => element.name == "LOTOFÁCIL")
+        .first.maxSize = 20;
+
+    prefs.setString(Constants.concursosSharedPreferencesKey, concursos.toJsonString());
   }
 }
