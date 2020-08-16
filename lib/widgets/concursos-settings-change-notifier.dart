@@ -24,23 +24,24 @@ class ConcursosSettingsChangeNotifier with ChangeNotifier {
 
     if (start < current) {
       int end = current - 1;
-      var startItem = concursosBeanList.elementAt(start);
+      var startItem = concursosBeanList[start];
       int i = 0;
       int local = start;
       do {
-        concursosBeanList.fillRange(local, local, concursosBeanList.elementAt(++local));
+        concursosBeanList[local] = concursosBeanList[++local];
         i++;
       } while (i < end - start);
-      concursosBeanList.fillRange(end, end, startItem);
+      concursosBeanList[end] = startItem;
     }
     // dragging from bottom to top
     else if (start > current) {
-      var startItem = concursosBeanList.elementAt(start);
+      var startItem = concursosBeanList[start];
       for (int i = start; i > current; i--) {
-        concursosBeanList.fillRange(i, i, concursosBeanList.elementAt(i-1));
+        concursosBeanList[i] = concursosBeanList[i - 1];
       }
-      concursosBeanList.fillRange(current, current, startItem);
+      concursosBeanList[current] = startItem;
     }
+
     ConcursoService.saveConcursos(_concursos);
     notifyListeners();
   }
