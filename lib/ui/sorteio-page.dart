@@ -82,18 +82,6 @@ class _SorteioPageState extends State<SorteioPage> {
     var minSize = widget._concurso.minSize.toDouble();
     var maxSize = widget._concurso.maxSize.toDouble();
 
-    var refreshButton = SizedBox(
-      width: double.infinity,
-      child: RaisedButton.icon(
-          icon: Icon(Icons.refresh, color: Colors.white,),
-          label: Text("Gerar novamente",
-            style: TextStyle(
-                color: Colors.white
-            ),),
-          color: widget._concurso.colorBean.getColor(context),
-          onPressed: () => _sortearComAnuncio(0)),
-    );
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -103,16 +91,14 @@ class _SorteioPageState extends State<SorteioPage> {
         backgroundColor: widget._concurso.colorBean.getColor(context),
         title: Text(widget._concurso.name),
         actions: <Widget>[
-//          IconButton(
-//            tooltip: "Salvar jogo",
-//            icon: Icon(!_favorited ? Icons.favorite_border : Icons.favorite),
-//            onPressed: () {
-//              setState(() {
-//                _favorited = !_favorited;
-//              });
-//            },
-//          ),
-          PopUpMenu(),
+          IconButton(
+              tooltip: "Gerar novamente",
+              icon: Icon(
+                Icons.refresh,
+                color: Colors.white,
+              ),
+              onPressed: () => _sortearComAnuncio(0)),
+//          PopUpMenu(),
         ],
       ),
       body: Padding(
@@ -161,9 +147,6 @@ class _SorteioPageState extends State<SorteioPage> {
             Visibility(visible: maxSize != minSize, child: Divider()),
             Flexible(
               child: dezenas,
-            ),
-            Column(
-              children: <Widget>[refreshButton],
             ),
           ],
           direction: Axis.vertical,
