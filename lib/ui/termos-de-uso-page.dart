@@ -19,7 +19,7 @@ class _TermosDeUsoPageState extends State<TermosDeUsoPage> {
       ),
       body: Padding(
         padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
-        child: TermosDeUsoForm(false),
+        child: TermosDeUsoForm(),
       ),
     );
   }
