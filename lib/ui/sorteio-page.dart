@@ -1,12 +1,11 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/ad-units.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:palpites_da_loteria/service/admob-service.dart';
 import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator.dart';
 import 'package:palpites_da_loteria/service/generator/random-sorteio-generator.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
-import 'package:palpites_da_loteria/widgets/popup-menu.dart';
 
 class SorteioPage extends StatefulWidget {
   final ConcursoBean _concurso;
@@ -20,11 +19,10 @@ class SorteioPage extends StatefulWidget {
 class _SorteioPageState extends State<SorteioPage> {
   List<Dezena> _dezenas = List();
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
-  bool _favorited = false;
   bool _firstTime = true;
   InterstitialAd _sorteioInterstitial;
   double _sorteioValue;
-  int _chance = 0;
+  int _chance = 4;
 
   void _sortear(double increment) {
     _sorteioValue += increment;
@@ -37,7 +35,7 @@ class _SorteioPageState extends State<SorteioPage> {
     setState(() {
       _sortear(increment);
       _chance++;
-      if (_chance == 3) {
+      if (_chance >= 5) {
         _sorteioInterstitial.show();
         _loadInterstitial();
         _chance = 0;
@@ -47,7 +45,7 @@ class _SorteioPageState extends State<SorteioPage> {
 
   void _loadInterstitial() {
     _sorteioInterstitial = InterstitialAd(
-      adUnitId: AdUnits.getSorteioInterstitialId(),
+      adUnitId: AdMobService.getSorteioInterstitialId(),
       targetingInfo: MobileAdTargetingInfo(
           testDevices: [
             "30B81A47E3005ADC205D4BCECC4450E1",
@@ -102,7 +100,7 @@ class _SorteioPageState extends State<SorteioPage> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
+        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
         child: Flex(
           children: <Widget>[
             Visibility(

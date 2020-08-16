@@ -1,8 +1,8 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/ad-units.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:palpites_da_loteria/service/admob-service.dart';
 import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
 import 'package:palpites_da_loteria/widgets/list-item-concurso.dart';
 import 'package:provider/provider.dart';
@@ -75,7 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
         title: Text(Strings.settings),
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
+        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
         child: ListView.builder(
           physics: ClampingScrollPhysics(),
           itemCount: 1,

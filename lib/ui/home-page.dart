@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/ad-units.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:palpites_da_loteria/service/admob-service.dart';
 import 'package:palpites_da_loteria/ui/home-loading-page.dart';
 import 'package:palpites_da_loteria/widgets/card-concursos.dart';
 import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
@@ -23,9 +23,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    AdUnits.instatiateBannerAd();
-    AdUnits.concursosBanner.load();
-    AdUnits.showBannerAd();
+    AdMobService.instatiateBannerAd();
+    AdMobService.concursosBanner.load();
+    AdMobService.showBannerAd();
   }
 
 
@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
           child: AppDrawer(),
         ),
         body: Padding(
-          padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
+          padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
           child: Center(
               child: GridView(
                 padding: EdgeInsets.all(spacing),
@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
           child: AppDrawer(),
         ),
         body: Padding(
-          padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
+          padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
           child: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
         ),
       );

@@ -1,11 +1,9 @@
-
-
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
-import 'package:palpites_da_loteria/defaults/ad-units.dart';
+import 'package:palpites_da_loteria/service/admob-service.dart';
 
 class HomeLoadingPage extends StatelessWidget {
   final spacing;
@@ -17,7 +15,7 @@ class HomeLoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
+      padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
       child: Center(
           child: GridView(
             padding: EdgeInsets.all(spacing),

@@ -8,11 +8,11 @@ import 'package:palpites_da_loteria/ui/settings-page.dart';
 import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
 import 'package:provider/provider.dart';
 
-import 'defaults/ad-units.dart';
+import 'service/admob-service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseAdMob.instance.initialize(appId: AdUnits.getAppId());
+  FirebaseAdMob.instance.initialize(appId: AdMobService.getAppId());
   runApp(PalpitesLoteriaApp());
 }
 
