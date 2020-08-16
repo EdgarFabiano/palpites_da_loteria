@@ -60,6 +60,7 @@ class _SorteioPageState extends State<SorteioPage> {
 
   @override
   void initState() {
+    super.initState();
     _sorteioValue = widget._concurso.minSize.toDouble();
     _loadInterstitial();
   }

@@ -17,6 +17,7 @@ void main() {
 }
 
 class PalpitesLoteriaApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     ConcursosSettingsChangeNotifier concursosSettingsChangeNotifier = ConcursosSettingsChangeNotifier();

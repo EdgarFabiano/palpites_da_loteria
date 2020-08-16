@@ -22,7 +22,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
-class Concursos {
+class Concursos extends Iterable<dynamic> {
   List<ConcursoBean> concursosBeanList;
 
   Concursos({this.concursosBeanList});
@@ -44,6 +44,9 @@ class Concursos {
   static Map<String, dynamic> toMap(String jsonString) {
     return json.decode(jsonString);
   }
+
+  @override
+  Iterator get iterator => concursosBeanList.iterator;
 
 }
 

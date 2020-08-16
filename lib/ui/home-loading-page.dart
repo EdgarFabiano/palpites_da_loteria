@@ -7,11 +7,11 @@ import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
 import 'package:palpites_da_loteria/defaults/ad-units.dart';
 
-class LoadingPage extends StatelessWidget {
+class HomeLoadingPage extends StatelessWidget {
   final spacing;
   final tileSize;
 
-  const LoadingPage({Key key, this.spacing, this.tileSize}) : super(key: key);
+  const HomeLoadingPage({Key key, this.spacing, this.tileSize}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/ad-units.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
-import 'package:palpites_da_loteria/service/concurso-service.dart';
 import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
 import 'package:palpites_da_loteria/widgets/list-item-concurso.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +14,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   List<ListItemConcurso> _items;
-  Concursos _concursos;
 
   void _switchTheme(BuildContext context) {
     var b = Theme.of(context).brightness;
@@ -24,33 +22,53 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _onReorder(int start, int current) {
+    // dragging from top to bottom
+    if (start < current) {
+      int end = current - 1;
+      var startItem = _items[start];
+      int i = 0;
+      int local = start;
+      do {
+        _items[local] = _items[++local];
+        i++;
+      } while (i < end - start);
+      _items[end] = startItem;
+    }
+    // dragging from bottom to top
+    else if (start > current) {
+      var startItem = _items[start];
+      for (int i = start; i > current; i--) {
+        _items[i] = _items[i - 1];
+      }
+      _items[current] = startItem;
+    }
     setState(() {
-      // dragging from top to bottom
-      if (start < current) {
-        int end = current - 1;
-        var startItem = _items[start];
-        int i = 0;
-        int local = start;
-        do {
-          _items[local] = _items[++local];
-          i++;
-        } while (i < end - start);
-        _items[end] = startItem;
-      }
-      // dragging from bottom to top
-      else if (start > current) {
-        var startItem = _items[start];
-        for (int i = start; i > current; i--) {
-          _items[i] = _items[i - 1];
-        }
-        _items[current] = startItem;
-      }
+
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var reorderableListView;
+
     var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
+    Concursos _concursos = concursosProvider.getConcursos();
+
+    if (concursosProvider != null && _concursos != null) {
+      _items = _concursos.concursosBeanList
+          .map((concurso) =>
+          ListItemConcurso(concurso, _concursos, key: Key("listItem" + concurso.name),))
+          .toList();
+      reorderableListView = ReorderableListView(
+        children: _items,
+        onReorder: (start, current) {
+          _onReorder(start, current);
+          concursosProvider.onReorder(start, current);
+        },
+      );
+    } else {
+      reorderableListView = Container();
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -96,29 +114,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 Divider(),
                 SizedBox(
                   height: 500,
-                  child: FutureBuilder(
-                    key: Key("future"),
-                    future: ConcursoService.getUsersConcursosFuture(),
-                    builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-                        _concursos = snapshot.data;
-                        _items = _concursos.concursosBeanList
-                            .map((concurso) =>
-                            ListItemConcurso(concurso, _concursos, key: Key("listItem" + concurso.name),))
-                            .toList();
-
-                        return ReorderableListView(
-                          children: _items,
-                          onReorder: (start, current) {
-                            _onReorder(start, current);
-                            concursosProvider.onReorder(start, current);
-                          },
-                        );
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
+                  child: reorderableListView,
                 ),
               ],
             );

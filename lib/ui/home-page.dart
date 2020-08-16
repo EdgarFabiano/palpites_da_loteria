@@ -45,23 +45,12 @@ class _HomePageState extends State<HomePage> {
     var spacing = mediaQueryData.size.height / 100;
 
     var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
-    var concursos = concursosProvider.getConcursos();
+    Concursos concursos = concursosProvider.getConcursos();
     if (concursosProvider != null && concursos != null) {
-      cards = concursos.concursosBeanList
+      cards = concursos
           .where((element) => element.enabled)
           .map((concurso) => CardConcursos(concurso))
           .toList();
-
-      var gridView = Center(
-          child: GridView(
-            padding: EdgeInsets.all(spacing),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              crossAxisSpacing: spacing,
-              mainAxisSpacing: spacing,
-              maxCrossAxisExtent: tileSize,
-            ),
-            children: cards,
-          ));
 
       return Scaffold(
         appBar: AppBar(
@@ -72,7 +61,16 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Padding(
           padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
-          child: gridView,
+          child: Center(
+              child: GridView(
+                padding: EdgeInsets.all(spacing),
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  crossAxisSpacing: spacing,
+                  mainAxisSpacing: spacing,
+                  maxCrossAxisExtent: tileSize,
+                ),
+                children: cards,
+              )),
         ),
       );
 
@@ -86,15 +84,9 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Padding(
           padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
-          child: LoadingPage(spacing: spacing, tileSize: tileSize),
+          child: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
         ),
       );
     }
-
-
-
-
-
-
   }
 }
