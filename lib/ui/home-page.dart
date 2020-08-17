@@ -1,75 +1,67 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/ad-units.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
-import 'package:palpites_da_loteria/service/concurso-service.dart';
+import 'package:palpites_da_loteria/service/admob-service.dart';
+import 'package:palpites_da_loteria/ui/home-loading-page.dart';
 import 'package:palpites_da_loteria/widgets/card-concursos.dart';
-import 'package:palpites_da_loteria/widgets/termos-de-uso-form.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
+import 'package:provider/provider.dart';
 
 import 'app-drawer.dart';
 
 class HomePage extends StatefulWidget {
+  HomePage();
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<Concursos> _usersConcursosFuture;
-  List<CardConcursos> _cards;
-  Concursos _concursos;
 
   @override
   void initState() {
-    AdUnits.instatiateBannerAd();
-    AdUnits.concursosBanner.load();
-    AdUnits.showBannerAd();
-    _usersConcursosFuture = ConcursoService.getUsersConcursosFuture(context);
+    super.initState();
+    AdMobService.instatiateBannerAd();
+    AdMobService.concursosBanner.load();
+    AdMobService.showBannerAd();
   }
 
-  void checkUpdate() {
-    Future<SharedPreferences> preferences = SharedPreferences.getInstance();
-    preferences.then((onValue) {
-      var mustUpdate = onValue.getBool(Constants.updateHomeSharedPreferencesKey);
-      if (mustUpdate != null && mustUpdate) {
-        setState(() {
-          initState();
-          onValue.setBool(Constants.updateHomeSharedPreferencesKey, false);
-        });
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    checkUpdate();
-    AdUnits.showBannerAd();
-    var gridView = FutureBuilder(
-      future: _usersConcursosFuture,
-      builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          _concursos = snapshot.data;
-          _cards = _concursos.concursosBean
-              .where((element) => element.enabled)
-              .map((concurso) => CardConcursos(concurso))
-              .toList();
+    List<CardConcursos> cards;
+    var mediaQueryData = MediaQuery.of(context);
+    var isPortrait = mediaQueryData.orientation == Orientation.portrait;
 
-          var mediaQueryData = MediaQuery.of(context);
-          var isPortrait = mediaQueryData.orientation == Orientation.portrait;
+    var screenWidth = mediaQueryData.size.width;
+    var portraitSize = screenWidth / 2;
+    var landscapeSize = screenWidth / 4;
+    var tileSize = isPortrait ?
+    (portraitSize > Constants.tileMaxSize ? Constants.tileMaxSize: portraitSize)
+        : (landscapeSize > Constants.tileMaxSize ? Constants.tileMaxSize: landscapeSize) ;
 
-          var screenWidth = mediaQueryData.size.width;
-          var portraitSize = screenWidth / 2;
-          var landscapeSize = screenWidth / 4;
-          var tileSize = isPortrait ?
-          (portraitSize > Constants.tileMaxSize ? Constants.tileMaxSize: portraitSize)
-              : (landscapeSize > Constants.tileMaxSize ? Constants.tileMaxSize: landscapeSize) ;
+    var spacing = mediaQueryData.size.height / 100;
 
-          var spacing = mediaQueryData.size.height / 100;
-          return Center(
+    var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
+    Concursos concursos = concursosProvider.getConcursos();
+    if (concursosProvider != null && concursos != null) {
+      cards = concursos
+          .where((element) => element.enabled)
+          .map((concurso) => CardConcursos(concurso))
+          .toList();
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(Strings.appName),
+        ),
+        drawer: Drawer(
+          child: AppDrawer(),
+        ),
+        body: Padding(
+          padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
+          child: Center(
               child: GridView(
                 padding: EdgeInsets.all(spacing),
                 gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -77,25 +69,24 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSpacing: spacing,
                   maxCrossAxisExtent: tileSize,
                 ),
-                children: _cards,
-              ));
-        } else {
-          return TermosDeUsoForm(true);
-        }
-      },
-    );
+                children: cards,
+              )),
+        ),
+      );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(Strings.appName),
-      ),
-      drawer: Drawer(
-        child: AppDrawer(),
-      ),
-      body: Padding(
-        padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
-        child: gridView,
-      ),
-    );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(Strings.appName),
+        ),
+        drawer: Drawer(
+          child: AppDrawer(),
+        ),
+        body: Padding(
+          padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
+          child: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
+        ),
+      );
+    }
   }
 }

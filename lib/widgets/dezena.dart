@@ -34,9 +34,7 @@ class _DezenaState extends State<Dezena> {
   @override
   Widget build(BuildContext context) {
     Widget circle = GestureDetector(
-      onTap: () => setState(() {
-        tapped = !tapped;
-      }),
+      onTap: () => setState(() => tapped = !tapped),
       child: Card(
         elevation: 2,
         color: widget._color,

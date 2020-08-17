@@ -3,8 +3,7 @@ import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/ui/home-page.dart';
 
 class TermosDeUsoForm extends StatefulWidget {
-  final bool _showEntendi;
-  TermosDeUsoForm(this._showEntendi);
+  TermosDeUsoForm();
 
   @override
   _TermosDeusoState createState() => _TermosDeusoState();
@@ -56,23 +55,20 @@ class _TermosDeusoState extends State<TermosDeUsoForm> {
               textAlign: TextAlign.justify,
             ),
           ),
-          Visibility(
-            visible: widget._showEntendi,
-            child: ButtonBar(
-              children: <Widget>[
-                FlatButton(
-                  child: Text("Entendi!"),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
+          ButtonBar(
+            children: <Widget>[
+              FlatButton(
+                child: Text("Entendi!"),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(),
+                    ),
+                  );
+                },
+              )
+            ],
           )
         ],
         )

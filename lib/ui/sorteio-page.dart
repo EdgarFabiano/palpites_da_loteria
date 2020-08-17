@@ -1,12 +1,11 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/ad-units.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:palpites_da_loteria/service/admob-service.dart';
 import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator.dart';
 import 'package:palpites_da_loteria/service/generator/random-sorteio-generator.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
-import 'package:palpites_da_loteria/widgets/popup-menu.dart';
 
 class SorteioPage extends StatefulWidget {
   final ConcursoBean _concurso;
@@ -20,11 +19,10 @@ class SorteioPage extends StatefulWidget {
 class _SorteioPageState extends State<SorteioPage> {
   List<Dezena> _dezenas = List();
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
-  bool _favorited = false;
   bool _firstTime = true;
   InterstitialAd _sorteioInterstitial;
   double _sorteioValue;
-  int _chance = 0;
+  int _chance = 4;
 
   void _sortear(double increment) {
     _sorteioValue += increment;
@@ -37,7 +35,7 @@ class _SorteioPageState extends State<SorteioPage> {
     setState(() {
       _sortear(increment);
       _chance++;
-      if (_chance == 3) {
+      if (_chance >= 5) {
         _sorteioInterstitial.show();
         _loadInterstitial();
         _chance = 0;
@@ -47,7 +45,7 @@ class _SorteioPageState extends State<SorteioPage> {
 
   void _loadInterstitial() {
     _sorteioInterstitial = InterstitialAd(
-      adUnitId: AdUnits.getSorteioInterstitialId(),
+      adUnitId: AdMobService.getSorteioInterstitialId(),
       targetingInfo: MobileAdTargetingInfo(
           testDevices: [
             "30B81A47E3005ADC205D4BCECC4450E1",
@@ -60,6 +58,7 @@ class _SorteioPageState extends State<SorteioPage> {
 
   @override
   void initState() {
+    super.initState();
     _sorteioValue = widget._concurso.minSize.toDouble();
     _loadInterstitial();
   }
@@ -81,18 +80,6 @@ class _SorteioPageState extends State<SorteioPage> {
     var minSize = widget._concurso.minSize.toDouble();
     var maxSize = widget._concurso.maxSize.toDouble();
 
-    var refreshButton = SizedBox(
-      width: double.infinity,
-      child: RaisedButton.icon(
-          icon: Icon(Icons.refresh, color: Colors.white,),
-          label: Text("Gerar novamente",
-            style: TextStyle(
-                color: Colors.white
-            ),),
-          color: widget._concurso.colorBean.getColor(context),
-          onPressed: () => _sortearComAnuncio(0)),
-    );
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -102,20 +89,18 @@ class _SorteioPageState extends State<SorteioPage> {
         backgroundColor: widget._concurso.colorBean.getColor(context),
         title: Text(widget._concurso.name),
         actions: <Widget>[
-//          IconButton(
-//            tooltip: "Salvar jogo",
-//            icon: Icon(!_favorited ? Icons.favorite_border : Icons.favorite),
-//            onPressed: () {
-//              setState(() {
-//                _favorited = !_favorited;
-//              });
-//            },
-//          ),
-          PopUpMenu(),
+          IconButton(
+              tooltip: "Gerar novamente",
+              icon: Icon(
+                Icons.refresh,
+                color: Colors.white,
+              ),
+              onPressed: () => _sortearComAnuncio(0)),
+//          PopUpMenu(),
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
+        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
         child: Flex(
           children: <Widget>[
             Visibility(
@@ -160,9 +145,6 @@ class _SorteioPageState extends State<SorteioPage> {
             Visibility(visible: maxSize != minSize, child: Divider()),
             Flexible(
               child: dezenas,
-            ),
-            Column(
-              children: <Widget>[refreshButton],
             ),
           ],
           direction: Axis.vertical,

@@ -3,7 +3,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item>
-        <color android:color="#fff6e1" />
+        <color android:color="#ffffff" />
     </item>
 
     <!-- You can insert your own image assets here -->
@@ -13,3 +13,4 @@
             android:src="@drawable/logo_300" />
     </item>
 </layer-list>
+

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 
-class AdUnits {
+class AdMobService {
 
   static final String androidApiKey = "ca-app-pub-9921693044196842~4393626727";
   static final String androidConcursosBanner = "ca-app-pub-9921693044196842/2888973360";
@@ -16,13 +16,13 @@ class AdUnits {
   static BannerAd _concursosBanner;
   static BannerAd get concursosBanner => _concursosBanner;
 
-  static double _bannerPadding = 50;
+  static double _bannerPadding = 0;
   static double get bannerPadding => _bannerPadding;
 
   static void instatiateBannerAd() {
     _concursosBanner = BannerAd(
       size: AdSize.banner,
-      adUnitId: AdUnits.getConcursosBannerId(),
+      adUnitId: AdMobService.getConcursosBannerId(),
       targetingInfo: MobileAdTargetingInfo(
           testDevices: [
             "30B81A47E3005ADC205D4BCECC4450E1",
@@ -35,8 +35,8 @@ class AdUnits {
   static void showBannerAd() {
     _concursosBanner.isLoaded().then((isLoaded) {
       if (isLoaded) {
+        _bannerPadding = 50;
         _concursosBanner.show();
-        _bannerPadding = 0;
       } else {
         instatiateBannerAd();
         _concursosBanner.load();

@@ -1,12 +1,11 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/ad-units.dart';
-import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
-import 'package:palpites_da_loteria/service/concurso-service.dart';
+import 'package:palpites_da_loteria/service/admob-service.dart';
+import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
 import 'package:palpites_da_loteria/widgets/list-item-concurso.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -15,8 +14,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   List<ListItemConcurso> _items;
-  Concursos _concursos;
-  Widget _reorderableListView;
 
   void _switchTheme(BuildContext context) {
     var b = Theme.of(context).brightness;
@@ -45,52 +42,40 @@ class _SettingsPageState extends State<SettingsPage> {
       }
       _items[current] = startItem;
     }
-
-    _concursos.concursosBean.clear();
-    _items.forEach((listitem) {
-      _concursos.concursosBean.add(listitem.concursoBean);
-    });
-    ConcursoService.saveConcursos(_concursos);
     setState(() {
-      Future<SharedPreferences> preferences = SharedPreferences.getInstance();
-      preferences.then((onValue) {
-        onValue.setBool(Constants.updateHomeSharedPreferencesKey, true);
-      });
+
     });
-  }
-
-  @override
-  void initState() {
-    _reorderableListView = FutureBuilder(
-      key: Key("future"),
-      future: ConcursoService.getUsersConcursosFuture(context),
-      builder: (BuildContext buildContext, AsyncSnapshot snapshot) {
-        if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-          _concursos = snapshot.data;
-          _items = _concursos.concursosBean
-              .map((concurso) =>
-              ListItemConcurso(concurso, key: Key("listItem" + concurso.name),))
-              .toList();
-
-          return ReorderableListView(
-            children: _items,
-            onReorder: _onReorder,
-          );
-        } else {
-          return Container();
-        }
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    var reorderableListView;
+
+    var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
+    Concursos _concursos = concursosProvider.getConcursos();
+
+    if (concursosProvider != null && _concursos != null) {
+      _items = _concursos.concursosBeanList
+          .map((concurso) =>
+          ListItemConcurso(concurso, _concursos, key: Key("listItem" + concurso.name),))
+          .toList();
+      reorderableListView = ReorderableListView(
+        children: _items,
+        onReorder: (start, current) {
+          _onReorder(start, current);
+          concursosProvider.onReorder(start, current);
+        },
+      );
+    } else {
+      reorderableListView = Container();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(Strings.settings),
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: AdUnits.bannerPadding),
+        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
         child: ListView.builder(
           physics: ClampingScrollPhysics(),
           itemCount: 1,
@@ -129,7 +114,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 Divider(),
                 SizedBox(
                   height: 500,
-                  child: _reorderableListView,
+                  child: reorderableListView,
                 ),
               ],
             );

@@ -11,7 +11,7 @@ description: Projeto para gerar numeros da loteria Caixa.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -29,7 +29,9 @@ dependencies:
   firebase_core: 0.4.5
   firebase_admob: 0.9.3+4
   firebase_analytics: 5.0.16
-  fluttertoast: ^7.0.2
+  fluttertoast: 7.0.2
+  provider: 4.3.2
+  loading: 1.0.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
