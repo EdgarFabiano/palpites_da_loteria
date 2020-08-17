@@ -22,7 +22,7 @@ class _SorteioPageState extends State<SorteioPage> {
   bool _firstTime = true;
   InterstitialAd _sorteioInterstitial;
   double _sorteioValue;
-  int _chance = 4;
+  int _chance = 3;
 
   void _sortear(double increment) {
     _sorteioValue += increment;

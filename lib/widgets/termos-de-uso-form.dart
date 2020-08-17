@@ -55,21 +55,6 @@ class _TermosDeusoState extends State<TermosDeUsoForm> {
               textAlign: TextAlign.justify,
             ),
           ),
-          ButtonBar(
-            children: <Widget>[
-              FlatButton(
-                child: Text("Entendi!"),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(),
-                    ),
-                  );
-                },
-              )
-            ],
-          )
         ],
         )
     );
