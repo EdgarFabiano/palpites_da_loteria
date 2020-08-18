@@ -23,11 +23,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    AdMobService.instatiateBannerAd();
-    AdMobService.concursosBanner.load();
-    AdMobService.showBannerAd();
+    AdMobService.loadConcursosBanner().then((value) => AdMobService.showConcursosBanner());
   }
-
 
   @override
   Widget build(BuildContext context) {

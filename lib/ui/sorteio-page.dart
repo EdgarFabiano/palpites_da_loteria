@@ -1,4 +1,3 @@
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
@@ -20,7 +19,6 @@ class _SorteioPageState extends State<SorteioPage> {
   List<Dezena> _dezenas = List();
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
   bool _firstTime = true;
-  InterstitialAd _sorteioInterstitial;
   double _sorteioValue;
   int _chance = 3;
 
@@ -36,31 +34,17 @@ class _SorteioPageState extends State<SorteioPage> {
       _sortear(increment);
       _chance++;
       if (_chance >= 5) {
-        _sorteioInterstitial.show();
-        _loadInterstitial();
+        AdMobService.showSorteioInterstitial();
         _chance = 0;
       }
     });
-  }
-
-  void _loadInterstitial() {
-    _sorteioInterstitial = InterstitialAd(
-      adUnitId: AdMobService.getSorteioInterstitialId(),
-      targetingInfo: MobileAdTargetingInfo(
-          testDevices: [
-            "30B81A47E3005ADC205D4BCECC4450E1",
-            "F2EFF4F833C2BA2BE93D3A4A1098A125"
-          ]
-          ),
-    );
-    _sorteioInterstitial.load();
   }
 
   @override
   void initState() {
     super.initState();
     _sorteioValue = widget._concurso.minSize.toDouble();
-    _loadInterstitial();
+    AdMobService.loadSorteioInterstitial();
   }
 
   @override

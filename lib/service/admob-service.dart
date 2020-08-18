@@ -13,34 +13,51 @@ class AdMobService {
   static final String iosConcursosBanner = "ca-app-pub-9921693044196842/3409548238";
   static final String iosSorteioInterstitial = "ca-app-pub-9921693044196842/3623071156";
 
+  static InterstitialAd _sorteioInterstitial;
+  static InterstitialAd get sorteioInterstitial => _sorteioInterstitial;
+
   static BannerAd _concursosBanner;
-  static BannerAd get concursosBanner => _concursosBanner;
 
   static double _bannerPadding = 0;
   static double get bannerPadding => _bannerPadding;
 
-  static void instatiateBannerAd() {
-    _concursosBanner = BannerAd(
-      size: AdSize.banner,
-      adUnitId: AdMobService.getConcursosBannerId(),
-      targetingInfo: MobileAdTargetingInfo(
-          testDevices: [
-            "30B81A47E3005ADC205D4BCECC4450E1",
-            "F2EFF4F833C2BA2BE93D3A4A1098A125"
-          ]
-      ),
-    );
+  static Future<bool> loadConcursosBanner() {
+    if (_concursosBanner == null) {
+      _concursosBanner = BannerAd(
+        size: AdSize.banner,
+        adUnitId: AdMobService.getConcursosBannerId(),
+      );
+    }
+    return _concursosBanner.load();
   }
 
-  static void showBannerAd() {
+  static Future<bool> loadSorteioInterstitial() {
+    if (_sorteioInterstitial == null) {
+      _sorteioInterstitial = InterstitialAd(
+        adUnitId: AdMobService.getSorteioInterstitialId(),
+      );
+    }
+    return _sorteioInterstitial.load();
+  }
+
+  static void showConcursosBanner() {
     _concursosBanner.isLoaded().then((isLoaded) {
       if (isLoaded) {
         _bannerPadding = 50;
         _concursosBanner.show();
       } else {
-        instatiateBannerAd();
-        _concursosBanner.load();
+        loadConcursosBanner();
         _bannerPadding = 0;
+      }
+    });
+  }
+
+  static void showSorteioInterstitial() {
+    _sorteioInterstitial.isLoaded().then((isLoaded) {
+      if (isLoaded) {
+        _sorteioInterstitial.show();
+      } else {
+        loadSorteioInterstitial();
       }
     });
   }
