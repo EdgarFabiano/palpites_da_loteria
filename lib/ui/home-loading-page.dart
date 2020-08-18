@@ -15,7 +15,7 @@ class HomeLoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
+      padding: EdgeInsets.only(bottom: AdMobService.getBannerSize(context)),
       child: Center(
           child: GridView(
             padding: EdgeInsets.all(spacing),

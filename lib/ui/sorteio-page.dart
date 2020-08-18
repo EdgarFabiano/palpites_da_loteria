@@ -35,6 +35,7 @@ class _SorteioPageState extends State<SorteioPage> {
       _chance++;
       if (_chance >= 5) {
         AdMobService.showSorteioInterstitial();
+        AdMobService.getSorteioInterstitial();
         _chance = 0;
       }
     });
@@ -44,7 +45,7 @@ class _SorteioPageState extends State<SorteioPage> {
   void initState() {
     super.initState();
     _sorteioValue = widget._concurso.minSize.toDouble();
-    AdMobService.loadSorteioInterstitial();
+    AdMobService.getSorteioInterstitial();
   }
 
   @override
@@ -84,7 +85,7 @@ class _SorteioPageState extends State<SorteioPage> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
+        padding: EdgeInsets.only(bottom: AdMobService.getBannerSize(context)),
         child: Flex(
           children: <Widget>[
             Visibility(
@@ -134,6 +135,7 @@ class _SorteioPageState extends State<SorteioPage> {
           direction: Axis.vertical,
         ),
       ),
+      bottomSheet: AdMobService.getConcursosBanner(),
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:admob_flutter/admob_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 
 class AdMobService {
@@ -13,51 +15,36 @@ class AdMobService {
   static final String iosConcursosBanner = "ca-app-pub-9921693044196842/3409548238";
   static final String iosSorteioInterstitial = "ca-app-pub-9921693044196842/3623071156";
 
-  static InterstitialAd _sorteioInterstitial;
-  static InterstitialAd get sorteioInterstitial => _sorteioInterstitial;
+  static AdmobInterstitial _sorteioInterstitial;
+  static AdmobInterstitial get sorteioInterstitial => _sorteioInterstitial;
 
-  static BannerAd _concursosBanner;
+  static AdmobBanner _concursosBanner;
 
-  static double _bannerPadding = 0;
-  static double get bannerPadding => _bannerPadding;
-
-  static Future<bool> loadConcursosBanner() {
+  static AdmobBanner getConcursosBanner() {
     if (_concursosBanner == null) {
-      _concursosBanner = BannerAd(
-        size: AdSize.banner,
+      _concursosBanner = AdmobBanner(
+        adSize: AdmobBannerSize.FULL_BANNER,
         adUnitId: AdMobService.getConcursosBannerId(),
       );
     }
-    return _concursosBanner.load();
+    return _concursosBanner;
   }
 
-  static Future<bool> loadSorteioInterstitial() {
+  static AdmobInterstitial  getSorteioInterstitial() {
     if (_sorteioInterstitial == null) {
-      _sorteioInterstitial = InterstitialAd(
+      _sorteioInterstitial = AdmobInterstitial (
         adUnitId: AdMobService.getSorteioInterstitialId(),
       );
     }
-    return _sorteioInterstitial.load();
-  }
-
-  static void showConcursosBanner() {
-    _concursosBanner.isLoaded().then((isLoaded) {
-      if (isLoaded) {
-        _bannerPadding = 50;
-        _concursosBanner.show();
-      } else {
-        loadConcursosBanner();
-        _bannerPadding = 0;
-      }
-    });
+    return _sorteioInterstitial;
   }
 
   static void showSorteioInterstitial() {
-    _sorteioInterstitial.isLoaded().then((isLoaded) {
+    _sorteioInterstitial.isLoaded.then((isLoaded) {
       if (isLoaded) {
         _sorteioInterstitial.show();
       } else {
-        loadSorteioInterstitial();
+        getSorteioInterstitial();
       }
     });
   }
@@ -91,5 +78,9 @@ class AdMobService {
       }
     }
     return InterstitialAd.testAdUnitId;
+  }
+
+  static double getBannerSize(BuildContext context) {
+    return 60;
   }
 }

@@ -21,12 +21,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   @override
-  void initState() {
-    super.initState();
-    AdMobService.loadConcursosBanner().then((value) => AdMobService.showConcursosBanner());
-  }
-
-  @override
   Widget build(BuildContext context) {
     List<CardConcursos> cards;
     var mediaQueryData = MediaQuery.of(context);
@@ -57,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           child: AppDrawer(),
         ),
         body: Padding(
-          padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
+          padding: EdgeInsets.only(bottom: AdMobService.getBannerSize(context)),
           child: Center(
               child: GridView(
                 padding: EdgeInsets.all(spacing),
@@ -69,6 +63,7 @@ class _HomePageState extends State<HomePage> {
                 children: cards,
               )),
         ),
+        bottomSheet: AdMobService.getConcursosBanner(),
       );
 
     } else {
@@ -80,9 +75,10 @@ class _HomePageState extends State<HomePage> {
           child: AppDrawer(),
         ),
         body: Padding(
-          padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
+          padding: EdgeInsets.only(bottom: AdMobService.getBannerSize(context)),
           child: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
         ),
+        bottomSheet: AdMobService.getConcursosBanner(),
       );
     }
   }
