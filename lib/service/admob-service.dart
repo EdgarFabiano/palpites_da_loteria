@@ -20,12 +20,10 @@ class AdMobService {
 
   static final String androidApiKey = "ca-app-pub-9921693044196842~4393626727";
   static final String androidConcursosBanner = "ca-app-pub-9921693044196842/2888973360";
-  static final String androidSorteioBanner = "ca-app-pub-9921693044196842/1209494959";
   static final String androidSorteioInterstitial = "ca-app-pub-9921693044196842/1209850177";
 
   static final String iosApiKey = "ca-app-pub-9921693044196842~2867650422";
   static final String iosConcursosBanner = "ca-app-pub-9921693044196842/3409548238";
-  static final String iosSorteioBanner = "ca-app-pub-9921693044196842/3859515509";
   static final String iosSorteioInterstitial = "ca-app-pub-9921693044196842/3623071156";
 
   static InterstitialAd _sorteioInterstitial;
