@@ -21,6 +21,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   @override
+  void initState() {
+    super.initState();
+    AdMobService.startConcursosBanner();
+    AdMobService.displayBanner();
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<CardConcursos> cards;
     var mediaQueryData = MediaQuery.of(context);
@@ -50,29 +57,33 @@ class _HomePageState extends State<HomePage> {
         drawer: Drawer(
           child: AppDrawer(),
         ),
-        body: Center(
-            child: GridView(
-              padding: EdgeInsets.all(spacing),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                crossAxisSpacing: spacing,
-                mainAxisSpacing: spacing,
-                maxCrossAxisExtent: tileSize,
-              ),
-              children: cards,
-            )),
-        bottomNavigationBar: AdMobService.getConcursosBanner(),
+        body: Padding(
+          padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
+          child: Center(
+              child: GridView(
+                padding: EdgeInsets.all(spacing),
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  crossAxisSpacing: spacing,
+                  mainAxisSpacing: spacing,
+                  maxCrossAxisExtent: tileSize,
+                ),
+                children: cards,
+              )),
+        ),
       );
 
     } else {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(Strings.appName),
+      return Padding(
+        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(Strings.appName),
+          ),
+          drawer: Drawer(
+            child: AppDrawer(),
+          ),
+          body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
         ),
-        drawer: Drawer(
-          child: AppDrawer(),
-        ),
-        body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
-        bottomNavigationBar: AdMobService.getConcursosBanner(),
       );
     }
   }

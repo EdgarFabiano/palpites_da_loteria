@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 
 class AdMobService {
@@ -31,28 +31,25 @@ class AdMobService {
   static InterstitialAd _sorteioInterstitial;
   static InterstitialAd get sorteioInterstitial => _sorteioInterstitial;
 
-  static AdmobBanner _concursosBanner;
+  static BannerAd _concursosBanner;
 
-  static AdmobBanner _sorteioBanner;
-
-  static AdmobBanner getConcursosBanner() {
+  static BannerAd startConcursosBanner() {
     if (_concursosBanner == null) {
-      _concursosBanner = AdmobBanner(
-        adSize: AdmobBannerSize.FULL_BANNER,
-        adUnitId: AdMobService.getConcursosBannerId(),
+      _concursosBanner = BannerAd(
+        adUnitId: getConcursosBannerId(),
+        size: AdSize.smartBanner,
       );
     }
     return _concursosBanner;
   }
 
-  static AdmobBanner getSorteioBanner() {
-    if (_sorteioBanner == null) {
-      _sorteioBanner = AdmobBanner(
-        adSize: AdmobBannerSize.FULL_BANNER,
-        adUnitId: AdMobService.getSorteioBannerId(),
+  static void displayBanner() {
+    _concursosBanner
+      ..load()
+      ..show(
+        anchorOffset: 0.0,
+        anchorType: AnchorType.bottom,
       );
-    }
-    return _sorteioBanner;
   }
 
   static InterstitialAd buildInterstitial() {
@@ -88,17 +85,6 @@ class AdMobService {
     return bannerTestAdUnitId;
   }
 
-  static String getSorteioBannerId() {
-    if (!Constants.isTesting) {
-      if (Platform.isIOS) {
-        return iosSorteioBanner;
-      } else if (Platform.isAndroid) {
-        return androidSorteioBanner;
-      }
-    }
-    return bannerTestAdUnitId;
-  }
-
   static String getSorteioInterstitialId() {
     if (!Constants.isTesting) {
       if (Platform.isIOS) {
@@ -108,6 +94,17 @@ class AdMobService {
       }
     }
     return interstitialTestAdUnitId;
+  }
+
+  static double bannerPadding(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+
+    if (height <= 400) {
+      return 32;
+    } else if (height >= 720) {
+      return 90;
+    }
+    return 50;
   }
 
 }

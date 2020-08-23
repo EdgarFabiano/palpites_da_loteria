@@ -1,4 +1,3 @@
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +12,6 @@ import 'service/admob-service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Admob.initialize(AdMobService.getAppId());
   FirebaseAdMob.instance.initialize(appId: AdMobService.getAppId());
   runApp(PalpitesLoteriaApp());
 }

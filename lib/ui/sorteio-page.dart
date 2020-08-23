@@ -83,55 +83,57 @@ class _SorteioPageState extends State<SorteioPage> {
 //          PopUpMenu(),
         ],
       ),
-      body: Flex(
-        children: <Widget>[
-          Visibility(
-            visible: maxSize != minSize,
-            child: Padding(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Visibility(
-                    maintainSize: true,
-                    maintainAnimation: true,
-                    maintainState: true,
-                    visible: _sorteioValue > widget._concurso.minSize,
-                    child: FlatButton.icon(
-                        onPressed: () => setState(() {
-                          _sortear(-1);
-                        }),
-                        icon: Icon(Icons.exposure_neg_1),
-                        label: Text("")),
-                  ),
-                  Text(
-                    _sorteioValue.toInt().toString(),
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Visibility(
-                    maintainSize: true,
-                    maintainAnimation: true,
-                    maintainState: true,
-                    visible: _sorteioValue < widget._concurso.maxSize,
-                    child: FlatButton.icon(
-                        onPressed: () => setState(() {
-                          _sortear(1);
-                        }),
-                        icon: Icon(Icons.exposure_plus_1),
-                        label: Text("")),
-                  ),
-                ],
+      body: Padding(
+        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
+        child: Flex(
+          children: <Widget>[
+            Visibility(
+              visible: maxSize != minSize,
+              child: Padding(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Visibility(
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      visible: _sorteioValue > widget._concurso.minSize,
+                      child: FlatButton.icon(
+                          onPressed: () => setState(() {
+                            _sortear(-1);
+                          }),
+                          icon: Icon(Icons.exposure_neg_1),
+                          label: Text("")),
+                    ),
+                    Text(
+                      _sorteioValue.toInt().toString(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Visibility(
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      visible: _sorteioValue < widget._concurso.maxSize,
+                      child: FlatButton.icon(
+                          onPressed: () => setState(() {
+                            _sortear(1);
+                          }),
+                          icon: Icon(Icons.exposure_plus_1),
+                          label: Text("")),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.only(top: 5, left: 12, right: 12),
               ),
-              padding: EdgeInsets.only(top: 5, left: 12, right: 12),
             ),
-          ),
-          Visibility(visible: maxSize != minSize, child: Divider()),
-          Flexible(
-            child: dezenas,
-          ),
-        ],
-        direction: Axis.vertical,
+            Visibility(visible: maxSize != minSize, child: Divider()),
+            Flexible(
+              child: dezenas,
+            ),
+          ],
+          direction: Axis.vertical,
+        ),
       ),
-      bottomNavigationBar: AdMobService.getSorteioBanner(),
     );
   }
 }
