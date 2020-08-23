@@ -5,6 +5,7 @@ import 'package:palpites_da_loteria/service/admob-service.dart';
 import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator.dart';
 import 'package:palpites_da_loteria/service/generator/random-sorteio-generator.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
+import 'package:palpites_da_loteria/widgets/popup-menu.dart';
 
 class SorteioPage extends StatefulWidget {
   final ConcursoBean _concurso;
@@ -49,6 +50,21 @@ class _SorteioPageState extends State<SorteioPage> {
 
   @override
   Widget build(BuildContext context) {
+    var refreshButton = RaisedButton.icon(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        icon: Icon(
+          Icons.refresh,
+          color: Colors.white,
+        ),
+        label: Text(
+          "Gerar novamente",
+          style: TextStyle(color: Colors.white),
+        ),
+        color: widget._concurso.colorBean.getColor(context),
+        onPressed: () => _sortearComAnuncio(0));
+
     if (_firstTime) {
       _sortear(0);
       _firstTime = false;
@@ -73,14 +89,7 @@ class _SorteioPageState extends State<SorteioPage> {
         backgroundColor: widget._concurso.colorBean.getColor(context),
         title: Text(widget._concurso.name),
         actions: <Widget>[
-          IconButton(
-              tooltip: "Gerar novamente",
-              icon: Icon(
-                Icons.refresh,
-                color: Colors.white,
-              ),
-              onPressed: () => _sortearComAnuncio(0)),
-//          PopUpMenu(),
+          PopUpMenu(),
         ],
       ),
       body: Padding(
@@ -90,6 +99,7 @@ class _SorteioPageState extends State<SorteioPage> {
             Visibility(
               visible: maxSize != minSize,
               child: Padding(
+                padding: EdgeInsets.only(top: 5, left: 12, right: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -100,8 +110,8 @@ class _SorteioPageState extends State<SorteioPage> {
                       visible: _sorteioValue > widget._concurso.minSize,
                       child: FlatButton.icon(
                           onPressed: () => setState(() {
-                            _sortear(-1);
-                          }),
+                                _sortear(-1);
+                              }),
                           icon: Icon(Icons.exposure_neg_1),
                           label: Text("")),
                     ),
@@ -116,19 +126,22 @@ class _SorteioPageState extends State<SorteioPage> {
                       visible: _sorteioValue < widget._concurso.maxSize,
                       child: FlatButton.icon(
                           onPressed: () => setState(() {
-                            _sortear(1);
-                          }),
+                                _sortear(1);
+                              }),
                           icon: Icon(Icons.exposure_plus_1),
                           label: Text("")),
                     ),
                   ],
                 ),
-                padding: EdgeInsets.only(top: 5, left: 12, right: 12),
               ),
             ),
             Visibility(visible: maxSize != minSize, child: Divider()),
             Flexible(
               child: dezenas,
+            ),
+            Container(
+              margin: EdgeInsets.only(bottom: 50),
+              child: refreshButton,
             ),
           ],
           direction: Axis.vertical,
