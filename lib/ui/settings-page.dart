@@ -75,7 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
         title: Text(Strings.settings),
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
+        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
         child: ListView.builder(
           physics: ClampingScrollPhysics(),
           itemCount: 1,

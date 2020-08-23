@@ -5,6 +5,7 @@ import 'package:palpites_da_loteria/service/admob-service.dart';
 import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator.dart';
 import 'package:palpites_da_loteria/service/generator/random-sorteio-generator.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
+import 'package:palpites_da_loteria/widgets/popup-menu.dart';
 
 class SorteioPage extends StatefulWidget {
   final ConcursoBean _concurso;
@@ -22,6 +23,13 @@ class _SorteioPageState extends State<SorteioPage> {
   double _sorteioValue;
   int _chance = 3;
 
+  @override
+  void initState() {
+    super.initState();
+    _sorteioValue = widget._concurso.minSize.toDouble();
+    AdMobService.buildInterstitial();
+  }
+
   void _sortear(double increment) {
     _sorteioValue += increment;
     _dezenas = _sorteioGenerator
@@ -34,21 +42,29 @@ class _SorteioPageState extends State<SorteioPage> {
       _sortear(increment);
       _chance++;
       if (_chance >= 5) {
-        AdMobService.showSorteioInterstitial();
+        AdMobService.buildInterstitial()..load()..show();
         _chance = 0;
       }
     });
   }
 
   @override
-  void initState() {
-    super.initState();
-    _sorteioValue = widget._concurso.minSize.toDouble();
-    AdMobService.loadSorteioInterstitial();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    var refreshButton = RaisedButton.icon(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        icon: Icon(
+          Icons.refresh,
+          color: Colors.white,
+        ),
+        label: Text(
+          "Gerar novamente",
+          style: TextStyle(color: Colors.white),
+        ),
+        color: widget._concurso.colorBean.getColor(context),
+        onPressed: () => _sortearComAnuncio(0));
+
     if (_firstTime) {
       _sortear(0);
       _firstTime = false;
@@ -73,23 +89,17 @@ class _SorteioPageState extends State<SorteioPage> {
         backgroundColor: widget._concurso.colorBean.getColor(context),
         title: Text(widget._concurso.name),
         actions: <Widget>[
-          IconButton(
-              tooltip: "Gerar novamente",
-              icon: Icon(
-                Icons.refresh,
-                color: Colors.white,
-              ),
-              onPressed: () => _sortearComAnuncio(0)),
-//          PopUpMenu(),
+          PopUpMenu(),
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
+        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
         child: Flex(
           children: <Widget>[
             Visibility(
               visible: maxSize != minSize,
               child: Padding(
+                padding: EdgeInsets.only(top: 5, left: 12, right: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -123,12 +133,15 @@ class _SorteioPageState extends State<SorteioPage> {
                     ),
                   ],
                 ),
-                padding: EdgeInsets.only(top: 5, left: 12, right: 12),
               ),
             ),
             Visibility(visible: maxSize != minSize, child: Divider()),
             Flexible(
               child: dezenas,
+            ),
+            Container(
+              margin: EdgeInsets.only(bottom: 50),
+              child: refreshButton,
             ),
           ],
           direction: Axis.vertical,

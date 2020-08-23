@@ -18,9 +18,10 @@ class _TermosDeUsoPageState extends State<TermosDeUsoPage> {
         title: Text(Strings.appName),
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding),
+        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
         child: TermosDeUsoForm(),
       ),
     );
   }
 }
+
