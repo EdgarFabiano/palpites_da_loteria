@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
-import 'package:palpites_da_loteria/service/concurso-service.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'concursos-settings-change-notifier.dart';
 

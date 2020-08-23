@@ -50,20 +50,17 @@ class _HomePageState extends State<HomePage> {
         drawer: Drawer(
           child: AppDrawer(),
         ),
-        body: Padding(
-          padding: EdgeInsets.only(bottom: AdMobService.getBannerSize(context)),
-          child: Center(
-              child: GridView(
-                padding: EdgeInsets.all(spacing),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  crossAxisSpacing: spacing,
-                  mainAxisSpacing: spacing,
-                  maxCrossAxisExtent: tileSize,
-                ),
-                children: cards,
-              )),
-        ),
-        bottomSheet: AdMobService.getConcursosBanner(),
+        body: Center(
+            child: GridView(
+              padding: EdgeInsets.all(spacing),
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                crossAxisSpacing: spacing,
+                mainAxisSpacing: spacing,
+                maxCrossAxisExtent: tileSize,
+              ),
+              children: cards,
+            )),
+        bottomNavigationBar: AdMobService.getConcursosBanner(),
       );
 
     } else {
@@ -74,11 +71,8 @@ class _HomePageState extends State<HomePage> {
         drawer: Drawer(
           child: AppDrawer(),
         ),
-        body: Padding(
-          padding: EdgeInsets.only(bottom: AdMobService.getBannerSize(context)),
-          child: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
-        ),
-        bottomSheet: AdMobService.getConcursosBanner(),
+        body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
+        bottomNavigationBar: AdMobService.getConcursosBanner(),
       );
     }
   }

@@ -74,54 +74,51 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: Text(Strings.settings),
       ),
-      body: Padding(
-        padding: EdgeInsets.only(bottom: AdMobService.getBannerSize(context)),
-        child: ListView.builder(
-          physics: ClampingScrollPhysics(),
-          itemCount: 1,
-          itemBuilder: (context, index) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Theme
-                      .of(context)
-                      .brightness == Brightness.dark
-                      ? Icons.brightness_3
-                      : Icons.brightness_high),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Modo noturno"),
-                      Switch(
-                        value: Theme
-                            .of(context)
-                            .brightness == Brightness.dark,
-                        onChanged: (value) {
-                          _switchTheme(context);
-                        },
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    _switchTheme(context);
-                  },
+      body: ListView.builder(
+        physics: ClampingScrollPhysics(),
+        itemCount: 1,
+        itemBuilder: (context, index) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Theme
+                    .of(context)
+                    .brightness == Brightness.dark
+                    ? Icons.brightness_3
+                    : Icons.brightness_high),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Modo noturno"),
+                    Switch(
+                      value: Theme
+                          .of(context)
+                          .brightness == Brightness.dark,
+                      onChanged: (value) {
+                        _switchTheme(context);
+                      },
+                    ),
+                  ],
                 ),
-                Divider(),
-                ListTile(
-                  title: Text("Tela inicial"),
-                ),
-                Divider(),
-                SizedBox(
-                  height: 500,
-                  child: reorderableListView,
-                ),
-              ],
-            );
-          },
-        ),
+                onTap: () {
+                  _switchTheme(context);
+                },
+              ),
+              Divider(),
+              ListTile(
+                title: Text("Tela inicial"),
+              ),
+              Divider(),
+              SizedBox(
+                height: 500,
+                child: reorderableListView,
+              ),
+            ],
+          );
+        },
       ),
-      bottomSheet: AdMobService.getConcursosBanner(),
+      bottomNavigationBar: AdMobService.getConcursosBanner(),
     );
   }
 }

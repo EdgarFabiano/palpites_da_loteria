@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
 import 'package:loading/loading.dart';
-import 'package:palpites_da_loteria/service/admob-service.dart';
 
 class HomeLoadingPage extends StatelessWidget {
   final spacing;
@@ -14,28 +13,25 @@ class HomeLoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: AdMobService.getBannerSize(context)),
-      child: Center(
-          child: GridView(
-            padding: EdgeInsets.all(spacing),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              crossAxisSpacing: spacing,
-              mainAxisSpacing: spacing,
-              maxCrossAxisExtent: tileSize,
-            ),
-            children: [
-              EmptyCardConcursos(),
-              EmptyCardConcursos(),
-              EmptyCardConcursos(),
-              EmptyCardConcursos(),
-              EmptyCardConcursos(),
-              EmptyCardConcursos(),
-              EmptyCardConcursos(),
-              EmptyCardConcursos()
-            ],
-          )),
-    );
+    return Center(
+        child: GridView(
+          padding: EdgeInsets.all(spacing),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            crossAxisSpacing: spacing,
+            mainAxisSpacing: spacing,
+            maxCrossAxisExtent: tileSize,
+          ),
+          children: [
+            EmptyCardConcursos(),
+            EmptyCardConcursos(),
+            EmptyCardConcursos(),
+            EmptyCardConcursos(),
+            EmptyCardConcursos(),
+            EmptyCardConcursos(),
+            EmptyCardConcursos(),
+            EmptyCardConcursos()
+          ],
+        ));
   }
 }
 

@@ -17,11 +17,8 @@ class _TermosDeUsoPageState extends State<TermosDeUsoPage> {
       appBar: AppBar(
         title: Text(Strings.appName),
       ),
-      body: Padding(
-        padding: EdgeInsets.only(bottom: AdMobService.getBannerSize(context)),
-        child: TermosDeUsoForm(),
-      ),
-      bottomSheet: AdMobService.getConcursosBanner(),
+      body: TermosDeUsoForm(),
+      bottomNavigationBar: AdMobService.getConcursosBanner(),
     );
   }
 }
