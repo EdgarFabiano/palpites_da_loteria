@@ -1,6 +1,7 @@
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/ui/settings-page.dart';
@@ -21,6 +22,8 @@ class _AppDrawerState extends State<AppDrawer> {
       _inAppReview.openStoreListing();
     } else if (await _inAppReview.isAvailable()) {
       _inAppReview.requestReview();
+    } else {
+      Fluttertoast.showToast(msg: "Operação indisponível no momento");
     }
   }
 
@@ -69,7 +72,7 @@ class _AppDrawerState extends State<AppDrawer> {
         ListTile(
           leading: Icon(Icons.star),
           title: Text("Avaliar"),
-          onTap: () => _requestReview,
+          onTap: _requestReview,
         ),
       ],
     );
