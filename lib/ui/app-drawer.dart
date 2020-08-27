@@ -1,5 +1,7 @@
+import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/ui/settings-page.dart';
 import 'package:palpites_da_loteria/ui/termos-de-uso-page.dart';
@@ -10,6 +12,18 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
+  final InAppReview _inAppReview = InAppReview.instance;
+
+  Future<void> _requestReview() async {
+    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    final androidInfo = await deviceInfoPlugin.androidInfo;
+    if (androidInfo.version.sdkInt < 21) {
+      _inAppReview.openStoreListing();
+    } else if (await _inAppReview.isAvailable()) {
+      _inAppReview.requestReview();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -43,15 +57,6 @@ class _AppDrawerState extends State<AppDrawer> {
                 CupertinoPageRoute(builder: (context) => SettingsPage()));
           },
         ),
-//        ListTile(
-//          leading: Icon(Icons.favorite),
-//          title: Text("Jogos salvos"),
-//          onTap: () {
-//            Navigator.of(context).pop();
-//            Navigator.push(context,
-//                CupertinoPageRoute(builder: (context) => SettingsPage()));
-//          },
-//        ),
         ListTile(
           leading: Icon(Icons.beenhere),
           title: Text("Termos de uso"),
@@ -60,7 +65,12 @@ class _AppDrawerState extends State<AppDrawer> {
             Navigator.push(context,
                 CupertinoPageRoute(builder: (context) => TermosDeUsoPage()));
           },
-        )
+        ),
+        ListTile(
+          leading: Icon(Icons.star),
+          title: Text("Avaliar"),
+          onTap: () => _requestReview,
+        ),
       ],
     );
   }

@@ -32,6 +32,8 @@ dependencies:
   fluttertoast: 7.0.2
   provider: 4.3.2
   loading: 1.0.2
+  in_app_review: 0.2.0+3
+  device_info: 0.4.2+7
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
