@@ -44,9 +44,7 @@ class _SorteioPageState extends State<SorteioPage> {
 
   Future<Resultado> fetchResultado() async {
     var url = LoteriaAPIService.getEndpointFor(widget._concurso.name);
-    print(url);
     final response = await http.get(url);
-    print(response.body);
 
     if (response.statusCode == 200) {
       return Resultado.fromJson(json.decode(response.body));
@@ -168,9 +166,18 @@ class _SorteioPageState extends State<SorteioPage> {
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
-
         // By default, show a loading spinner.
-        return Loading(size: 10.0, indicator: BallSpinFadeLoaderIndicator(), color: Colors.grey,);
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Loading(
+              size: 50.0,
+              indicator: BallSpinFadeLoaderIndicator(),
+              color: Colors.grey,
+            )
+          ],
+        );
       },
     );
 

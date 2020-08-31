@@ -12,7 +12,7 @@ class Premiacao {
       acertos: json['acertos'],
       nome: json['nome'],
       quantidade_ganhadores: json['quantidade_ganhadores'],
-      valor_total: json['valor_total'],
+      valor_total: json['valor_total'] != null ? json['valor_total'].toDouble() : null,
     );
   }
 

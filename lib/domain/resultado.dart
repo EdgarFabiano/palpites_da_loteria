@@ -20,7 +20,7 @@ class Resultado {
     List<Premiacao> premiacao;
     bool rateio_processamento;
     double valor_acumulado;
-    int valor_estimado_proximo_concurso;
+    double valor_estimado_proximo_concurso;
     String nome_acumulado_especial;
     double valor_acumulado_especial;
 
@@ -71,9 +71,9 @@ class Resultado {
   });
 
   factory Resultado.fromJson(Map<String, dynamic> json) {
-        return Resultado(
+        var resultado = Resultado(
             acumulou: json['acumulou'],
-            arrecadacao_total: json['arrecadacao_total'],
+            arrecadacao_total: json['arrecadacao_total'] != null ? json['arrecadacao_total'].toDouble() : null,
             concurso_especial: json['concurso_especial'],
             concurso_proximo: json['concurso_proximo'],
             data_concurso: json['data_concurso'],
@@ -87,19 +87,34 @@ class Resultado {
             numero_concurso: json['numero_concurso'],
             premiacao: json['premiacao'] != null ? (json['premiacao'] as List).map((i) => Premiacao.fromJson(i)).toList() : null,
             rateio_processamento: json['rateio_processamento'],
-            valor_acumulado: json['valor_acumulado'],
-            valor_estimado_proximo_concurso: json['valor_estimado_proximo_concurso'],
+            valor_acumulado: json['valor_acumulado'] != null ? json['valor_acumulado'].toDouble() : null,
+            valor_estimado_proximo_concurso: json['valor_estimado_proximo_concurso'] != null ? json['valor_estimado_proximo_concurso'].toDouble() : null,
             nome_acumulado_especial: json['nome_acumulado_especial'],
-            valor_acumulado_especial: json['valor_acumulado_especial'],
+            valor_acumulado_especial: json['valor_acumulado_especial'] != null ? json['valor_acumulado_especial'].toDouble() : null,
             dezena_mes_sorte: json['dezena_mes_sorte'],
             nome_mes_sorte: json['nome_mes_sorte'],
             dezenas_2: json['dezenas_2'] != null ? new List<String>.from(json['dezenas_2']) : null,
             premiacao_2: json['premiacao_2'] != null ? (json['premiacao_2'] as List).map((i) => Premiacao.fromJson(i)).toList() : null,
             numero_final_concurso_acumulado: json['numero_final_concurso_acumulado'],
-            valor_final_concurso_acumulado: json['valor_final_concurso_acumulado'],
+            valor_final_concurso_acumulado: json['valor_final_concurso_acumulado'] != null ? json['valor_final_concurso_acumulado'].toDouble() : null,
             dezena_time_coracao: json['dezena_time_coracao'],
             nome_time_coracao: json['nome_time_coracao'],
         );
+        return resultado;
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
