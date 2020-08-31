@@ -18,40 +18,46 @@ class ListItemConcurso extends StatefulWidget {
 }
 
 class _ListItemConcursoState extends State<ListItemConcurso> {
+
+  void changeEnabled(ConcursosSettingsChangeNotifier concursosProvider) {
+    return setState(() {
+              widget._concursoBean.enabled = !widget._concursoBean.enabled;
+              var index = widget._concursos.concursosBeanList.indexOf(widget.concursoBean);
+              widget._concursos.concursosBeanList.fillRange(index, index, widget.concursoBean);
+              concursosProvider.setConcursos(widget._concursos);
+            });
+  }
+
   @override
   Widget build(BuildContext context) {
     var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
     return ListTile(
       key: Key(widget._concursoBean.name),
       leading: Icon(Icons.reorder),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Image.asset(
-                Constants.loteriasIconAssetPath,
-                width: 25,
-                color: widget._concursoBean.colorBean.getColor(context)
-                    .withAlpha(255),
-                colorBlendMode: BlendMode.modulate,
-              ),
-              Text("    "),
-              Text(widget._concursoBean.name)
-            ],
-          ),
-          Switch(
-            value: widget._concursoBean.enabled,
-            onChanged: (value) {
-              setState(() {
-                widget._concursoBean.enabled = value;
-                var index = widget._concursos.concursosBeanList.indexOf(widget.concursoBean);
-                widget._concursos.concursosBeanList.fillRange(index, index, widget.concursoBean);
-                concursosProvider.setConcursos(widget._concursos);
-              });
-            },
-          )
-        ],
+      title: GestureDetector(
+        onTap: () => changeEnabled( concursosProvider),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Image.asset(
+                  Constants.loteriasIconAssetPath,
+                  width: 25,
+                  color: widget._concursoBean.colorBean.getColor(context)
+                      .withAlpha(255),
+                  colorBlendMode: BlendMode.modulate,
+                ),
+                Text("    "),
+                Text(widget._concursoBean.name)
+              ],
+            ),
+            Switch(
+              value: widget._concursoBean.enabled,
+              onChanged: (value) => changeEnabled( concursosProvider),
+            )
+          ],
+        ),
       ),
     );
   }

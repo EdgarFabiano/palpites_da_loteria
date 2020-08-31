@@ -22,28 +22,27 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _onReorder(int start, int current) {
-    // dragging from top to bottom
-    if (start < current) {
-      int end = current - 1;
-      var startItem = _items[start];
-      int i = 0;
-      int local = start;
-      do {
-        _items[local] = _items[++local];
-        i++;
-      } while (i < end - start);
-      _items[end] = startItem;
-    }
-    // dragging from bottom to top
-    else if (start > current) {
-      var startItem = _items[start];
-      for (int i = start; i > current; i--) {
-        _items[i] = _items[i - 1];
-      }
-      _items[current] = startItem;
-    }
     setState(() {
-
+      // dragging from top to bottom
+      if (start < current) {
+        int end = current - 1;
+        var startItem = _items[start];
+        int i = 0;
+        int local = start;
+        do {
+          _items[local] = _items[++local];
+          i++;
+        } while (i < end - start);
+        _items[end] = startItem;
+      }
+      // dragging from bottom to top
+      else if (start > current) {
+        var startItem = _items[start];
+        for (int i = start; i > current; i--) {
+          _items[i] = _items[i - 1];
+        }
+        _items[current] = startItem;
+      }
     });
   }
 
