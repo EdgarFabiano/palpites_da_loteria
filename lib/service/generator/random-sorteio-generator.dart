@@ -10,9 +10,10 @@ class RandomSorteioGenerator implements AbstractSorteioGenerator {
 
   @override
   List<Dezena> sortear(int gameSize, ConcursoBean concurso, BuildContext context) {
-    Set<int> set = SplayTreeSet();
+    Set<String> set = SplayTreeSet();
     for (int i = 0; i < gameSize; i++) {
-      while (!set.add(concurso.spaceStart + Random().nextInt((concurso.spaceEnd + 1) - concurso.spaceStart)));
+      var value = concurso.spaceStart + Random().nextInt((concurso.spaceEnd + 1) - concurso.spaceStart);
+      while (!set.add(value.toString()));
     }
     return set.map((value) => Dezena(value, concurso.colorBean.getColor(context))).toList();
   }

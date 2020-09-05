@@ -94,13 +94,6 @@ class _SorteioPageState extends State<SorteioPage> {
       _sortear(0);
       _firstTime = false;
     }
-    var dezenas = GridView(
-      padding: EdgeInsets.all(20),
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 60,
-      ),
-      children: _dezenas.toList(),
-    );
 
     var minSize = widget._concurso.minSize.toDouble();
     var maxSize = widget._concurso.maxSize.toDouble();
@@ -148,7 +141,13 @@ class _SorteioPageState extends State<SorteioPage> {
                   ),
                   Visibility(visible: maxSize != minSize, child: Divider()),
                   Flexible(
-                    child: dezenas,
+                    child: GridView(
+                      padding: EdgeInsets.all(20),
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 60,
+                      ),
+                      children: _dezenas.toList(),
+                    ),
                   ),
                   Container(
                     margin: EdgeInsets.only(bottom: 50),
@@ -162,7 +161,20 @@ class _SorteioPageState extends State<SorteioPage> {
       future: futureResultado,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Text(snapshot.data.dezenas.toString());
+          var data = snapshot.data;
+          Text(data.dezenas.toString());
+
+          var resultado = GridView(
+            padding: EdgeInsets.all(20),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 60,
+            ),
+            children: data.dezenas
+                .map((e) =>
+                    Dezena(e, widget._concurso.colorBean.getColor(context)))
+                .toList(),
+          );
+          return resultado;
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }

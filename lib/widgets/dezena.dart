@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Dezena extends StatefulWidget {
-  final int _dezena;
+  final String _dezena;
   final Color _color;
 
   const Dezena(this._dezena, this._color, {Key key}) : super(key: key);
@@ -18,7 +18,7 @@ class _DezenaState extends State<Dezena> {
     String text = widget._dezena.toString();
     if (tapped) {
       text = "X";
-    } else if (widget._dezena < 10) {
+    } else if (int.parse(widget._dezena) < 10) {
       text = "0" + widget._dezena.toString();
     }
     return Text(
