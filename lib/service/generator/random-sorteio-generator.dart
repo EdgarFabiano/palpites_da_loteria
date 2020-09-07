@@ -15,7 +15,7 @@ class RandomSorteioGenerator implements AbstractSorteioGenerator {
       var value = concurso.spaceStart + Random().nextInt((concurso.spaceEnd + 1) - concurso.spaceStart);
       while (!set.add(value.toString()));
     }
-    return set.map((value) => Dezena(value, concurso.colorBean.getColor(context))).toList();
+    return set.map((value) => Dezena(value, concurso.colorBean.getColor(context), true)).toList();
   }
 
 }

@@ -32,6 +32,7 @@ class _CardConcursosState extends State<CardConcursos> {
       var maxHeight = constraints.maxHeight;
 
       return Card(
+        elevation: 2,
         color: cardColor,
         child: SizedBox(
           child: Column(

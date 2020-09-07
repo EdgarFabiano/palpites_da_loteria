@@ -1,12 +1,10 @@
 
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
-
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
-import 'package:loading/loading.dart';
+import 'package:http/http.dart' as http;
 import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:palpites_da_loteria/domain/resultado.dart';
 import 'package:palpites_da_loteria/service/admob-service.dart';
@@ -14,7 +12,9 @@ import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator
 import 'package:palpites_da_loteria/service/generator/random-sorteio-generator.dart';
 import 'package:palpites_da_loteria/service/loteria-api-service.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
+import 'package:palpites_da_loteria/widgets/fullscreen-loading.dart';
 import 'package:palpites_da_loteria/widgets/popup-menu.dart';
+import 'package:palpites_da_loteria/widgets/tab-resultado.dart';
 
 class SorteioPage extends StatefulWidget {
   final ConcursoBean _concurso;
@@ -43,6 +43,9 @@ class _SorteioPageState extends State<SorteioPage> {
   }
 
   Future<Resultado> fetchResultado() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+
+  if (connectivityResult != ConnectivityResult.none) {
     var url = LoteriaAPIService.getEndpointFor(widget._concurso.name);
     final response = await http.get(url);
 
@@ -51,6 +54,9 @@ class _SorteioPageState extends State<SorteioPage> {
     } else {
       throw Exception('Erro ao buscar resultado');
     }
+  }
+
+    return Resultado();
   }
 
   void _sortear(double increment) {
@@ -85,7 +91,7 @@ class _SorteioPageState extends State<SorteioPage> {
         ),
         label: Text(
           "Gerar novamente",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontSize: 20),
         ),
         color: widget._concurso.colorBean.getColor(context),
         onPressed: () => _sortearComAnuncio(0));
@@ -97,9 +103,11 @@ class _SorteioPageState extends State<SorteioPage> {
 
     var minSize = widget._concurso.minSize.toDouble();
     var maxSize = widget._concurso.maxSize.toDouble();
+    var width = MediaQuery.of(context).size.width;
 
     var tabSorteio = Flex(
-                children: <Widget>[
+      direction: Axis.vertical,
+      children: <Widget>[
                   Visibility(
                     visible: maxSize != minSize,
                     child: Padding(
@@ -141,11 +149,10 @@ class _SorteioPageState extends State<SorteioPage> {
                   ),
                   Visibility(visible: maxSize != minSize, child: Divider()),
                   Flexible(
-                    child: GridView(
-                      padding: EdgeInsets.all(20),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 60,
-                      ),
+                    child: GridView.extent(
+                      maxCrossAxisExtent: width/8 + 20,
+                      shrinkWrap: false,
+                      padding: EdgeInsets.all(10),
                       children: _dezenas.toList(),
                     ),
                   ),
@@ -154,7 +161,6 @@ class _SorteioPageState extends State<SorteioPage> {
                     child: refreshButton,
                   ),
                 ],
-                direction: Axis.vertical,
               );
 
     var tabResultado = FutureBuilder<Resultado>(
@@ -162,34 +168,14 @@ class _SorteioPageState extends State<SorteioPage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var data = snapshot.data;
-          Text(data.dezenas.toString());
-
-          var resultado = GridView(
-            padding: EdgeInsets.all(20),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 60,
-            ),
-            children: data.dezenas
-                .map((e) =>
-                    Dezena(e, widget._concurso.colorBean.getColor(context)))
-                .toList(),
-          );
-          return resultado;
+          return TabResultado(resultado: data, concursoBean: widget._concurso,);
         } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
+          return Padding(
+            padding: EdgeInsets.all(15),
+            child: Text("${snapshot.error}"),
+          );
         }
-        // By default, show a loading spinner.
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Loading(
-              size: 50.0,
-              indicator: BallSpinFadeLoaderIndicator(),
-              color: Colors.grey,
-            )
-          ],
-        );
+        return FullScreenLoading();
       },
     );
 
