@@ -13,7 +13,7 @@ class Resultado {
     String data_proximo_concurso;
     int data_proximo_concurso_milliseconds;
     List<String> dezenas;
-    List<LocalGanhadore> local_ganhadores;
+    List<LocalGanhador> local_ganhadores;
     String local_realizacao;
     String nome;
     int numero_concurso;
@@ -81,7 +81,7 @@ class Resultado {
             data_proximo_concurso: json['data_proximo_concurso'],
             data_proximo_concurso_milliseconds: json['data_proximo_concurso_milliseconds'],
             dezenas: json['dezenas'] != null ? new List<String>.from(json['dezenas']) : null,
-            local_ganhadores: json['local_ganhadores'] != null ? (json['local_ganhadores'] as List).map((i) => LocalGanhadore.fromJson(i)).toList() : null,
+            local_ganhadores: json['local_ganhadores'] != null ? (json['local_ganhadores'] as List).map((i) => LocalGanhador.fromJson(i)).toList() : null,
             local_realizacao: json['local_realizacao'],
             nome: json['nome'],
             numero_concurso: json['numero_concurso'],

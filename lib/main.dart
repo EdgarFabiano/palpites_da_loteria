@@ -2,7 +2,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
-import 'package:palpites_da_loteria/service/concurso-service.dart';
+import 'package:palpites_da_loteria/service/concurso-service.dart' as concursoService;
 import 'package:palpites_da_loteria/ui/home-page.dart';
 import 'package:palpites_da_loteria/ui/settings-page.dart';
 import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
@@ -21,7 +21,8 @@ class PalpitesLoteriaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ConcursosSettingsChangeNotifier concursosSettingsChangeNotifier = ConcursosSettingsChangeNotifier();
-    ConcursoService.getUsersConcursosFuture().then((value) => concursosSettingsChangeNotifier.setConcursos(value));
+    concursoService.getUsersConcursosFuture().then((value) => concursosSettingsChangeNotifier.setConcursos(value));
+
     return new DynamicTheme(
         defaultBrightness: Brightness.light,
         data: (brightness) => new ThemeData(

@@ -1,5 +1,6 @@
 
 class LoteriaAPIService {
+
   static String server = "https://apiloterias.com.br/app/resultado";
   static String token = "d8Kdf33jLdJdfK2";
 
@@ -34,4 +35,5 @@ class LoteriaAPIService {
         return null;
     }
   }
+
 }

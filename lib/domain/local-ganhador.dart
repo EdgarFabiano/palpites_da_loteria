@@ -1,15 +1,15 @@
 
-class LocalGanhadore {
+class LocalGanhador {
   bool canal_eletronico;
   String cidade;
   String local;
   int quantidade_ganhadores;
   String uf;
 
-  LocalGanhadore({this.canal_eletronico, this.cidade, this.local, this.quantidade_ganhadores, this.uf});
+  LocalGanhador({this.canal_eletronico, this.cidade, this.local, this.quantidade_ganhadores, this.uf});
 
-  factory LocalGanhadore.fromJson(Map<String, dynamic> json) {
-    return LocalGanhadore(
+  factory LocalGanhador.fromJson(Map<String, dynamic> json) {
+    return LocalGanhador(
       canal_eletronico: json['canal_eletronico'],
       cidade: json['cidade'],
       local: json['local'],

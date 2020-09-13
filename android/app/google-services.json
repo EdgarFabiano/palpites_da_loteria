@@ -35,35 +35,6 @@
         }
       },
       "admob_app_id": "ca-app-pub-9921693044196842~4393626727"
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:662670439503:android:c087805236ebdec547263a",
-        "android_client_info": {
-          "package_name": "com.example.palpites_da_loteria"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "662670439503-tfs0dfcbs03cd5m1nfjd096rujbsvcru.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyA4bH_5BQdwRyNqbCXcc4-MDKUq-E3227c"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "662670439503-tfs0dfcbs03cd5m1nfjd096rujbsvcru.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

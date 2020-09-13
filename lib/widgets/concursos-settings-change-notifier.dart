@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
-import 'package:palpites_da_loteria/service/concurso-service.dart';
+import 'package:palpites_da_loteria/service/concurso-service.dart' as concursoService;
 
 class ConcursosSettingsChangeNotifier with ChangeNotifier {
   Concursos _concursos;
@@ -13,7 +13,7 @@ class ConcursosSettingsChangeNotifier with ChangeNotifier {
 
   setConcursos(Concursos value) {
     _concursos = value;
-    ConcursoService.saveConcursos(_concursos);
+    concursoService.saveConcursos(_concursos);
     notifyListeners();
   }
 
@@ -42,7 +42,7 @@ class ConcursosSettingsChangeNotifier with ChangeNotifier {
       concursosBeanList[current] = startItem;
     }
 
-    ConcursoService.saveConcursos(_concursos);
+    concursoService.saveConcursos(_concursos);
     notifyListeners();
   }
 
