@@ -1,56 +1,81 @@
+import 'dart:convert';
+
 import 'package:date_format/date_format.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
 import 'package:palpites_da_loteria/domain/local-ganhador.dart';
 import 'package:palpites_da_loteria/domain/premiacao.dart';
 import 'package:palpites_da_loteria/domain/resultado.dart';
+import 'package:palpites_da_loteria/service/loteria-api-service.dart';
+
+Resultado parseResultado (String responseBody) {
+  return Resultado.fromJson(json.decode(responseBody));
+}
+
+Future<Resultado> fetchResultado(String concursoName) async {
+  var url = LoteriaAPIService.getEndpointFor(concursoName);
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    return compute(parseResultado, response.body);
+  } else {
+    return Future.value(Resultado());
+  }
+}
 
 class TabResultado extends StatefulWidget {
-  final Resultado resultado;
   final ConcursoBean concursoBean;
-
-  TabResultado({Key key, this.resultado, this.concursoBean}) : super(key: key);
+  const TabResultado(this.concursoBean, {Key key}) : super(key: key);
 
   @override
   _TabResultadoState createState() => _TabResultadoState();
 }
 
 class _TabResultadoState extends State<TabResultado> {
-  _getDezenasResultadoDisplayValue(List<String> resultado) {
-    var value = "";
-    resultado.forEach((element) {
-      value += value == "" ? element : " | " + element;
-    });
-    return value;
+  Future<Resultado> futureResultado;
+
+  @override
+  void initState() {
+    super.initState();
+    futureResultado = fetchResultado(widget.concursoBean.name);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.resultado.numero_concurso == null) {
-      return Padding(
-        padding: EdgeInsets.all(15),
-        child: Visibility(
-          visible: widget.resultado.numero_concurso != null,
-          child: Text("Sem conexão"),
-        ),
-      );
-    }
 
-    return Flex(
-      direction: Axis.vertical,
-      children: [
-        Flexible(
-          child: ListView(
-            padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 35),
-            children: _getResultadoWidgets(context),
-          ),
-        )
-      ],
+    return FutureBuilder<Resultado>(
+      future: futureResultado,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Flex(
+            direction: Axis.vertical,
+            children: [
+              Flexible(
+                child: ListView(
+                  padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 35),
+                  children: _getResultadoWidgets(snapshot.data, context),
+                ),
+              )
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return Padding(
+            padding: EdgeInsets.all(15),
+            child: Text("${snapshot.error}"),
+          );
+        }
+        return Center(child: CircularProgressIndicator());
+      },
     );
+
   }
 
-  _getResultadoWidgets(BuildContext context) {
+  _getResultadoWidgets(  Resultado resultado, BuildContext context) {
+
     List<Widget> builder = [];
 
     var defaultTableBorder = BorderSide(
@@ -59,12 +84,12 @@ class _TabResultadoState extends State<TabResultado> {
       width: 0.2,
     );
 
-    if (widget.resultado.acumulou != null) {
+    if (resultado.acumulou != null) {
       builder.add(Center(
         child: Padding(
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.only(top: 15, bottom: 10),
           child: Text(
-            widget.resultado.acumulou ? "ACUMULOU!" : "TEVE GANHADOR",
+            resultado.acumulou ? "ACUMULOU!" : "TEVE GANHADOR",
             style: TextStyle(fontSize: 25),
           ),
         ),
@@ -76,26 +101,26 @@ class _TabResultadoState extends State<TabResultado> {
       ));
     }
 
-    if (widget.resultado.numero_concurso != null &&
-        widget.resultado.data_concurso != null) {
+    if (resultado.numero_concurso != null &&
+        resultado.data_concurso != null) {
       builder.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Padding(
             padding: EdgeInsets.all(15),
             child: Text(
-                "Concurso: " + widget.resultado.numero_concurso.toString()),
+                "Concurso: " + resultado.numero_concurso.toString()),
           ),
           Padding(
             padding: EdgeInsets.all(15),
-            child: Text("Data: " + _formatDate(widget.resultado.data_concurso)),
+            child: Text("Data: " + _formatDate(resultado.data_concurso)),
           )
         ],
       ));
     }
 
-    if (widget.resultado.dezenas != null &&
-        widget.resultado.dezenas.isNotEmpty) {
+    if (resultado.dezenas != null &&
+        resultado.dezenas.isNotEmpty) {
       builder.add(Card(
         elevation: 2,
         color: widget.concursoBean.colorBean.getColor(context),
@@ -103,7 +128,7 @@ class _TabResultadoState extends State<TabResultado> {
           padding: EdgeInsets.all(15),
           child: Center(
             child:
-                Text(_getDezenasResultadoDisplayValue(widget.resultado.dezenas),
+                Text(_getDezenasResultadoDisplayValue(resultado.dezenas),
                     style: TextStyle(
                       fontSize: 26,
                       color: Colors.white,
@@ -113,15 +138,15 @@ class _TabResultadoState extends State<TabResultado> {
       ));
     }
 
-    if (widget.resultado.dezenas_2 != null &&
-        widget.resultado.dezenas_2.isNotEmpty) {
+    if (resultado.dezenas_2 != null &&
+        resultado.dezenas_2.isNotEmpty) {
       builder.add(Card(
         elevation: 2,
         color: widget.concursoBean.colorBean.getColor(context),
         child: Padding(
           padding: EdgeInsets.all(15),
           child:
-              Text(_getDezenasResultadoDisplayValue(widget.resultado.dezenas_2),
+              Text(_getDezenasResultadoDisplayValue(resultado.dezenas_2),
                   style: TextStyle(
                     fontSize: 26,
                     color: Colors.white,
@@ -130,24 +155,24 @@ class _TabResultadoState extends State<TabResultado> {
       ));
     }
 
-    if (widget.resultado.local_realizacao != null &&
-        widget.resultado.local_realizacao != "") {
+    if (resultado.local_realizacao != null &&
+        resultado.local_realizacao != "") {
       builder.add(Padding(
         padding: EdgeInsets.all(15),
         child: Center(
             child: Text(
-                "Local de realização: " + widget.resultado.local_realizacao)),
+                "Local de realização: " + resultado.local_realizacao)),
       ));
     }
 
-    if ((widget.resultado.valor_estimado_proximo_concurso != null &&
-            widget.resultado.valor_estimado_proximo_concurso != 0) ||
-        (widget.resultado.data_proximo_concurso != null &&
-            widget.resultado.data_proximo_concurso != '')) {
+    if ((resultado.valor_estimado_proximo_concurso != null &&
+            resultado.valor_estimado_proximo_concurso != 0) ||
+        (resultado.data_proximo_concurso != null &&
+            resultado.data_proximo_concurso != '')) {
       List<Widget> proxConcurso = [];
 
-      if (widget.resultado.valor_estimado_proximo_concurso != null &&
-          widget.resultado.valor_estimado_proximo_concurso != 0) {
+      if (resultado.valor_estimado_proximo_concurso != null &&
+          resultado.valor_estimado_proximo_concurso != 0) {
         proxConcurso.add(
           Text(
             "Prêmio estimado para o próximo concurso",
@@ -158,20 +183,20 @@ class _TabResultadoState extends State<TabResultado> {
         );
         proxConcurso.add(Divider());
         proxConcurso.add(Text(
-          _formatCurrency(widget.resultado.valor_estimado_proximo_concurso) +
+          _formatCurrency(resultado.valor_estimado_proximo_concurso) +
               '!',
         ));
       }
 
-      if ((widget.resultado.valor_estimado_proximo_concurso != null &&
-              widget.resultado.valor_estimado_proximo_concurso != 0) &&
-          (widget.resultado.data_proximo_concurso != null &&
-              widget.resultado.data_proximo_concurso != '')) {
+      if ((resultado.valor_estimado_proximo_concurso != null &&
+              resultado.valor_estimado_proximo_concurso != 0) &&
+          (resultado.data_proximo_concurso != null &&
+              resultado.data_proximo_concurso != '')) {
         proxConcurso.add(Divider());
       }
 
-      if (widget.resultado.data_proximo_concurso != null &&
-          widget.resultado.data_proximo_concurso != '') {
+      if (resultado.data_proximo_concurso != null &&
+          resultado.data_proximo_concurso != '') {
         proxConcurso.add(Text(
           "Data do próximo concurso",
           style: TextStyle(
@@ -181,7 +206,7 @@ class _TabResultadoState extends State<TabResultado> {
 
         proxConcurso.add(Divider());
         proxConcurso
-            .add(Text(_formatDate(widget.resultado.data_proximo_concurso)));
+            .add(Text(_formatDate(resultado.data_proximo_concurso)));
       }
 
       builder.add(Card(
@@ -196,8 +221,8 @@ class _TabResultadoState extends State<TabResultado> {
       ));
     }
 
-    if (widget.resultado.premiacao != null &&
-        widget.resultado.premiacao.isNotEmpty) {
+    if (resultado.premiacao != null &&
+        resultado.premiacao.isNotEmpty) {
       builder.add(Padding(
         padding: EdgeInsets.only(top: 15),
         child: Table(
@@ -205,13 +230,13 @@ class _TabResultadoState extends State<TabResultado> {
             bottom: defaultTableBorder,
             horizontalInside: defaultTableBorder,
           ),
-          children: _criarTabelaPremiacao(widget.resultado.premiacao),
+          children: _criarTabelaPremiacao(resultado.premiacao),
         ),
       ));
     }
 
-    if (widget.resultado.arrecadacao_total != null &&
-        widget.resultado.valor_acumulado != null) {
+    if (resultado.arrecadacao_total != null &&
+        resultado.valor_acumulado != null) {
       builder.add(Padding(
         padding: EdgeInsets.only(top: 15.0),
         child: Row(
@@ -232,7 +257,7 @@ class _TabResultadoState extends State<TabResultado> {
                       ),
                       Divider(),
                       Text(
-                        _formatCurrency(widget.resultado.arrecadacao_total),
+                        _formatCurrency(resultado.arrecadacao_total),
                       )
                     ],
                   ),
@@ -255,7 +280,7 @@ class _TabResultadoState extends State<TabResultado> {
                       ),
                       Divider(),
                       Text(
-                        _formatCurrency(widget.resultado.valor_acumulado),
+                        _formatCurrency(resultado.valor_acumulado),
                       )
                     ],
                   ),
@@ -267,8 +292,8 @@ class _TabResultadoState extends State<TabResultado> {
       ));
     }
 
-    if (widget.resultado.local_ganhadores != null &&
-        widget.resultado.local_ganhadores.isNotEmpty) {
+    if (resultado.local_ganhadores != null &&
+        resultado.local_ganhadores.isNotEmpty) {
       builder.add(Padding(
         padding: EdgeInsets.only(top: 15),
         child: Table(
@@ -277,12 +302,49 @@ class _TabResultadoState extends State<TabResultado> {
             horizontalInside: defaultTableBorder,
           ),
           children:
-              _criarTabelaLocalGanhadores(widget.resultado.local_ganhadores),
+              _criarTabelaLocalGanhadores(resultado.local_ganhadores),
         ),
       ));
     }
 
+    if (resultado.nome_acumulado_especial != null &&
+        resultado.nome_acumulado_especial != '' &&
+        resultado.valor_acumulado_especial != null) {
+      builder.add(Padding(
+        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+        child: Divider(),
+      ));
+      builder.add(
+        Center(
+          child: Text(
+            "Acumulado  '${resultado.nome_acumulado_especial}'",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+      builder.add(Padding(
+        padding: EdgeInsets.only(top: 8.0),
+        child: Center(
+          child: Text(
+            _formatCurrency(resultado.valor_acumulado_especial) +
+                '!',
+          ),
+        ),
+      ));
+
+    }
+
     return builder;
+  }
+
+  _getDezenasResultadoDisplayValue(List<String> resultado) {
+    var value = "";
+    resultado.forEach((element) {
+      value += value == "" ? element : " | " + element;
+    });
+    return value;
   }
 
   _criarTabelaPremiacao(List<Premiacao> premiacao) {

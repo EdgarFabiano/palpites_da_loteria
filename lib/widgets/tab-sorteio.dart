@@ -8,10 +8,8 @@ import 'package:palpites_da_loteria/service/generator/random-sorteio-generator.d
 import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 class TabSorteio extends StatefulWidget {
-
-  final ConcursoBean _concurso;
-
-  TabSorteio(this._concurso);
+  final ConcursoBean concursoBean;
+  const TabSorteio(this.concursoBean, {Key key}) : super(key: key);
 
   @override
   _TabSorteioState createState() => _TabSorteioState();
@@ -21,14 +19,14 @@ class _TabSorteioState extends State<TabSorteio> {
 
   List<Dezena> _dezenas = List();
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
-  bool _firstTime = true;
-  double _sorteioValue;
+  bool _primeiraVez = true;
+  double _numeroDeDezenasASortear;
   int _chance = 3;
 
   void _sortear(double increment) {
-    _sorteioValue += increment;
+    _numeroDeDezenasASortear += increment;
     _dezenas = _sorteioGenerator
-        .sortear(_sorteioValue.toInt(), widget._concurso, context)
+        .sortear(_numeroDeDezenasASortear.toInt(), widget.concursoBean, context)
         .toList();
   }
 
@@ -48,7 +46,7 @@ class _TabSorteioState extends State<TabSorteio> {
   @override
   void initState() {
     super.initState();
-    _sorteioValue = widget._concurso.minSize.toDouble();
+    _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
     AdMobService.buildInterstitial();
   }
 
@@ -66,16 +64,16 @@ class _TabSorteioState extends State<TabSorteio> {
           "Gerar novamente",
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
-        color: widget._concurso.colorBean.getColor(context),
+        color: widget.concursoBean.colorBean.getColor(context),
         onPressed: () => _sortearComAnuncio(0));
 
-    if (_firstTime) {
-      _sortear(0);
-      _firstTime = false;
+    if (_primeiraVez) {
+      _sortearComAnuncio(0);
+      _primeiraVez = false;
     }
 
-    var minSize = widget._concurso.minSize.toDouble();
-    var maxSize = widget._concurso.maxSize.toDouble();
+    var minSize = widget.concursoBean.minSize.toDouble();
+    var maxSize = widget.concursoBean.maxSize.toDouble();
     var width = MediaQuery.of(context).size.width;
 
     return Flex(
@@ -92,7 +90,7 @@ class _TabSorteioState extends State<TabSorteio> {
                   maintainSize: true,
                   maintainAnimation: true,
                   maintainState: true,
-                  visible: _sorteioValue > widget._concurso.minSize,
+                  visible: _numeroDeDezenasASortear > widget.concursoBean.minSize,
                   child: FlatButton.icon(
                       onPressed: () => setState(() {
                         _sortear(-1);
@@ -101,14 +99,14 @@ class _TabSorteioState extends State<TabSorteio> {
                       label: Text("")),
                 ),
                 Text(
-                  _sorteioValue.toInt().toString(),
+                  _numeroDeDezenasASortear.toInt().toString(),
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Visibility(
                   maintainSize: true,
                   maintainAnimation: true,
                   maintainState: true,
-                  visible: _sorteioValue < widget._concurso.maxSize,
+                  visible: _numeroDeDezenasASortear < widget.concursoBean.maxSize,
                   child: FlatButton.icon(
                       onPressed: () => setState(() {
                         _sortear(1);

@@ -2,13 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/domain/concursos.dart';
-import 'package:palpites_da_loteria/ui/sorteio-page.dart';
+import 'package:palpites_da_loteria/ui/sorteio-resultado-page.dart';
 
 class CardConcursos extends StatefulWidget {
-  const CardConcursos(this._concursoBean, {Key key}) : super(key: key);
   final ConcursoBean _concursoBean;
-
-  ConcursoBean get concursoBean => _concursoBean;
+  const CardConcursos(this._concursoBean, {Key key}) : super(key: key);
 
   @override
   _CardConcursosState createState() => _CardConcursosState();
@@ -23,7 +21,7 @@ class _CardConcursosState extends State<CardConcursos> {
       Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (context) => SorteioPage(widget._concursoBean),
+          builder: (context) => SorteioResultadoPage(widget._concursoBean),
         ),
       );
     }, child: LayoutBuilder(
@@ -44,7 +42,7 @@ class _CardConcursosState extends State<CardConcursos> {
                 width: maxWidth / 2,
               ),
               Padding(
-                padding: EdgeInsets.only(top: maxHeight/10),
+                padding: EdgeInsets.only(top: maxHeight / 10),
                 child: Text(
                   name,
                   style: TextStyle(

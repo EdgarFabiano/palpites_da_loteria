@@ -12,13 +12,15 @@ import 'package:provider/provider.dart';
 import 'app-drawer.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage();
-
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+
+  List<CardConcursos> cards;
+  ConcursosSettingsChangeNotifier concursosProvider;
+  Concursos concursos;
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<CardConcursos> cards;
+
     var mediaQueryData = MediaQuery.of(context);
     var isPortrait = mediaQueryData.orientation == Orientation.portrait;
 
@@ -42,8 +44,9 @@ class _HomePageState extends State<HomePage> {
 
     var spacing = mediaQueryData.size.height / 100;
 
-    var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
-    Concursos concursos = concursosProvider.getConcursos();
+    concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
+    concursos = concursosProvider.getConcursos();
+
     if (concursosProvider != null && concursos != null) {
       cards = concursos
           .where((element) => element.enabled)

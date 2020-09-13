@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/service/concurso-service.dart' as concursoService;
 import 'package:palpites_da_loteria/ui/home-page.dart';
-import 'package:palpites_da_loteria/ui/settings-page.dart';
 import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -53,10 +52,6 @@ class ConcursosMaterialApp extends StatelessWidget {
         title: Strings.appName,
         theme: _theme,
         home: HomePage(),
-        debugShowCheckedModeBanner: false,
-        initialRoute: Strings.concursosRoute,
-        routes: {
-          Strings.configuracoesRoute: (context) => SettingsPage(),
-        });
+        debugShowCheckedModeBanner: false,);
   }
 }
