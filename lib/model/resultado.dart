@@ -1,6 +1,5 @@
 
-import 'package:palpites_da_loteria/domain/local-ganhador.dart';
-import 'package:palpites_da_loteria/domain/premiacao.dart';
+import 'package:palpites_da_loteria/model/model-export.dart';
 
 class Resultado {
 

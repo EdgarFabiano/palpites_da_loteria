@@ -1,8 +1,6 @@
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:palpites_da_loteria/model/model-export.dart';
 import 'package:palpites_da_loteria/service/admob-service.dart';
 import 'package:palpites_da_loteria/widgets/popup-menu.dart';
 import 'package:palpites_da_loteria/widgets/tab-resultado.dart';

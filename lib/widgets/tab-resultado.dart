@@ -1,15 +1,12 @@
 import 'dart:convert';
 
 import 'package:date_format/date_format.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:palpites_da_loteria/domain/concursos.dart';
-import 'package:palpites_da_loteria/domain/local-ganhador.dart';
-import 'package:palpites_da_loteria/domain/premiacao.dart';
-import 'package:palpites_da_loteria/domain/resultado.dart';
+import 'package:palpites_da_loteria/model/model-export.dart';
+
 import 'package:palpites_da_loteria/service/loteria-api-service.dart';
 
 Resultado parseResultado (String responseBody) {

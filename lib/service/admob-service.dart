@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:firebase_admob/firebase_admob.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:palpites_da_loteria/defaults/constants.dart';
+import 'package:flutter/material.dart';
+import 'package:palpites_da_loteria/defaults/defaults-export.dart';
 
 class AdMobService {
 

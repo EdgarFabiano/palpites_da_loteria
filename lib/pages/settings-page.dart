@@ -1,7 +1,7 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/strings.dart';
-import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:palpites_da_loteria/defaults/defaults-export.dart';
+import 'package:palpites_da_loteria/model/model-export.dart';
 import 'package:palpites_da_loteria/service/admob-service.dart';
 import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
 import 'package:palpites_da_loteria/widgets/list-item-concurso.dart';

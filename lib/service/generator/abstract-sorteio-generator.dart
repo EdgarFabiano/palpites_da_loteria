@@ -1,6 +1,6 @@
 
-import 'package:flutter/cupertino.dart';
-import 'package:palpites_da_loteria/domain/concursos.dart';
+import 'package:flutter/material.dart';
+import 'package:palpites_da_loteria/model/model-export.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 abstract class AbstractSorteioGenerator {
