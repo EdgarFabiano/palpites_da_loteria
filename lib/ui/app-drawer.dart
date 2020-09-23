@@ -21,7 +21,11 @@ class _AppDrawerState extends State<AppDrawer> {
     if (androidInfo.version.sdkInt < 21) {
       _inAppReview.openStoreListing();
     } else if (await _inAppReview.isAvailable()) {
-      _inAppReview.requestReview();
+      try {
+        _inAppReview.requestReview();
+      } catch (e) {
+        _inAppReview.openStoreListing();
+      }
     } else {
       Fluttertoast.showToast(msg: "Operação indisponível no momento");
     }
