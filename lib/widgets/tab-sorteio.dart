@@ -14,7 +14,7 @@ class TabSorteio extends StatefulWidget {
   _TabSorteioState createState() => _TabSorteioState();
 }
 
-class _TabSorteioState extends State<TabSorteio> {
+class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMixin {
 
   List<Dezena> _dezenas = List();
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
@@ -133,4 +133,7 @@ class _TabSorteioState extends State<TabSorteio> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

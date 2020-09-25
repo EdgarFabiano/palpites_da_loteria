@@ -32,7 +32,7 @@ class TabResultado extends StatefulWidget {
   _TabResultadoState createState() => _TabResultadoState();
 }
 
-class _TabResultadoState extends State<TabResultado> {
+class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClientMixin {
   Future<Resultado> futureResultado;
 
   @override
@@ -427,4 +427,7 @@ class _TabResultadoState extends State<TabResultado> {
       }).toList(),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
