@@ -9,9 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:palpites_da_loteria/model/model-export.dart';
 import 'package:palpites_da_loteria/service/loteria-api-service.dart';
+import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'internet_not_available.dart';
 
 DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
 Options _cacheOptions = buildCacheOptions(Duration(days: 7), forceRefresh: true);
@@ -42,6 +43,14 @@ class TabResultado extends StatefulWidget {
 
 class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClientMixin {
   Future<Resultado> futureResultado;
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  void _onRefresh() async{
+    setState(() {
+      futureResultado = fetchResultado(widget.concursoBean.name);
+      futureResultado.whenComplete(() => _refreshController.refreshCompleted());
+    });
+  }
 
   @override
   void initState() {
@@ -52,31 +61,39 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
 
   @override
   Widget build(BuildContext context) {
-    return Flex(
-      direction: Axis.vertical,
-      children: [
-        Visibility(
-            visible: Provider.of<DataConnectionStatus>(context) ==
-                DataConnectionStatus.disconnected,
-            child: InternetNotAvailable()),
-        FutureBuilder<Resultado>(
-          future: futureResultado,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Flexible(
-                child: ListView(
-                  padding: EdgeInsets.only(
-                      left: 15, right: 15, top: 15, bottom: 35),
-                  children: _getResultadoWidgets(snapshot.data, context),
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Expanded(child: Center(child: Icon(Icons.signal_wifi_off)));
-            }
-            return Expanded(child: Center(child: CircularProgressIndicator()));
-          },
-        )
-      ],
+    var isDisconnected = Provider.of<DataConnectionStatus>(context) ==
+                  DataConnectionStatus.disconnected;
+    return SmartRefresher(
+      enablePullDown: !isDisconnected,
+      onRefresh: _onRefresh,
+      controller: _refreshController,
+      child: Flex(
+        direction: Axis.vertical,
+        children: [
+          Visibility(
+              visible: isDisconnected,
+              child: InternetNotAvailable()),
+          FutureBuilder<Resultado>(
+            future: futureResultado,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Flexible(
+                  child: ListView(
+                    padding: EdgeInsets.only(
+                        left: 15, right: 15, top: 15, bottom: 35),
+                    children: _getResultadoWidgets(snapshot.data, context),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Expanded(
+                    child: Center(child: Icon(Icons.signal_wifi_off)));
+              }
+              return Expanded(
+                  child: Center(child: CircularProgressIndicator()));
+            },
+          )
+        ],
+      ),
     );
   }
 
