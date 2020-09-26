@@ -1,10 +1,11 @@
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/strings.dart';
-import 'package:palpites_da_loteria/service/concurso-service.dart';
-import 'package:palpites_da_loteria/ui/home-page.dart';
-import 'package:palpites_da_loteria/ui/settings-page.dart';
+import 'package:palpites_da_loteria/defaults/defaults-export.dart';
+import 'package:palpites_da_loteria/service/concurso-service.dart' as concursoService;
+import 'package:palpites_da_loteria/pages/home-page.dart';
+import 'package:palpites_da_loteria/service/data_connectivity_service.dart';
 import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,8 @@ class PalpitesLoteriaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ConcursosSettingsChangeNotifier concursosSettingsChangeNotifier = ConcursosSettingsChangeNotifier();
-    ConcursoService.getUsersConcursosFuture().then((value) => concursosSettingsChangeNotifier.setConcursos(value));
+    concursoService.getUsersConcursosFuture().then((value) => concursosSettingsChangeNotifier.setConcursos(value));
+
     return new DynamicTheme(
         defaultBrightness: Brightness.light,
         data: (brightness) => new ThemeData(
@@ -33,9 +35,18 @@ class PalpitesLoteriaApp extends StatelessWidget {
               }),
             ),
         themedWidgetBuilder: (context, theme) {
-          return ChangeNotifierProvider<ConcursosSettingsChangeNotifier>(
-            create: (_) => concursosSettingsChangeNotifier,
+          return MultiProvider(
             child: ConcursosMaterialApp(theme),
+            providers: [
+              ChangeNotifierProvider<ConcursosSettingsChangeNotifier>(
+                create: (_) => concursosSettingsChangeNotifier,
+              ),
+              StreamProvider<DataConnectionStatus>(create: (context) {
+                return DataConnectivityService()
+                    .connectivityStreamController
+                    .stream;
+              })
+            ],
           );
         });
   }
@@ -52,10 +63,6 @@ class ConcursosMaterialApp extends StatelessWidget {
         title: Strings.appName,
         theme: _theme,
         home: HomePage(),
-        debugShowCheckedModeBanner: false,
-        initialRoute: Strings.concursosRoute,
-        routes: {
-          Strings.configuracoesRoute: (context) => SettingsPage(),
-        });
+        debugShowCheckedModeBanner: false,);
   }
 }

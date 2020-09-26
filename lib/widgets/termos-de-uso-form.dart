@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/strings.dart';
+import 'package:palpites_da_loteria/defaults/defaults-export.dart';
 
 class TermosDeUsoForm extends StatefulWidget {
   TermosDeUsoForm();

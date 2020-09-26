@@ -1,8 +1,5 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:loading/indicator/ball_spin_fade_loader_indicator.dart';
-import 'package:loading/loading.dart';
 
 class HomeLoadingPage extends StatelessWidget {
   final spacing;
@@ -50,7 +47,7 @@ class EmptyCardConcursos extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Loading(indicator: BallSpinFadeLoaderIndicator(), color: Colors.grey,),
+                  Center(child: CircularProgressIndicator(backgroundColor: Colors.grey,)),
                 ],
               ),
             ),
