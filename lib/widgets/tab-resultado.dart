@@ -1,24 +1,32 @@
-import 'dart:convert';
+import 'dart:async';
 
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:date_format/date_format.dart';
+import 'package:dio/dio.dart';
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:palpites_da_loteria/model/model-export.dart';
-
 import 'package:palpites_da_loteria/service/loteria-api-service.dart';
+import 'package:provider/provider.dart';
 
-Resultado parseResultado (String responseBody) {
-  return Resultado.fromJson(json.decode(responseBody));
+import 'internet_not_available.dart';
+
+DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
+Options _cacheOptions = buildCacheOptions(Duration(days: 7), forceRefresh: true);
+Dio _dio = Dio();
+
+Resultado parseResultado(Map<String, dynamic> responseBody) {
+  return Resultado.fromJson(responseBody);
 }
 
 Future<Resultado> fetchResultado(String concursoName) async {
   var url = LoteriaAPIService.getEndpointFor(concursoName);
-  final response = await http.get(url);
+  Response response = await _dio.get(url, options: _cacheOptions);
 
-  if (response.statusCode == 200) {
-    return compute(parseResultado, response.body);
+  if (response.statusCode == 200 && response.data is Map) {
+    return compute(parseResultado, response.data as Map<String, dynamic>);
   } else {
     return Future.value(Resultado());
   }
@@ -38,41 +46,41 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
   @override
   void initState() {
     super.initState();
+    _dio.interceptors.add(_dioCacheManager.interceptor);
     futureResultado = fetchResultado(widget.concursoBean.name);
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return FutureBuilder<Resultado>(
-      future: futureResultado,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Flex(
-            direction: Axis.vertical,
-            children: [
-              Flexible(
+    return Flex(
+      direction: Axis.vertical,
+      children: [
+        Visibility(
+            visible: Provider.of<DataConnectionStatus>(context) ==
+                DataConnectionStatus.disconnected,
+            child: InternetNotAvailable()),
+        FutureBuilder<Resultado>(
+          future: futureResultado,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Flexible(
                 child: ListView(
-                  padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 35),
+                  padding: EdgeInsets.only(
+                      left: 15, right: 15, top: 15, bottom: 35),
                   children: _getResultadoWidgets(snapshot.data, context),
                 ),
-              )
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return Padding(
-            padding: EdgeInsets.all(15),
-            child: Text("${snapshot.error}"),
-          );
-        }
-        return Center(child: CircularProgressIndicator());
-      },
+              );
+            } else if (snapshot.hasError) {
+              return Expanded(child: Center(child: Icon(Icons.signal_wifi_off)));
+            }
+            return Expanded(child: Center(child: CircularProgressIndicator()));
+          },
+        )
+      ],
     );
-
   }
 
-  _getResultadoWidgets(  Resultado resultado, BuildContext context) {
-
+  _getResultadoWidgets(Resultado resultado, BuildContext context) {
     List<Widget> builder = [];
 
     var defaultTableBorder = BorderSide(
@@ -84,7 +92,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
     if (resultado.acumulou != null) {
       builder.add(Center(
         child: Padding(
-          padding: EdgeInsets.only(top: 15, bottom: 10),
+          padding: EdgeInsets.only(top: 10, bottom: 10),
           child: Text(
             resultado.acumulou ? "ACUMULOU!" : "TEVE GANHADOR",
             style: TextStyle(fontSize: 25),
@@ -98,56 +106,50 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
       ));
     }
 
-    if (resultado.numero_concurso != null &&
-        resultado.data_concurso != null) {
+    if (resultado.numero_concurso != null && resultado.data_concurso != null) {
       builder.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Padding(
-            padding: EdgeInsets.all(15),
-            child: Text(
-                "Concurso: " + resultado.numero_concurso.toString()),
+            padding: EdgeInsets.all(10),
+            child: Text("Concurso: " + resultado.numero_concurso.toString()),
           ),
           Padding(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.all(10),
             child: Text("Data: " + _formatDate(resultado.data_concurso)),
           )
         ],
       ));
     }
 
-    if (resultado.dezenas != null &&
-        resultado.dezenas.isNotEmpty) {
+    if (resultado.dezenas != null && resultado.dezenas.isNotEmpty) {
       builder.add(Card(
-        elevation: 2,
         color: widget.concursoBean.colorBean.getColor(context),
         child: Padding(
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.all(10),
           child: Center(
-            child:
-                Text(_getDezenasResultadoDisplayValue(resultado.dezenas),
-                    style: TextStyle(
-                      fontSize: 26,
-                      color: Colors.white,
-                    )),
+            child: Text(_getDezenasResultadoDisplayValue(resultado.dezenas),
+                style: TextStyle(
+                  fontSize: 26,
+                  color: Colors.white,
+                )),
           ),
         ),
       ));
     }
 
-    if (resultado.dezenas_2 != null &&
-        resultado.dezenas_2.isNotEmpty) {
+    if (resultado.dezenas_2 != null && resultado.dezenas_2.isNotEmpty) {
       builder.add(Card(
-        elevation: 2,
         color: widget.concursoBean.colorBean.getColor(context),
         child: Padding(
-          padding: EdgeInsets.all(15),
-          child:
-              Text(_getDezenasResultadoDisplayValue(resultado.dezenas_2),
-                  style: TextStyle(
-                    fontSize: 26,
-                    color: Colors.white,
-                  )),
+          padding: EdgeInsets.all(10),
+          child: Center(
+            child: Text(_getDezenasResultadoDisplayValue(resultado.dezenas_2),
+                style: TextStyle(
+                  fontSize: 26,
+                  color: Colors.white,
+                )),
+          ),
         ),
       ));
     }
@@ -155,93 +157,20 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
     if (resultado.local_realizacao != null &&
         resultado.local_realizacao != "") {
       builder.add(Padding(
-        padding: EdgeInsets.all(15),
+        padding: EdgeInsets.only(top: 10),
         child: Center(
-            child: Text(
-                "Local de realização: " + resultado.local_realizacao)),
-      ));
-    }
-
-    if ((resultado.valor_estimado_proximo_concurso != null &&
-            resultado.valor_estimado_proximo_concurso != 0) ||
-        (resultado.data_proximo_concurso != null &&
-            resultado.data_proximo_concurso != '')) {
-      List<Widget> proxConcurso = [];
-
-      if (resultado.valor_estimado_proximo_concurso != null &&
-          resultado.valor_estimado_proximo_concurso != 0) {
-        proxConcurso.add(
-          Text(
-            "Prêmio estimado para o próximo concurso",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-        proxConcurso.add(Divider());
-        proxConcurso.add(Text(
-          _formatCurrency(resultado.valor_estimado_proximo_concurso) +
-              '!',
-        ));
-      }
-
-      if ((resultado.valor_estimado_proximo_concurso != null &&
-              resultado.valor_estimado_proximo_concurso != 0) &&
-          (resultado.data_proximo_concurso != null &&
-              resultado.data_proximo_concurso != '')) {
-        proxConcurso.add(Divider());
-      }
-
-      if (resultado.data_proximo_concurso != null &&
-          resultado.data_proximo_concurso != '') {
-        proxConcurso.add(Text(
-          "Data do próximo concurso",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ));
-
-        proxConcurso.add(Divider());
-        proxConcurso
-            .add(Text(_formatDate(resultado.data_proximo_concurso)));
-      }
-
-      builder.add(Card(
-        elevation: 2,
-        color: Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: proxConcurso,
-          ),
-        ),
-      ));
-    }
-
-    if (resultado.premiacao != null &&
-        resultado.premiacao.isNotEmpty) {
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 15),
-        child: Table(
-          border: TableBorder(
-            bottom: defaultTableBorder,
-            horizontalInside: defaultTableBorder,
-          ),
-          children: _criarTabelaPremiacao(resultado.premiacao),
-        ),
+            child: Text("Local de realização: " + resultado.local_realizacao)),
       ));
     }
 
     if (resultado.arrecadacao_total != null &&
         resultado.valor_acumulado != null) {
       builder.add(Padding(
-        padding: EdgeInsets.only(top: 15.0),
+        padding: EdgeInsets.only(top: 10.0),
         child: Row(
           children: [
             Expanded(
               child: Card(
-                elevation: 2,
-                color: Colors.transparent,
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
@@ -263,8 +192,6 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
             ),
             Expanded(
               child: Card(
-                elevation: 2,
-                color: Colors.transparent,
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
@@ -289,17 +216,51 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
       ));
     }
 
-    if (resultado.local_ganhadores != null &&
-        resultado.local_ganhadores.isNotEmpty) {
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 15),
-        child: Table(
-          border: TableBorder(
-            bottom: defaultTableBorder,
-            horizontalInside: defaultTableBorder,
+    if ((resultado.valor_estimado_proximo_concurso != null &&
+            resultado.valor_estimado_proximo_concurso != 0) ||
+        (resultado.data_proximo_concurso != null &&
+            resultado.data_proximo_concurso != '')) {
+      List<Widget> proxConcurso = [];
+
+      if (resultado.valor_estimado_proximo_concurso != null &&
+          resultado.valor_estimado_proximo_concurso != 0) {
+        proxConcurso.add(
+          Text(
+            "Prêmio estimado para o próximo concurso",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          children:
-              _criarTabelaLocalGanhadores(resultado.local_ganhadores),
+        );
+        proxConcurso.add(Text(
+          _formatCurrency(resultado.valor_estimado_proximo_concurso) + '!',
+        ));
+      }
+
+      if ((resultado.valor_estimado_proximo_concurso != null &&
+              resultado.valor_estimado_proximo_concurso != 0) &&
+          (resultado.data_proximo_concurso != null &&
+              resultado.data_proximo_concurso != '')) {
+        proxConcurso.add(Divider());
+      }
+
+      if (resultado.data_proximo_concurso != null &&
+          resultado.data_proximo_concurso != '') {
+        proxConcurso.add(Text(
+          "Data do próximo concurso",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ));
+        proxConcurso.add(Text(_formatDate(resultado.data_proximo_concurso)));
+      }
+
+      builder.add(Card(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: proxConcurso,
+          ),
         ),
       ));
     }
@@ -307,16 +268,16 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
     if (resultado.nome_acumulado_especial != null &&
         resultado.nome_acumulado_especial != '' &&
         resultado.valor_acumulado_especial != null) {
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-        child: Divider(),
-      ));
+
       builder.add(
-        Center(
-          child: Text(
-            "Acumulado  '${resultado.nome_acumulado_especial}'",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Center(
+            child: Text(
+              "Acumulado  '${resultado.nome_acumulado_especial}'",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -325,12 +286,41 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
         padding: EdgeInsets.only(top: 8.0),
         child: Center(
           child: Text(
-            _formatCurrency(resultado.valor_acumulado_especial) +
-                '!',
+            _formatCurrency(resultado.valor_acumulado_especial) + '!',
           ),
         ),
       ));
+    }
 
+    if (resultado.premiacao != null && resultado.premiacao.isNotEmpty) {
+      builder.add(Padding(
+        padding: EdgeInsets.only(top: 15),
+        child: Card(
+          child: Table(
+            border: TableBorder(
+              bottom: defaultTableBorder,
+              horizontalInside: defaultTableBorder,
+            ),
+            children: _criarTabelaPremiacao(resultado.premiacao),
+          ),
+        ),
+      ));
+    }
+
+    if (resultado.local_ganhadores != null &&
+        resultado.local_ganhadores.isNotEmpty) {
+      builder.add(Padding(
+        padding: EdgeInsets.only(top: 15),
+        child: Card(
+          child: Table(
+            border: TableBorder(
+              bottom: defaultTableBorder,
+              horizontalInside: defaultTableBorder,
+            ),
+            children: _criarTabelaLocalGanhadores(resultado.local_ganhadores),
+          ),
+        ),
+      ));
     }
 
     return builder;
@@ -338,9 +328,23 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
 
   _getDezenasResultadoDisplayValue(List<String> resultado) {
     var value = "";
-    resultado.forEach((element) {
-      value += value == "" ? element : " | " + element;
-    });
+    if (resultado.length <= 7) {
+      resultado.forEach((element) {
+        value += value == "" ? element : " | " + element;
+      });
+    } else {
+      var count = 0;
+      var iterator = resultado.iterator;
+      resultado.forEach((element) {
+        value += value == "" || value.endsWith("\n") ? element : " | " + element;
+        count++;
+        if (count >= 5) {
+          count = 0;
+          value += !iterator.moveNext() ? "" : "\n";
+        }
+      });
+      value = value.substring(0, value.length-1);
+    }
     return value;
   }
 
@@ -415,7 +419,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
       decoration: BoxDecoration(
           color: Colors.black12,
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+              topLeft: Radius.circular(4), topRight: Radius.circular(4))),
       children: listaNomes.split(',').map((name) {
         return Container(
           alignment: Alignment.center,

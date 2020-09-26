@@ -9,7 +9,6 @@ import 'package:palpites_da_loteria/pages/settings-page.dart';
 final InAppReview _inAppReview = InAppReview.instance;
 
 Future<void> _requestReview() async {
-
   DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   final androidInfo = await deviceInfoPlugin.androidInfo;
 
@@ -21,7 +20,6 @@ Future<void> _requestReview() async {
         _inAppReview.requestReview();
         return true;
       }
-
       _inAppReview.openStoreListing();
       return false;
     }).catchError((err) => Fluttertoast.showToast(msg: "Operação indisponível no momento"));
