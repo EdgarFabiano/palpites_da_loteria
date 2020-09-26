@@ -1,4 +1,6 @@
 
+import 'package:palpites_da_loteria/service/format_service.dart';
+
 class Premiacao {
   int acertos;
   String nome;
@@ -23,5 +25,12 @@ class Premiacao {
     data['quantidade_ganhadores'] = this.quantidade_ganhadores;
     data['valor_total'] = this.valor_total;
     return data;
+  }
+
+  getQuantidadeGanhadoresDisplayValue () {
+    return formatNumber(quantidade_ganhadores);
+  }
+  getValorTotalDisplayValue () {
+    return formatCurrency(valor_total);
   }
 }

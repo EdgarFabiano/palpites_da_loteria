@@ -1,5 +1,6 @@
 
 import 'package:palpites_da_loteria/model/model-export.dart';
+import 'package:palpites_da_loteria/service/format_service.dart';
 
 class Resultado {
 
@@ -99,21 +100,67 @@ class Resultado {
             dezena_time_coracao: json['dezena_time_coracao'],
             nome_time_coracao: json['nome_time_coracao'],
         );
-        return resultado;
-    }
+    return resultado;
+  }
 
+  String getDataConcursoDisplayValue () {
+    if (data_concurso != null)
+      return dateFormat(data_concurso);
+    return '';
+  }
+  String getArrecadacaoTotalDisplayValue () {
+    if (arrecadacao_total != null)
+      return formatCurrency(arrecadacao_total);
+    return '';
+  }
+
+  String getValorAcumuladoDisplayValue () {
+    if (valor_acumulado != null)
+      return formatCurrency(valor_acumulado);
+    return '';
+  }
+
+  String getValorEstimadoProximoConcursoDisplayValue () {
+    if (valor_estimado_proximo_concurso != null)
+      return formatCurrency(valor_estimado_proximo_concurso);
+    return '';
+  }
+
+  String getDataProximoConcursoDisplayValue () {
+    if (data_proximo_concurso != null)
+      return dateFormat(data_proximo_concurso);
+    return '';
+  }
+
+  String getValorAcumuladoEspecialDisplayValue () {
+    if (valor_acumulado_especial != null)
+      return formatCurrency(valor_acumulado_especial);
+    return '';
+  }
+
+
+  String getDezenasDisplayValue() {
+    return getDezenasResultadoDisplayValue(dezenas);
+  }
+
+  String getDezenas2DisplayValue() {
+    return getDezenasResultadoDisplayValue(dezenas_2);
+  }
+
+  String shareString() {
+    return 'Aplicativo Palpites da loteria\n'
+        ' 👉 https://rb.gy/qpv1h9 🍀\n\n'
+        'Resultado $nome\n\n' +
+        (acumulou ? 'ACUMULOU' : 'TEVE GANHADOR') + '\n\n' +
+        (dezenas != null && dezenas.isNotEmpty ? getDezenasDisplayValue() + '\n\n' : '')  +
+        (dezenas_2 != null && dezenas_2.isNotEmpty ? getDezenas2DisplayValue() + '\n\n' : '') +
+        'Concurso: $numero_concurso \n'
+        'Data de realização: ' + getDataConcursoDisplayValue() + '\n\n'
+        'Arrecadação total: ' + getArrecadacaoTotalDisplayValue() +'\n'
+        'Acumulado: ' + getValorAcumuladoDisplayValue() + '\n\n'
+        'Próximo concurso dia ' + getDataProximoConcursoDisplayValue() +'\n'
+        'Prêmio estimado: ' + getValorEstimadoProximoConcursoDisplayValue() + '\n\n' +
+        (nome_acumulado_especial != null ? 'Acumulado $nome_acumulado_especial: ' + getValorAcumuladoEspecialDisplayValue() : '')
+    ;
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

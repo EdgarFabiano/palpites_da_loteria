@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:date_format/date_format.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:palpites_da_loteria/model/model-export.dart';
 import 'package:palpites_da_loteria/service/loteria-api-service.dart';
 import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
@@ -42,13 +40,13 @@ class TabResultado extends StatefulWidget {
 }
 
 class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClientMixin {
-  Future<Resultado> futureResultado;
+  Future<Resultado> _futureResultado;
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   void _onRefresh() async{
     setState(() {
-      futureResultado = fetchResultado(widget.concursoBean.name);
-      futureResultado.whenComplete(() => _refreshController.refreshCompleted());
+      _futureResultado = fetchResultado(widget.concursoBean.name);
+      _futureResultado.whenComplete(() => _refreshController.refreshCompleted());
     });
   }
 
@@ -56,7 +54,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
   void initState() {
     super.initState();
     _dio.interceptors.add(_dioCacheManager.interceptor);
-    futureResultado = fetchResultado(widget.concursoBean.name);
+    _futureResultado = fetchResultado(widget.concursoBean.name);
   }
 
   @override
@@ -74,7 +72,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
               visible: isDisconnected,
               child: InternetNotAvailable()),
           FutureBuilder<Resultado>(
-            future: futureResultado,
+            future: _futureResultado,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Flexible(
@@ -133,7 +131,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
           ),
           Padding(
             padding: EdgeInsets.all(10),
-            child: Text("Data: " + _formatDate(resultado.data_concurso)),
+            child: Text("Data: " + resultado.getDataConcursoDisplayValue()),
           )
         ],
       ));
@@ -145,7 +143,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
-            child: Text(_getDezenasResultadoDisplayValue(resultado.dezenas),
+            child: Text(resultado.getDezenasDisplayValue(),
                 style: TextStyle(
                   fontSize: 26,
                   color: Colors.white,
@@ -161,7 +159,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
-            child: Text(_getDezenasResultadoDisplayValue(resultado.dezenas_2),
+            child: Text(resultado.getDezenas2DisplayValue(),
                 style: TextStyle(
                   fontSize: 26,
                   color: Colors.white,
@@ -200,7 +198,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
                       ),
                       Divider(),
                       Text(
-                        _formatCurrency(resultado.arrecadacao_total),
+                        resultado.getArrecadacaoTotalDisplayValue(),
                       )
                     ],
                   ),
@@ -221,7 +219,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
                       ),
                       Divider(),
                       Text(
-                        _formatCurrency(resultado.valor_acumulado),
+                        resultado.getValorAcumuladoDisplayValue(),
                       )
                     ],
                   ),
@@ -250,7 +248,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
           ),
         );
         proxConcurso.add(Text(
-          _formatCurrency(resultado.valor_estimado_proximo_concurso) + '!',
+          resultado.getValorEstimadoProximoConcursoDisplayValue() + '!',
         ));
       }
 
@@ -269,7 +267,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
             fontWeight: FontWeight.bold,
           ),
         ));
-        proxConcurso.add(Text(_formatDate(resultado.data_proximo_concurso)));
+        proxConcurso.add(Text(resultado.getDataProximoConcursoDisplayValue()));
       }
 
       builder.add(Card(
@@ -303,7 +301,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
         padding: EdgeInsets.only(top: 8.0),
         child: Center(
           child: Text(
-            _formatCurrency(resultado.valor_acumulado_especial) + '!',
+            resultado.getValorAcumuladoEspecialDisplayValue() + '!',
           ),
         ),
       ));
@@ -343,28 +341,6 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
     return builder;
   }
 
-  _getDezenasResultadoDisplayValue(List<String> resultado) {
-    var value = "";
-    if (resultado.length <= 7) {
-      resultado.forEach((element) {
-        value += value == "" ? element : " | " + element;
-      });
-    } else {
-      var count = 0;
-      var iterator = resultado.iterator;
-      resultado.forEach((element) {
-        value += value == "" || value.endsWith("\n") ? element : " | " + element;
-        count++;
-        if (count >= 5) {
-          count = 0;
-          value += !iterator.moveNext() ? "" : "\n";
-        }
-      });
-      value = value.substring(0, value.length-1);
-    }
-    return value;
-  }
-
   _criarTabelaPremiacao(List<Premiacao> premiacao) {
     var cabecalho = _criarCabecalhoTable("Acertos, Ganhadores, Premiação");
     var list = premiacao.map((premiacaoItem) {
@@ -379,13 +355,13 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
         Container(
           alignment: Alignment.center,
           child: Text(
-            _formatNumber(premiacaoItem.quantidade_ganhadores),
+            premiacaoItem.getQuantidadeGanhadoresDisplayValue(),
           ),
           padding: EdgeInsets.all(10.0),
         ),
         Container(
           alignment: Alignment.center,
-          child: Text(_formatCurrency(premiacaoItem.valor_total)),
+          child: Text(premiacaoItem.getValorTotalDisplayValue()),
           padding: EdgeInsets.all(10.0),
         )
       ]);
@@ -408,7 +384,7 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
         ),
         Container(
           alignment: Alignment.center,
-          child: Text(_formatNumber(localGanhador.quantidade_ganhadores)),
+          child: Text(localGanhador.getQuantidadeGanhadoresDisplayValue()),
           padding: EdgeInsets.all(10.0),
         )
       ]);
@@ -416,19 +392,6 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
 
     list.insert(0, cabecalho);
     return list;
-  }
-
-  String _formatDate(String date) {
-    return formatDate(DateTime.parse(date), [dd, '/', mm, '/', yyyy])
-        .toString();
-  }
-
-  String _formatNumber(dynamic valor) {
-    return NumberFormat.decimalPattern('pt_BR').format(valor);
-  }
-
-  String _formatCurrency(dynamic valor) {
-    return 'R\$ ' + NumberFormat.compactLong(locale: 'pt_BR').format(valor);
   }
 
   _criarCabecalhoTable(String listaNomes) {

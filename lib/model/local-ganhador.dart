@@ -1,4 +1,6 @@
 
+import 'package:palpites_da_loteria/service/format_service.dart';
+
 class LocalGanhador {
   bool canal_eletronico;
   String cidade;
@@ -26,5 +28,9 @@ class LocalGanhador {
     data['quantidade_ganhadores'] = this.quantidade_ganhadores;
     data['uf'] = this.uf;
     return data;
+  }
+
+  getQuantidadeGanhadoresDisplayValue () {
+    return formatNumber(quantidade_ganhadores);
   }
 }
