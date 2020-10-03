@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     AdMobService.startConcursosBanner();
-    AdMobService.displayBanner();
+    AdMobService.displayConcursosBanner();
   }
 
   @override

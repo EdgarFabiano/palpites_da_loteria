@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:dio/dio.dart';
@@ -6,6 +7,7 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
+import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +15,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
-Options _cacheOptions = buildCacheOptions(Duration(days: 7), forceRefresh: true);
+Options _cacheOptions = buildCacheOptions(Duration(minutes: 5), forceRefresh: true);
 Dio _dio = Dio();
 
 Resultado parseResultado(Map<String, dynamic> responseBody) {
@@ -29,6 +31,15 @@ Future<Resultado> fetchResultado(String concursoName) async {
   } else {
     return Future.value(Resultado());
   }
+}
+
+bool await(Duration duration) {
+  sleep(duration);
+  return true;
+}
+
+Future<bool> futureAwait() {
+  return compute(await, Duration(seconds: 3));
 }
 
 class TabResultado extends StatefulWidget {
@@ -55,10 +66,15 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
     super.initState();
     _dio.interceptors.add(_dioCacheManager.interceptor);
     _futureResultado = fetchResultado(widget.concursoBean.name);
+    futureAwait()
+        .whenComplete(() => AdMobService.buildResultadoInterstitial()
+          ..load()
+          ..show());
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     var isDisconnected = Provider.of<DataConnectionStatus>(context) ==
                   DataConnectionStatus.disconnected;
     return SmartRefresher(

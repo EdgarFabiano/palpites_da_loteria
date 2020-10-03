@@ -34,7 +34,7 @@ class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMi
       _sortear(increment);
       _chance++;
       if (_chance >= 5) {
-        AdMobService.buildInterstitial()
+        AdMobService.buildSorteioInterstitial()
           ..load()
           ..show();
         _chance = 0;
@@ -46,7 +46,7 @@ class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMi
   void initState() {
     super.initState();
     _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
-    AdMobService.buildInterstitial();
+    AdMobService.buildSorteioInterstitial();
   }
 
   @override
