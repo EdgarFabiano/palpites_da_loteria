@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/defaults-export.dart';
-import 'package:palpites_da_loteria/service/admob-service.dart';
-import 'package:palpites_da_loteria/widgets/termos-de-uso-form.dart';
+import 'package:palpites_da_loteria/defaults/defaults_export.dart';
+import 'package:palpites_da_loteria/service/admob_service.dart';
+import 'package:palpites_da_loteria/widgets/termos_de_uso_form.dart';
 
 class TermosDeUsoPage extends StatefulWidget {
   @override

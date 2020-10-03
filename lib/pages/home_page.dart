@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/defaults-export.dart';
-import 'package:palpites_da_loteria/model/model-export.dart';
-import 'package:palpites_da_loteria/service/admob-service.dart';
-import 'package:palpites_da_loteria/pages/home-loading-page.dart';
-import 'package:palpites_da_loteria/widgets/card-concursos.dart';
-import 'package:palpites_da_loteria/widgets/concursos-settings-change-notifier.dart';
+import 'package:palpites_da_loteria/defaults/defaults_export.dart';
+import 'package:palpites_da_loteria/model/model_export.dart';
+import 'package:palpites_da_loteria/service/admob_service.dart';
+import 'package:palpites_da_loteria/pages/home_loading_page.dart';
+import 'package:palpites_da_loteria/widgets/card_concursos.dart';
+import 'package:palpites_da_loteria/widgets/concursos_settings_change_notifier.dart';
 import 'package:provider/provider.dart';
 
-import 'app-drawer.dart';
+import 'app_drawer.dart';
 
 class HomePage extends StatefulWidget {
   @override

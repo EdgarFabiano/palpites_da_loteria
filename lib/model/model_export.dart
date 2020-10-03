@@ -1,4 +1,4 @@
 export 'concursos.dart';
-export 'local-ganhador.dart';
+export 'local_ganhador.dart';
 export 'premiacao.dart';
 export 'resultado.dart';

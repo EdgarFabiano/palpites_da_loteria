@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:palpites_da_loteria/defaults/defaults-export.dart';
-import 'package:palpites_da_loteria/pages/settings-page.dart';
+import 'package:palpites_da_loteria/defaults/defaults_export.dart';
+import 'package:palpites_da_loteria/pages/settings_page.dart';
 
 final InAppReview _inAppReview = InAppReview.instance;
 

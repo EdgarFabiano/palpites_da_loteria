@@ -2,8 +2,8 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/model/model-export.dart';
-import 'package:palpites_da_loteria/service/generator/abstract-sorteio-generator.dart';
+import 'package:palpites_da_loteria/model/model_export.dart';
+import 'package:palpites_da_loteria/service/generator/abstract_sorteio_generator.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 class RandomSorteioGenerator implements AbstractSorteioGenerator {

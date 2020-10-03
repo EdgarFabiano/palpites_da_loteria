@@ -1,8 +1,8 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/model/model-export.dart';
-import 'package:palpites_da_loteria/service/concurso-service.dart' as concursoService;
+import 'package:palpites_da_loteria/model/model_export.dart';
+import 'package:palpites_da_loteria/service/concurso_service.dart' as concursoService;
 
 class ConcursosSettingsChangeNotifier with ChangeNotifier {
   Concursos _concursos;

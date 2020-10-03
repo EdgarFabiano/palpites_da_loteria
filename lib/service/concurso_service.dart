@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:palpites_da_loteria/defaults/defaults-export.dart';
-import 'package:palpites_da_loteria/model/model-export.dart';
+import 'package:palpites_da_loteria/defaults/defaults_export.dart';
+import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool _updated = false;

@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/model/model-export.dart';
-import 'package:palpites_da_loteria/service/admob-service.dart';
-import 'package:palpites_da_loteria/widgets/popup-menu.dart';
-import 'package:palpites_da_loteria/widgets/tab-resultado.dart';
-import 'package:palpites_da_loteria/widgets/tab-sorteio.dart';
+import 'package:palpites_da_loteria/model/model_export.dart';
+import 'package:palpites_da_loteria/service/admob_service.dart';
+import 'package:palpites_da_loteria/widgets/popup_menu.dart';
+import 'package:palpites_da_loteria/widgets/tab_resultado.dart';
+import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/foundation.dart';
-import 'package:palpites_da_loteria/service/loteria-api-service.dart';
+import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:share/share.dart';
 
 DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
