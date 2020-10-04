@@ -75,8 +75,7 @@ class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMi
     var maxSize = widget.concursoBean.maxSize.toDouble();
     var width = MediaQuery.of(context).size.width;
 
-    return Flex(
-      direction: Axis.vertical,
+    return Column(
       children: <Widget>[
         Visibility(
           visible: maxSize != minSize,
@@ -117,8 +116,8 @@ class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMi
             ),
           ),
         ),
-        Visibility(visible: maxSize != minSize, child: Divider()),
-        Flexible(
+        Visibility(visible: maxSize != minSize, child: Divider(height: 0,)),
+        Expanded(
           child: GridView.extent(
             maxCrossAxisExtent: width/8 + 20,
             shrinkWrap: false,

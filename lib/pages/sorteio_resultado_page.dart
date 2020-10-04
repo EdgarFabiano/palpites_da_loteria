@@ -74,12 +74,8 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
 
   @override
   Widget build(BuildContext context) {
-    var tabSorteio = TabSorteio(
-      widget._concurso,
-    );
-    var tabResultado = TabResultado(
-      widget._concurso,
-    );
+    var tabSorteio = TabSorteio(widget._concurso);
+    var tabResultado = TabResultado(widget._concurso);
 
     return Padding(
       padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),

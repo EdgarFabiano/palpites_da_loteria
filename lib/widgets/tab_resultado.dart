@@ -13,19 +13,18 @@ import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-
 DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
-Options _cacheOptions = buildCacheOptions(Duration(minutes: 5), forceRefresh: true);
+Options _cacheOptions =
+    buildCacheOptions(Duration(minutes: 5), forceRefresh: true);
 Dio _dio = Dio();
 
 Resultado parseResultado(Map<String, dynamic> responseBody) {
   return Resultado.fromJson(responseBody);
 }
 
-Future<Resultado> fetchResultado(String concursoName) async {
-  var url = LoteriaAPIService.getEndpointFor(concursoName);
+Future<Resultado> fetchResultado(String concursoName, int concurso) async {
+  var url = LoteriaAPIService.getEndpointFor(concursoName) + "&concurso=${concurso}";
   Response response = await _dio.get(url, options: _cacheOptions);
-
   if (response.statusCode == 200 && response.data is Map) {
     return compute(parseResultado, response.data as Map<String, dynamic>);
   } else {
@@ -39,7 +38,7 @@ bool await(Duration duration) {
 }
 
 Future<bool> futureAwait() {
-  return compute(await, Duration(seconds: 3));
+  return compute(await, Duration(seconds: 4));
 }
 
 class TabResultado extends StatefulWidget {
@@ -50,14 +49,77 @@ class TabResultado extends StatefulWidget {
   _TabResultadoState createState() => _TabResultadoState();
 }
 
-class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClientMixin {
+class _TabResultadoState extends State<TabResultado>
+    with AutomaticKeepAliveClientMixin {
   Future<Resultado> _futureResultado;
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+  final _concursoTextController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  int _ultimoConcurso;
+  int _concursoAtual;
 
-  void _onRefresh() async{
+  Future<void> _showMyDialog() async {
+    _concursoTextController.text = _concursoAtual?.toString();
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Número do concurso'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Digite o número do concurso que deseja buscar'),
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _concursoTextController,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (!RegExp('[0-9]').hasMatch(value)) {
+                        return "Valor inválido";
+                      } else if (int.parse(value) > _ultimoConcurso) {
+                        return "Valor máximo: ${_ultimoConcurso}";
+                      } else if (int.parse(value) < 1) {
+                        return "Valor mínimo: 1";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Buscar'),
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  _concursoAtual = int.parse(_concursoTextController.text);
+                  _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _onRefresh() async {
     setState(() {
-      _futureResultado = fetchResultado(widget.concursoBean.name);
-      _futureResultado.whenComplete(() => _refreshController.refreshCompleted());
+      _futureResultado =
+          fetchResultado(widget.concursoBean.name, _ultimoConcurso)
+              .whenComplete(() => _refreshController.refreshCompleted())
+              .whenComplete(() => _concursoAtual = _ultimoConcurso);
     });
   }
 
@@ -65,49 +127,78 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
   void initState() {
     super.initState();
     _dio.interceptors.add(_dioCacheManager.interceptor);
-    _futureResultado = fetchResultado(widget.concursoBean.name);
-    futureAwait()
-        .whenComplete(() => AdMobService.buildResultadoInterstitial()
-          ..load()
-          ..show());
+    _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
+    futureAwait().whenComplete(() => AdMobService.buildResultadoInterstitial()
+      ..load()
+      ..show());
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    _concursoTextController.dispose();
+    _refreshController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     var isDisconnected = Provider.of<DataConnectionStatus>(context) ==
-                  DataConnectionStatus.disconnected;
-    return SmartRefresher(
-      enablePullDown: !isDisconnected,
-      onRefresh: _onRefresh,
-      controller: _refreshController,
-      child: Flex(
-        direction: Axis.vertical,
-        children: [
-          Visibility(
-              visible: isDisconnected,
-              child: InternetNotAvailable()),
-          FutureBuilder<Resultado>(
+        DataConnectionStatus.disconnected;
+
+    return Column(
+      children: [
+        Visibility(visible: isDisconnected, child: InternetNotAvailable()),
+        Expanded(
+          child: FutureBuilder<Resultado>(
             future: _futureResultado,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Flexible(
-                  child: ListView(
-                    padding: EdgeInsets.only(
-                        left: 15, right: 15, top: 15, bottom: 35),
-                    children: _getResultadoWidgets(snapshot.data, context),
-                  ),
+                var resultado = snapshot.data;
+                _ultimoConcurso = _ultimoConcurso == null ? resultado.numero_concurso : _ultimoConcurso;
+                _concursoAtual = _concursoAtual == null ? _ultimoConcurso : _concursoAtual;
+                return Column(
+                  children: [
+                    !isDisconnected ? _getButtonsTop(resultado) : SizedBox.shrink(),
+                    Divider(height: 0),
+                    Expanded(
+                      child: SmartRefresher(
+                        enablePullDown: !isDisconnected,
+                        onRefresh: _onRefresh,
+                        controller: _refreshController,
+                        child: ListView(
+                          padding: EdgeInsets.only(
+                              left: 15, right: 15, top: 5, bottom: 35),
+                          children: _getResultadoWidgets(resultado, context),
+                        ),
+                      ),
+                    )
+                  ],
                 );
               } else if (snapshot.hasError) {
-                return Expanded(
-                    child: Center(child: Icon(Icons.signal_wifi_off)));
+                return SmartRefresher(
+                  enablePullDown: !isDisconnected,
+                  onRefresh: _onRefresh,
+                  controller: _refreshController,
+                  child: Column(
+                    children: [
+                      Expanded(
+                          child: Center(child: Icon(Icons.signal_wifi_off))),
+                    ],
+                  ),
+                );
               }
-              return Expanded(
-                  child: Center(child: CircularProgressIndicator()));
+              return Column(
+                children: [
+                  Expanded(
+                      child: Center(child: CircularProgressIndicator())),
+                ],
+              );
             },
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 
@@ -298,8 +389,8 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
 
     if (resultado.nome_acumulado_especial != null &&
         resultado.nome_acumulado_especial != '' &&
-        resultado.valor_acumulado_especial != null) {
-
+        resultado.valor_acumulado_especial != null &&
+        resultado.valor_acumulado_especial != 0) {
       builder.add(
         Padding(
           padding: const EdgeInsets.only(top: 10.0),
@@ -430,4 +521,43 @@ class _TabResultadoState extends State<TabResultado> with AutomaticKeepAliveClie
 
   @override
   bool get wantKeepAlive => true;
+
+  _getButtonsTop(Resultado resultado) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Visibility(
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
+          visible: _concursoAtual > 1,
+          child: FlatButton(
+              onPressed: () => setState(() {
+                --_concursoAtual;
+                _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
+              }),
+              child: Text("Anterior")),
+        ),
+        FlatButton(
+          onPressed: _showMyDialog,
+          child: Text(
+            _concursoAtual?.toString(),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Visibility(
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
+          visible: _concursoAtual < _ultimoConcurso,
+          child: FlatButton(
+              onPressed: () => setState(() {
+                ++_concursoAtual;
+                _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
+              }),
+              child: Text("Próximo")),
+        ),
+      ],
+    );
+  }
 }
