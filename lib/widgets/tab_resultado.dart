@@ -23,7 +23,8 @@ Resultado parseResultado(Map<String, dynamic> responseBody) {
 }
 
 Future<Resultado> fetchResultado(String concursoName, int concurso) async {
-  var url = LoteriaAPIService.getEndpointFor(concursoName) + "&concurso=${concurso}";
+  var url =
+      LoteriaAPIService.getEndpointFor(concursoName) + "&concurso=${concurso}";
   Response response = await _dio.get(url, options: _cacheOptions);
   if (response.statusCode == 200 && response.data is Map) {
     return compute(parseResultado, response.data as Map<String, dynamic>);
@@ -59,7 +60,7 @@ class _TabResultadoState extends State<TabResultado>
   int _ultimoConcurso;
   int _concursoAtual;
 
-  Future<void> _showMyDialog() async {
+  Future<void> _showDialogConcurso() async {
     _concursoTextController.text = _concursoAtual?.toString();
     return showDialog<void>(
       context: context,
@@ -103,7 +104,8 @@ class _TabResultadoState extends State<TabResultado>
               onPressed: () {
                 if (_formKey.currentState.validate()) {
                   _concursoAtual = int.parse(_concursoTextController.text);
-                  _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
+                  _futureResultado =
+                      fetchResultado(widget.concursoBean.name, _concursoAtual);
                   Navigator.of(context).pop();
                 }
               },
@@ -133,7 +135,6 @@ class _TabResultadoState extends State<TabResultado>
       ..show());
   }
 
-
   @override
   void dispose() {
     super.dispose();
@@ -149,19 +150,24 @@ class _TabResultadoState extends State<TabResultado>
 
     return Column(
       children: [
-        Visibility(visible: isDisconnected, child: InternetNotAvailable()),
+        isDisconnected ? InternetNotAvailable() : SizedBox.shrink(),
         Expanded(
           child: FutureBuilder<Resultado>(
             future: _futureResultado,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData &&
+                  snapshot.connectionState == ConnectionState.done) {
                 var resultado = snapshot.data;
-                _ultimoConcurso = _ultimoConcurso == null ? resultado.numero_concurso : _ultimoConcurso;
-                _concursoAtual = _concursoAtual == null ? _ultimoConcurso : _concursoAtual;
+                if (_ultimoConcurso == null) {
+                  _ultimoConcurso = resultado.numero_concurso;
+                }
+                if (_concursoAtual == null) {
+                  _concursoAtual = _ultimoConcurso;
+                }
                 return Column(
                   children: [
-                    !isDisconnected ? _getButtonsTop(resultado) : SizedBox.shrink(),
-                    Divider(height: 0),
+                    !isDisconnected ? _getButtonsTop() : SizedBox.shrink(),
+                    !isDisconnected ? Divider(height: 0) : SizedBox.shrink(),
                     Expanded(
                       child: SmartRefresher(
                         enablePullDown: !isDisconnected,
@@ -191,8 +197,7 @@ class _TabResultadoState extends State<TabResultado>
               }
               return Column(
                 children: [
-                  Expanded(
-                      child: Center(child: CircularProgressIndicator())),
+                  Expanded(child: Center(child: CircularProgressIndicator())),
                 ],
               );
             },
@@ -522,7 +527,7 @@ class _TabResultadoState extends State<TabResultado>
   @override
   bool get wantKeepAlive => true;
 
-  _getButtonsTop(Resultado resultado) {
+  _getButtonsTop() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -530,18 +535,18 @@ class _TabResultadoState extends State<TabResultado>
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
-          visible: _concursoAtual > 1,
+          visible: _concursoAtual != null && _concursoAtual > 1,
           child: FlatButton(
               onPressed: () => setState(() {
-                --_concursoAtual;
-                _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
-              }),
+                    --_concursoAtual;
+                    _futureResultado = fetchResultado(
+                        widget.concursoBean.name, _concursoAtual);
+                  }),
               child: Text("Anterior")),
         ),
         FlatButton(
-          onPressed: _showMyDialog,
-          child: Text(
-            _concursoAtual?.toString(),
+          onPressed: _showDialogConcurso,
+          child: Text(_concursoAtual != null ? _concursoAtual.toString() : "----",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -549,12 +554,13 @@ class _TabResultadoState extends State<TabResultado>
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
-          visible: _concursoAtual < _ultimoConcurso,
+          visible: _concursoAtual != null && _concursoAtual < _ultimoConcurso,
           child: FlatButton(
               onPressed: () => setState(() {
-                ++_concursoAtual;
-                _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
-              }),
+                    ++_concursoAtual;
+                    _futureResultado = fetchResultado(
+                        widget.concursoBean.name, _concursoAtual);
+                  }),
               child: Text("Próximo")),
         ),
       ],
