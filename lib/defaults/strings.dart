@@ -1,5 +1,7 @@
 
 
+import 'dart:math';
+
 class Strings {
 
   ///App name
@@ -16,7 +18,6 @@ class Strings {
   static const String sorteioRoute = "/Sorteio";
   static const String configuracoesRoute = "/Configuracoes";
 
-
   ///Strings
   //Titles
   static const String appBarTitle = "App Bar";
@@ -25,5 +26,17 @@ class Strings {
   static const String buttonsTitle = "Buttons";
   static const String animatedIconsTitle = "Animated Icons";
   static const String animatedSizeTitle = "Animated Size";
+
+  ///Notification bodies
+  static const bodies = [
+    'Confira se você acertou os jogos que fez',
+    'Venha ver o resultado agora mesmo pelo aplicativo',
+    'Veja agora as dezenas sorteadas',
+    'Confira o resultado do último sorteio'
+  ];
+
+  static String randomNotificationBody() {
+    return bodies[Random().nextInt(bodies.length-1)];
+  }
 
 }
