@@ -118,7 +118,7 @@ class AdMobService {
 
   static InterstitialAd buildResultadoInterstitial() {
     return InterstitialAd(
-        adUnitId: getSorteioInterstitialId(),
+        adUnitId: getResultadoInterstitialId(),
         listener: (MobileAdEvent event) {
           if (event == MobileAdEvent.loaded) {
             _resultadoInterstitial?.show();
