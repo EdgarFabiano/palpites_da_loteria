@@ -7,7 +7,7 @@ import 'package:palpites_da_loteria/service/notification_service.dart';
 class NotificationScheduler {
   static var notificationService = NotificationService();
 
-  static var defaultTime = Time(19, 48, 00);
+  static var defaultTime = Time(19, 51, 00);
 
   static var megaSenaSorteios = [Day.wednesday, Day.saturday, Day.sunday];
   static var lotofacilSorteios = [Day.monday, Day.tuesday, Day.wednesday, Day.thursday, Day.friday, Day.saturday, Day.sunday];
