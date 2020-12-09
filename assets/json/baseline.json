@@ -1,7 +1,7 @@
 {
   "concursosBean": [
     {
-      "name": "MEGA-SENA",
+      "name": "MG. SENA",
       "colorBean": {
         "r": 32,
         "g": 152,
@@ -14,7 +14,7 @@
       "maxSize": 15
     },
     {
-      "name": "LOTOFÁCIL",
+      "name": "LT. FÁCIL",
       "colorBean": {
         "r": 149,
         "g": 67,
@@ -27,7 +27,7 @@
       "maxSize": 20
     },
     {
-      "name": "QUINA",
+      "name": "QN",
       "colorBean": {
         "r": 45,
         "g": 57,
@@ -40,7 +40,7 @@
       "maxSize": 15
     },
     {
-      "name": "LOTOMANIA",
+      "name": "LT. MANIA",
       "colorBean": {
         "r": 247,
         "g": 132,
@@ -53,7 +53,7 @@
       "maxSize": 50
     },
     {
-      "name": "TIMEMANIA",
+      "name": "TM. MANIA",
       "colorBean": {
         "r": 94,
         "g": 232,
@@ -66,7 +66,7 @@
       "maxSize": 10
     },
     {
-      "name": "DUPLA SENA",
+      "name": "D. SENA",
       "colorBean": {
         "r": 166,
         "g": 42,
@@ -79,7 +79,7 @@
       "maxSize": 15
     },
     {
-      "name": "DIA DE SORTE",
+      "name": "D. DE SORTE",
       "colorBean": {
         "r": 203,
         "g": 133,
