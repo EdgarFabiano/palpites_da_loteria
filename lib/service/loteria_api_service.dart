@@ -18,21 +18,35 @@ class LoteriaAPIService {
   static String getConcursoEnpointNameFor(String concursoName) {
     switch (concursoName) {
       case "MEGA-SENA":
+      case "MG. SENA":
         return "megasena";
+
       case "LOTOFÁCIL":
+      case "LT. FÁCIL":
         return "lotofacil";
+
       case "QUINA":
+      case "QN":
         return "quina";
+
       case "LOTOMANIA":
+      case "LT. MANIA":
         return "lotomania";
+
       case "TIMEMANIA":
+      case "TM. MANIA":
         return "timemania";
+
       case "DUPLA SENA":
+      case "D. SENA":
         return "duplasena";
+
       case "DIA DE SORTE":
+      case "D. DE SORTE":
         return "diadesorte";
+
       default:
-        return null;
+        return "";
     }
   }
 

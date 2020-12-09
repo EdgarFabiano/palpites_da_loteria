@@ -45,13 +45,45 @@ Future<Concursos> getUsersConcursosFuture() async {
 /*This method is used to update user concursos list attributes due to permanent changes in baseline.json for older installations only*/
 void _updateBaselineChanges(Concursos concursos, SharedPreferences prefs) {
   /*This is needed because the last version baseline.json contained 18 as maxSize for "LOTOFÁCIL" contest*/
+  var lotofacil = concursos.concursosBeanList
+      .where((element) => element.name == "LOTOFÁCIL");
+
+  if (lotofacil != null && lotofacil.isNotEmpty) lotofacil.first.maxSize = 20;
+
+  /*Updates the name due to copyrights infringement*/
   concursos.concursosBeanList
-      .where((element) => element.name == "LOTOFÁCIL")
-      .first
-      .maxSize = 20;
+      .forEach((element) => element.name = getNewName(element.name));
 
   prefs.setString(
       Constants.concursosSharedPreferencesKey, concursos.toJsonString());
+}
+
+String getNewName(String concursoName) {
+  switch (concursoName) {
+    case "MEGA-SENA":
+      return "MG. SENA";
+
+    case "LOTOFÁCIL":
+      return "LT. FÁCIL";
+
+    case "QUINA":
+      return "QN";
+
+    case "LOTOMANIA":
+      return "LT. MANIA";
+
+    case "TIMEMANIA":
+      return "TM. MANIA";
+
+    case "DUPLA SENA":
+      return "D. SENA";
+
+    case "DIA DE SORTE":
+      return "D. DE SORTE";
+
+    default:
+      return concursoName;
+  }
 }
 
 void saveConcursos(Concursos concursos) async {
