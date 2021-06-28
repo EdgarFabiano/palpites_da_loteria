@@ -1,25 +1,15 @@
-import 'dart:io';
-
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 
 class AdMobService {
-  static final String testAppId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544~3347511713'
-      : 'ca-app-pub-3940256099942544~1458002511';
+  static final String testAppId = 'ca-app-pub-3940256099942544~3347511713';
+  static final String bannerTestAdUnitId =
+      'ca-app-pub-3940256099942544/6300978111';
+  static final String interstitialTestAdUnitId =
+      'ca-app-pub-3940256099942544/1033173712';
 
-  static final String bannerTestAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/6300978111'
-      : 'ca-app-pub-3940256099942544/2934735716';
-
-  static final String interstitialTestAdUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/4411468910';
-
-  static final String appId = Platform.isAndroid
-      ? "ca-app-pub-9921693044196842~4393626727"
-      : "ca-app-pub-9921693044196842~2867650422";
+  static final String appId = 'ca-app-pub-5932227223136302~5495066076';
 
   static String getAppId() {
     if (!Constants.isTesting) {
@@ -39,9 +29,8 @@ class AdMobService {
   }
 
   /*concursos-banner*/
-  static final String concursosBannerId = Platform.isAndroid
-      ? "ca-app-pub-9921693044196842/2888973360"
-      : "ca-app-pub-9921693044196842/3409548238";
+  static final String concursosBannerId =
+      'ca-app-pub-5932227223136302/9652914887';
 
   static BannerAd _concursosBanner;
 
@@ -57,6 +46,8 @@ class AdMobService {
       _concursosBanner = BannerAd(
         adUnitId: getConcursosBannerId(),
         size: AdSize.smartBanner,
+        targetingInfo: MobileAdTargetingInfo(
+            testDevices: ['4B0FDC40963AB3E77AED679FF240F802']),
       );
     }
     return _concursosBanner;
@@ -72,9 +63,8 @@ class AdMobService {
   }
 
   /*sorteio-interstitial*/
-  static final String sorteioInterstitialId = Platform.isAndroid
-      ? "ca-app-pub-9921693044196842/1209850177"
-      : "ca-app-pub-9921693044196842/3623071156";
+  static final String sorteioInterstitialId =
+      'ca-app-pub-5932227223136302/1351753033';
 
   static InterstitialAd _sorteioInterstitial;
 
@@ -90,6 +80,8 @@ class AdMobService {
   static InterstitialAd buildSorteioInterstitial() {
     return InterstitialAd(
         adUnitId: getSorteioInterstitialId(),
+        targetingInfo: MobileAdTargetingInfo(
+            testDevices: ['4B0FDC40963AB3E77AED679FF240F802']),
         listener: (MobileAdEvent event) {
           if (event == MobileAdEvent.loaded) {
             _sorteioInterstitial?.show();
@@ -101,9 +93,8 @@ class AdMobService {
   }
 
   /*resultado-interstitial*/
-  static final String resultadoInterstitialId = Platform.isAndroid
-      ? "ca-app-pub-9921693044196842/3747778987"
-      : "ca-app-pub-9921693044196842/7495452301";
+  static final String resultadoInterstitialId =
+      'ca-app-pub-5932227223136302/4509287460';
 
   static InterstitialAd _resultadoInterstitial;
 
@@ -119,6 +110,8 @@ class AdMobService {
   static InterstitialAd buildResultadoInterstitial() {
     return InterstitialAd(
         adUnitId: getResultadoInterstitialId(),
+        targetingInfo: MobileAdTargetingInfo(
+            testDevices: ['4B0FDC40963AB3E77AED679FF240F802']),
         listener: (MobileAdEvent event) {
           if (event == MobileAdEvent.loaded) {
             _resultadoInterstitial?.show();
@@ -128,5 +121,4 @@ class AdMobService {
           }
         });
   }
-
 }

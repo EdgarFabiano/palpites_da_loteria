@@ -1,4 +1,4 @@
-package com.efs.palpites_da_loteria;
+package com.efs.palpites_da_loteria2;
 
 import io.flutter.embedding.android.FlutterActivity;
 

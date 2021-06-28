@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:dio/dio.dart';
@@ -133,9 +134,11 @@ class _TabResultadoState extends State<TabResultado>
     _dio.interceptors.add(_dioCacheManager.interceptor);
     _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
     futureAwait().whenComplete(() {
-      return interstitialAd
-        ..load()
-        ..show();
+      if (Random().nextInt(10) > 4) {
+        return interstitialAd
+          ..load()
+          ..show();
+      }
     });
   }
 
