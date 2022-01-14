@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
@@ -25,7 +26,7 @@ Resultado parseResultado(Map<String, dynamic> responseBody) {
 
 Future<Resultado> fetchResultado(String concursoName, int concurso) async {
   var url =
-      LoteriaAPIService.getEndpointFor(concursoName) + "&concurso=${concurso}";
+      LoteriaAPIService.getEndpointFor(concursoName) + "&concurso=$concurso";
   Response response = await _dio.get(url, options: _cacheOptions);
   if (response.statusCode == 200 && response.data is Map) {
     return compute(parseResultado, response.data as Map<String, dynamic>);
@@ -61,7 +62,7 @@ class _TabResultadoState extends State<TabResultado>
   final _formKey = GlobalKey<FormState>();
   int _ultimoConcurso;
   int _concursoAtual;
-  var interstitialAd = AdMobService.buildResultadoInterstitial();
+  bool _mostrarResultado = false;
 
   Future<void> _showDialogConcurso() async {
     _concursoTextController.text = _concursoAtual?.toString();
@@ -84,7 +85,7 @@ class _TabResultadoState extends State<TabResultado>
                       if (!RegExp('[0-9]').hasMatch(value)) {
                         return "Valor inválido";
                       } else if (int.parse(value) > _ultimoConcurso) {
-                        return "Valor máximo: ${_ultimoConcurso}";
+                        return "Valor máximo: $_ultimoConcurso";
                       } else if (int.parse(value) < 1) {
                         return "Valor mínimo: 1";
                       }
@@ -96,13 +97,13 @@ class _TabResultadoState extends State<TabResultado>
             ),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Buscar'),
               onPressed: () {
                 if (_formKey.currentState.validate()) {
@@ -135,16 +136,31 @@ class _TabResultadoState extends State<TabResultado>
     _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
     futureAwait().whenComplete(() {
       if (Random().nextInt(10) > 4) {
-        return interstitialAd
+        return InterstitialAd(
+            adUnitId: AdMobService.getResultadoInterstitialId(),
+            targetingInfo: MobileAdTargetingInfo(
+                testDevices: AdMobService.testDevices()),
+            listener: (MobileAdEvent event) {
+              if (event == MobileAdEvent.clicked ||
+                  event == MobileAdEvent.closed ||
+                  event == MobileAdEvent.impression ||
+                  event == MobileAdEvent.leftApplication) {
+                AdMobService.resultadoInterstitial?.dispose();
+                setState(() {
+                  _mostrarResultado = true;
+                });
+              }
+            })
           ..load()
           ..show();
+      } else {
+        _mostrarResultado = true;
       }
     });
   }
 
   @override
   void dispose() {
-    interstitialAd.dispose();
     _concursoTextController.dispose();
     _refreshController.dispose();
     super.dispose();
@@ -163,45 +179,47 @@ class _TabResultadoState extends State<TabResultado>
           child: FutureBuilder<Resultado>(
             future: _futureResultado,
             builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.done) {
-                var resultado = snapshot.data;
-                if (_ultimoConcurso == null) {
-                  _ultimoConcurso = resultado.numero_concurso;
-                }
-                if (_concursoAtual == null) {
-                  _concursoAtual = _ultimoConcurso;
-                }
-                return Column(
-                  children: [
-                    !isDisconnected ? _getButtonsTop() : SizedBox.shrink(),
-                    !isDisconnected ? Divider(height: 0) : SizedBox.shrink(),
-                    Expanded(
-                      child: SmartRefresher(
-                        enablePullDown: !isDisconnected,
-                        onRefresh: _onRefresh,
-                        controller: _refreshController,
-                        child: ListView(
-                          padding: EdgeInsets.only(
-                              left: 15, right: 15, top: 5, bottom: 35),
-                          children: _getResultadoWidgets(resultado, context),
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return SmartRefresher(
-                  enablePullDown: !isDisconnected,
-                  onRefresh: _onRefresh,
-                  controller: _refreshController,
-                  child: Column(
+              if(_mostrarResultado) {
+                if (snapshot.hasData &&
+                    snapshot.connectionState == ConnectionState.done) {
+                  var resultado = snapshot.data;
+                  if (_ultimoConcurso == null) {
+                    _ultimoConcurso = resultado.numero_concurso;
+                  }
+                  if (_concursoAtual == null) {
+                    _concursoAtual = _ultimoConcurso;
+                  }
+                  return Column(
                     children: [
+                      !isDisconnected ? _getButtonsTop() : SizedBox.shrink(),
+                      !isDisconnected ? Divider(height: 0) : SizedBox.shrink(),
                       Expanded(
-                          child: Center(child: Icon(Icons.signal_wifi_off))),
+                        child: SmartRefresher(
+                          enablePullDown: !isDisconnected,
+                          onRefresh: _onRefresh,
+                          controller: _refreshController,
+                          child: ListView(
+                            padding: EdgeInsets.only(
+                                left: 15, right: 15, top: 5, bottom: 35),
+                            children: _getResultadoWidgets(resultado, context),
+                          ),
+                        ),
+                      )
                     ],
-                  ),
-                );
+                  );
+                } else if (snapshot.hasError) {
+                  return SmartRefresher(
+                    enablePullDown: !isDisconnected,
+                    onRefresh: _onRefresh,
+                    controller: _refreshController,
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: Center(child: Icon(Icons.signal_wifi_off))),
+                      ],
+                    ),
+                  );
+                }
               }
               return Column(
                 children: [

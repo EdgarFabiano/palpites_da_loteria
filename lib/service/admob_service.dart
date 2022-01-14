@@ -1,3 +1,4 @@
+
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
@@ -10,6 +11,11 @@ class AdMobService {
       'ca-app-pub-3940256099942544/1033173712';
 
   static final String appId = 'ca-app-pub-5932227223136302~5495066076';
+
+  static List<String> testDevices() {
+    return ['4B0FDC40963AB3E77AED679FF240F802',
+      '118F4E581E0D5DAA4F78D3B1A29E861C'];
+  }
 
   static String getAppId() {
     if (!Constants.isTesting) {
@@ -46,20 +52,19 @@ class AdMobService {
       _concursosBanner = BannerAd(
         adUnitId: getConcursosBannerId(),
         size: AdSize.smartBanner,
+        listener: (MobileAdEvent event) {
+          if (event == MobileAdEvent.loaded) {
+            _concursosBanner?.show();
+          }
+          if (event == MobileAdEvent.clicked || event == MobileAdEvent.closed) {
+            _concursosBanner?.load();
+          }
+        },
         targetingInfo: MobileAdTargetingInfo(
-            testDevices: ['4B0FDC40963AB3E77AED679FF240F802']),
+            testDevices: testDevices()),
       );
     }
     return _concursosBanner;
-  }
-
-  static void displayConcursosBanner() {
-    _concursosBanner
-      ..load()
-      ..show(
-        anchorOffset: 0.0,
-        anchorType: AnchorType.bottom,
-      );
   }
 
   /*sorteio-interstitial*/
@@ -78,18 +83,23 @@ class AdMobService {
   }
 
   static InterstitialAd buildSorteioInterstitial() {
-    return InterstitialAd(
+    _sorteioInterstitial = InterstitialAd(
         adUnitId: getSorteioInterstitialId(),
         targetingInfo: MobileAdTargetingInfo(
-            testDevices: ['4B0FDC40963AB3E77AED679FF240F802']),
+            testDevices: testDevices()),
         listener: (MobileAdEvent event) {
           if (event == MobileAdEvent.loaded) {
             _sorteioInterstitial?.show();
           }
-          if (event == MobileAdEvent.clicked || event == MobileAdEvent.closed) {
-            _sorteioInterstitial.dispose();
+          if (event == MobileAdEvent.clicked ||
+              event == MobileAdEvent.closed ||
+              event == MobileAdEvent.impression ||
+              event == MobileAdEvent.leftApplication) {
+            _sorteioInterstitial?.dispose();
+            _sorteioInterstitial = null;
           }
         });
+    return _sorteioInterstitial;
   }
 
   /*resultado-interstitial*/
@@ -107,18 +117,4 @@ class AdMobService {
     return interstitialTestAdUnitId;
   }
 
-  static InterstitialAd buildResultadoInterstitial() {
-    return InterstitialAd(
-        adUnitId: getResultadoInterstitialId(),
-        targetingInfo: MobileAdTargetingInfo(
-            testDevices: ['4B0FDC40963AB3E77AED679FF240F802']),
-        listener: (MobileAdEvent event) {
-          if (event == MobileAdEvent.loaded) {
-            _resultadoInterstitial?.show();
-          }
-          if (event == MobileAdEvent.clicked || event == MobileAdEvent.closed) {
-            _resultadoInterstitial.dispose();
-          }
-        });
-  }
 }

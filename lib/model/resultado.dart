@@ -149,7 +149,7 @@ class Resultado {
 
   String shareString() {
     return 'Aplicativo Palpites da loteria\n'
-        ' 👉 https://rb.gy/qpv1h9 🍀\n\n'
+        ' 👉 https://rb.gy/3dcmmn 🍀\n\n'
         'Resultado $nome\n\n' +
         (acumulou ? 'ACUMULOU' : 'TEVE GANHADOR') + '\n\n' +
         (dezenas != null && dezenas.isNotEmpty ? getDezenasDisplayValue() + '\n\n' : '')  +

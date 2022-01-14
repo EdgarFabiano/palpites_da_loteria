@@ -1,10 +1,12 @@
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/pages/settings_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final InAppReview _inAppReview = InAppReview.instance;
 
@@ -66,19 +68,21 @@ class _AppDrawerState extends State<AppDrawer> {
                 CupertinoPageRoute(builder: (context) => SettingsPage()));
           },
         ),
-        // ListTile(
-        //   leading: Icon(Icons.beenhere),
-        //   title: Text("Termos de uso"),
-        //   onTap: () {
-        //     Navigator.of(context).pop();
-        //     Navigator.push(context,
-        //         CupertinoPageRoute(builder: (context) => TermosDeUsoPage()));
-        //   },
-        // ),
         ListTile(
           leading: Icon(Icons.star),
           title: Text("Avaliar"),
           onTap: _requestReview,
+        ),
+        ListTile(
+          leading: Icon(Icons.store),
+          title: Text("Mais apps como este"),
+          onTap: () {
+            try {
+              launch("https://play.google.com/store/apps/dev?id=9122266344608230682&hl=pt_BR");
+            } on PlatformException catch(e) {
+              Fluttertoast.showToast(msg: "Operação indisponível no momento");
+            }
+          },
         ),
       ],
     );

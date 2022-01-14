@@ -16,7 +16,7 @@ class TabSorteio extends StatefulWidget {
 
 class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMixin {
 
-  List<Dezena> _dezenas = List();
+  List<Dezena> _dezenas = [];
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
   bool _primeiraVez = true;
   double _numeroDeDezenasASortear;
@@ -46,7 +46,6 @@ class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMi
   void initState() {
     super.initState();
     _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
-    AdMobService.buildSorteioInterstitial();
   }
 
   @override
