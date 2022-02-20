@@ -5,7 +5,7 @@ class Dezena extends StatefulWidget {
   final Color _color;
   final bool _show0;
 
-  const Dezena(this._dezena, this._color, this._show0, {Key key}) : super(key: key);
+  const Dezena(this._dezena, this._color, this._show0, {Key? key}) : super(key: key);
 
   @override
   _DezenaState createState() => _DezenaState();

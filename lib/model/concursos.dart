@@ -24,17 +24,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class Concursos extends Iterable<dynamic> {
-  List<ConcursoBean> concursosBeanList;
+  List<ConcursoBean> concursosBeanList = [];
 
-  Concursos({this.concursosBeanList});
+  Concursos({required this.concursosBeanList});
 
-  Concursos.fromJson(Map<String, dynamic> json) {    
-    this.concursosBeanList = (json['concursosBean'] as List)!=null?(json['concursosBean'] as List).map((i) => ConcursoBean.fromJson(i)).toList():null;
+  Concursos.fromJson(Map<String, dynamic> json) {
+    this.concursosBeanList = (json['concursosBean'] as List)
+        .map((i) => ConcursoBean.fromJson(i))
+        .toList();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['concursosBean'] = this.concursosBeanList != null?this.concursosBeanList.map((i) => i.toJson()).toList():null;
+    data['concursosBean'] =
+        this.concursosBeanList.map((i) => i.toJson()).toList();
     return data;
   }
 
@@ -48,7 +51,6 @@ class Concursos extends Iterable<dynamic> {
 
   @override
   Iterator get iterator => concursosBeanList.iterator;
-
 }
 
 class ConcursoBean {
@@ -60,16 +62,26 @@ class ConcursoBean {
   int maxSize;
   ColorBean colorBean;
 
-  ConcursoBean({this.name, this.enabled, this.spaceStart, this.spaceEnd, this.minSize, this.maxSize, this.colorBean});
+  ConcursoBean(
+      {required this.name,
+      required this.enabled,
+      required this.spaceStart,
+      required this.spaceEnd,
+      required this.minSize,
+      required this.maxSize,
+      required this.colorBean});
 
-  ConcursoBean.fromJson(Map<String, dynamic> json) {
-    this.name = json['name'];
-    this.enabled = json['enabled'];
-    this.spaceStart = json['spaceStart'];
-    this.spaceEnd = json['spaceEnd'];
-    this.minSize = json['minSize'];
-    this.maxSize = json['maxSize'];
-    this.colorBean = json['colorBean'] != null ? ColorBean.fromJson(json['colorBean']) : null;
+  static ConcursoBean fromJson(Map<String, dynamic> json) {
+    return ConcursoBean(
+        name: json['name'],
+        enabled: json['enabled'],
+        spaceStart: json['spaceStart'],
+        spaceEnd: json['spaceEnd'],
+        minSize: json['minSize'],
+        maxSize: json['maxSize'],
+        colorBean: json['colorBean'] != null
+            ? ColorBean.fromJson(json['colorBean'])
+            : ColorBean(b: 0, g: 0, r: 0));
   }
 
   Map<String, dynamic> toJson() {
@@ -80,9 +92,7 @@ class ConcursoBean {
     data['spaceEnd'] = this.spaceEnd;
     data['minSize'] = this.minSize;
     data['maxSize'] = this.maxSize;
-    if (this.colorBean != null) {
-      data['colorBean'] = this.colorBean.toJson();
-    }
+    data['colorBean'] = this.colorBean.toJson();
     return data;
   }
 
@@ -97,12 +107,14 @@ class ColorBean {
   int g;
   int b;
 
-  ColorBean({this.r, this.g, this.b});
+  ColorBean({required this.r, required this.g, required this.b});
 
-  ColorBean.fromJson(Map<String, dynamic> json) {
-    this.r = json['r'];
-    this.g = json['g'];
-    this.b = json['b'];
+  static ColorBean fromJson(Map<String, dynamic> json) {
+    return ColorBean(
+      r: json['r'] != null ? json['r'] : 0,
+      g: json['g'] != null ? json['g'] : 0,
+      b: json['b'] != null ? json['b'] : 0,
+    );
   }
 
   Map<String, dynamic> toJson() {

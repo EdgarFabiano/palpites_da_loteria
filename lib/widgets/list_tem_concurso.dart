@@ -9,7 +9,7 @@ class ListItemConcurso extends StatefulWidget {
   final ConcursoBean _concursoBean;
   final Concursos _concursos;
 
-  ListItemConcurso(this._concursoBean, this._concursos, {Key key}) : super(key: key);
+  ListItemConcurso(this._concursoBean, this._concursos, {Key? key}) : super(key: key);
 
   ConcursoBean get concursoBean => _concursoBean;
 

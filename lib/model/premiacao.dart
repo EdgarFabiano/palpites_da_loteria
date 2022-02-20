@@ -2,10 +2,10 @@
 import 'package:palpites_da_loteria/service/format_service.dart';
 
 class Premiacao {
-  int acertos;
-  String nome;
-  int quantidade_ganhadores;
-  double valor_total;
+  int? acertos;
+  String? nome;
+  int? quantidade_ganhadores;
+  double? valor_total;
 
   Premiacao({this.acertos, this.nome, this.quantidade_ganhadores, this.valor_total});
 

@@ -21,18 +21,18 @@ Future<Concursos> getBaselineFuture() async {
 
 Future<Concursos> getUsersConcursosFuture() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String stringConcursos =
-      await prefs.get(Constants.concursosSharedPreferencesKey);
+  String? stringConcursos =
+  prefs.get(Constants.concursosSharedPreferencesKey) as String?;
 
   if (stringConcursos == null) {
     await getBaselineFuture().then((onValue) => prefs.setString(
         Constants.concursosSharedPreferencesKey,
         json.encode(onValue.toJson())));
-    stringConcursos = await prefs.get(Constants.concursosSharedPreferencesKey);
+    stringConcursos = prefs.get(Constants.concursosSharedPreferencesKey) as String?;
     _updated = true;
   }
 
-  Concursos concursos = await compute(parseJson, stringConcursos);
+  Concursos concursos = parseJson(stringConcursos!);
 
   if (!_updated) {
     _updateBaselineChanges(concursos, prefs);
@@ -48,7 +48,7 @@ void _updateBaselineChanges(Concursos concursos, SharedPreferences prefs) {
   var lotofacil = concursos.concursosBeanList
       .where((element) => element.name == "LOTOFÁCIL");
 
-  if (lotofacil != null && lotofacil.isNotEmpty) lotofacil.first.maxSize = 20;
+  if (lotofacil.isNotEmpty) lotofacil.first.maxSize = 20;
 
   /*Updates the name due to copyrights infringement*/
   concursos.concursosBeanList
@@ -86,16 +86,15 @@ String getNewName(String concursoName) {
   }
 }
 
-void saveConcursos(Concursos concursos) async {
+void saveConcursos(Concursos? concursos) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString(
-      Constants.concursosSharedPreferencesKey, concursos.toJsonString());
+      Constants.concursosSharedPreferencesKey, concursos!.toJsonString());
 }
 
 void saveConcurso(ConcursoBean concurso) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String usersConcursos =
-      await prefs.get(Constants.concursosSharedPreferencesKey);
+  String usersConcursos = prefs.get(Constants.concursosSharedPreferencesKey) as String;
   Map<String, dynamic> map = Concursos.toMap(usersConcursos);
   Concursos concursos = Concursos.fromJson(map);
   concursos.concursosBeanList.forEach((element) {

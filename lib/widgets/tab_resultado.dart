@@ -2,17 +2,15 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
-import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
@@ -24,7 +22,7 @@ Resultado parseResultado(Map<String, dynamic> responseBody) {
   return Resultado.fromJson(responseBody);
 }
 
-Future<Resultado> fetchResultado(String concursoName, int concurso) async {
+Future<Resultado> fetchResultado(String concursoName, int? concurso) async {
   var url =
       LoteriaAPIService.getEndpointFor(concursoName) + "&concurso=$concurso";
   Response response = await _dio.get(url, options: _cacheOptions);
@@ -47,7 +45,7 @@ Future<bool> futureAwait() {
 class TabResultado extends StatefulWidget {
   final ConcursoBean concursoBean;
 
-  const TabResultado(this.concursoBean, {Key key}) : super(key: key);
+  const TabResultado(this.concursoBean, {Key? key}) : super(key: key);
 
   @override
   _TabResultadoState createState() => _TabResultadoState();
@@ -55,17 +53,17 @@ class TabResultado extends StatefulWidget {
 
 class _TabResultadoState extends State<TabResultado>
     with AutomaticKeepAliveClientMixin {
-  Future<Resultado> _futureResultado;
+  Future<Resultado>? _futureResultado;
   RefreshController _refreshController =
   RefreshController(initialRefresh: false);
   final _concursoTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  int _ultimoConcurso;
-  int _concursoAtual;
+  int _ultimoConcurso = 0;
+  int _concursoAtual = 0;
   bool _mostrarResultado = false;
 
   Future<void> _showDialogConcurso() async {
-    _concursoTextController.text = _concursoAtual?.toString();
+    _concursoTextController.text = _concursoAtual.toString();
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -82,7 +80,7 @@ class _TabResultadoState extends State<TabResultado>
                     controller: _concursoTextController,
                     keyboardType: TextInputType.number,
                     validator: (value) {
-                      if (!RegExp('[0-9]').hasMatch(value)) {
+                      if (!RegExp('[0-9]').hasMatch(value!)) {
                         return "Valor inválido";
                       } else if (int.parse(value) > _ultimoConcurso) {
                         return "Valor máximo: $_ultimoConcurso";
@@ -106,7 +104,7 @@ class _TabResultadoState extends State<TabResultado>
             TextButton(
               child: Text('Buscar'),
               onPressed: () {
-                if (_formKey.currentState.validate()) {
+                if (_formKey.currentState!.validate()) {
                   _concursoAtual = int.parse(_concursoTextController.text);
                   _futureResultado =
                       fetchResultado(widget.concursoBean.name, _concursoAtual);
@@ -136,23 +134,8 @@ class _TabResultadoState extends State<TabResultado>
     _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
     futureAwait().whenComplete(() {
       if (Random().nextInt(10) > 4) {
-        return InterstitialAd(
-            adUnitId: AdMobService.getResultadoInterstitialId(),
-            targetingInfo: MobileAdTargetingInfo(
-                testDevices: AdMobService.testDevices()),
-            listener: (MobileAdEvent event) {
-              if (event == MobileAdEvent.clicked ||
-                  event == MobileAdEvent.closed ||
-                  event == MobileAdEvent.impression ||
-                  event == MobileAdEvent.leftApplication) {
-                AdMobService.resultadoInterstitial?.dispose();
-                setState(() {
-                  _mostrarResultado = true;
-                });
-              }
-            })
-          ..load()
-          ..show();
+        AdMobService.createResultadoInterstitialAd();
+        AdMobService.showResultadoInterstitialAd();
       } else {
         _mostrarResultado = true;
       }
@@ -166,11 +149,15 @@ class _TabResultadoState extends State<TabResultado>
     super.dispose();
   }
 
+  Future<bool> _isDisconnected() async {
+    return !await InternetConnectionChecker().hasConnection;
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var isDisconnected = Provider.of<DataConnectionStatus>(context) ==
-        DataConnectionStatus.disconnected;
+    bool isDisconnected = false;
+    _isDisconnected().then((value) => isDisconnected = value);
 
     return Column(
       children: [
@@ -183,12 +170,8 @@ class _TabResultadoState extends State<TabResultado>
                 if (snapshot.hasData &&
                     snapshot.connectionState == ConnectionState.done) {
                   var resultado = snapshot.data;
-                  if (_ultimoConcurso == null) {
-                    _ultimoConcurso = resultado.numero_concurso;
-                  }
-                  if (_concursoAtual == null) {
-                    _concursoAtual = _ultimoConcurso;
-                  }
+                  _ultimoConcurso = resultado!.numero_concurso!;
+                  _concursoAtual = _ultimoConcurso;
                   return Column(
                     children: [
                       !isDisconnected ? _getButtonsTop() : SizedBox.shrink(),
@@ -247,7 +230,7 @@ class _TabResultadoState extends State<TabResultado>
         child: Padding(
           padding: EdgeInsets.only(top: 10, bottom: 10),
           child: Text(
-            resultado.acumulou ? "ACUMULOU!" : "TEVE GANHADOR",
+            resultado.acumulou! ? "ACUMULOU!" : "TEVE GANHADOR",
             style: TextStyle(fontSize: 25),
           ),
         ),
@@ -275,7 +258,7 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.dezenas != null && resultado.dezenas.isNotEmpty) {
+    if (resultado.dezenas != null && resultado.dezenas!.isNotEmpty) {
       builder.add(Card(
         color: widget.concursoBean.colorBean.getColor(context),
         child: Padding(
@@ -291,7 +274,7 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.dezenas_2 != null && resultado.dezenas_2.isNotEmpty) {
+    if (resultado.dezenas_2 != null && resultado.dezenas_2!.isNotEmpty) {
       builder.add(Card(
         color: widget.concursoBean.colorBean.getColor(context),
         child: Padding(
@@ -312,7 +295,7 @@ class _TabResultadoState extends State<TabResultado>
       builder.add(Padding(
         padding: EdgeInsets.only(top: 10),
         child: Center(
-            child: Text("Local de realização: " + resultado.local_realizacao)),
+            child: Text("Local de realização: " + resultado.local_realizacao!)),
       ));
     }
 
@@ -445,7 +428,7 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.premiacao != null && resultado.premiacao.isNotEmpty) {
+    if (resultado.premiacao != null && resultado.premiacao!.isNotEmpty) {
       builder.add(Padding(
         padding: EdgeInsets.only(top: 15),
         child: Card(
@@ -454,14 +437,14 @@ class _TabResultadoState extends State<TabResultado>
               bottom: defaultTableBorder,
               horizontalInside: defaultTableBorder,
             ),
-            children: _criarTabelaPremiacao(resultado.premiacao),
+            children: _criarTabelaPremiacao(resultado.premiacao!),
           ),
         ),
       ));
     }
 
     if (resultado.local_ganhadores != null &&
-        resultado.local_ganhadores.isNotEmpty) {
+        resultado.local_ganhadores!.isNotEmpty) {
       builder.add(Padding(
         padding: EdgeInsets.only(top: 15),
         child: Card(
@@ -470,7 +453,7 @@ class _TabResultadoState extends State<TabResultado>
               bottom: defaultTableBorder,
               horizontalInside: defaultTableBorder,
             ),
-            children: _criarTabelaLocalGanhadores(resultado.local_ganhadores),
+            children: _criarTabelaLocalGanhadores(resultado.local_ganhadores!),
           ),
         ),
       ));
@@ -516,7 +499,7 @@ class _TabResultadoState extends State<TabResultado>
         Container(
           alignment: Alignment.center,
           child: Text(
-            localGanhador.local,
+            localGanhador.local!,
           ),
           padding: EdgeInsets.all(10.0),
         ),

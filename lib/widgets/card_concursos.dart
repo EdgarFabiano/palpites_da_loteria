@@ -6,7 +6,7 @@ import 'package:palpites_da_loteria/pages/sorteio_resultado_page.dart';
 
 class CardConcursos extends StatefulWidget {
   final ConcursoBean _concursoBean;
-  const CardConcursos(this._concursoBean, {Key key}) : super(key: key);
+  const CardConcursos(this._concursoBean, {Key? key}) : super(key: key);
 
   @override
   _CardConcursosState createState() => _CardConcursosState();

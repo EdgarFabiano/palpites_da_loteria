@@ -8,7 +8,7 @@ import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 class TabSorteio extends StatefulWidget {
   final ConcursoBean concursoBean;
-  const TabSorteio(this.concursoBean, {Key key}) : super(key: key);
+  const TabSorteio(this.concursoBean, {Key? key}) : super(key: key);
 
   @override
   _TabSorteioState createState() => _TabSorteioState();
@@ -19,13 +19,14 @@ class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMi
   List<Dezena> _dezenas = [];
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
   bool _primeiraVez = true;
-  double _numeroDeDezenasASortear;
+  double _numeroDeDezenasASortear = 0;
   int _chance = 3;
 
   void _sortear(double increment) {
     _numeroDeDezenasASortear += increment;
     _dezenas = _sorteioGenerator
-        .sortear(_numeroDeDezenasASortear.toInt(), widget.concursoBean, context)
+        .sortear(_numeroDeDezenasASortear.toInt(), widget.concursoBean)
+        .map((value) => Dezena(value.toString(), widget.concursoBean.colorBean.getColor(context), true)).toList()
         .toList();
   }
 
@@ -34,9 +35,7 @@ class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMi
       _sortear(increment);
       _chance++;
       if (_chance >= 5) {
-        AdMobService.buildSorteioInterstitial()
-          ..load()
-          ..show();
+        AdMobService.showSorteioInterstitialAd();
         _chance = 0;
       }
     });
@@ -45,6 +44,7 @@ class _TabSorteioState extends State<TabSorteio> with AutomaticKeepAliveClientMi
   @override
   void initState() {
     super.initState();
+    AdMobService.createSorteioInterstitialAd();
     _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
   }
 

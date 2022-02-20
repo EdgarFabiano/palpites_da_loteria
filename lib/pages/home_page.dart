@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
@@ -16,15 +17,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  List<CardConcursos> cards;
-  ConcursosSettingsChangeNotifier concursosProvider;
-  Concursos concursos;
+  List<CardConcursos>? cards;
+  ConcursosSettingsChangeNotifier? concursosProvider;
+  Concursos? concursos;
 
   @override
   void initState() {
     super.initState();
-    AdMobService.startConcursosBanner()..load();
-    // AdMobService.displayConcursosBanner();
+    AdMobService.getConcursosBanner().load();
   }
 
   @override
@@ -43,10 +43,10 @@ class _HomePageState extends State<HomePage> {
     var spacing = mediaQueryData.size.height / 100;
 
     concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
-    concursos = concursosProvider.getConcursos();
+    concursos = concursosProvider?.getConcursos();
 
     if (concursosProvider != null && concursos != null) {
-      cards = concursos
+      cards = concursos!
           .where((element) => element.enabled)
           .map((concurso) => CardConcursos(concurso))
           .toList();
@@ -61,14 +61,28 @@ class _HomePageState extends State<HomePage> {
         body: Padding(
           padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
           child: Center(
-              child: GridView(
-                padding: EdgeInsets.all(spacing),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  crossAxisSpacing: spacing,
-                  mainAxisSpacing: spacing,
-                  maxCrossAxisExtent: tileSize,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    GridView(
+                      padding: EdgeInsets.all(spacing),
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        crossAxisSpacing: spacing,
+                        mainAxisSpacing: spacing,
+                        maxCrossAxisExtent: tileSize,
+                      ),
+                      children: cards!,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                    ),
+                Container(
+                  alignment: Alignment.center,
+                  child: AdWidget(ad: AdMobService.getConcursosBanner()),
+                  width: AdMobService.getConcursosBanner().size.width.toDouble(),
+                  height: AdMobService.getConcursosBanner().size.height.toDouble(),
                 ),
-                children: cards,
+            ],
+                ),
               )),
         ),
       );

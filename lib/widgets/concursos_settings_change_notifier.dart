@@ -5,7 +5,7 @@ import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/concurso_service.dart' as concursoService;
 
 class ConcursosSettingsChangeNotifier with ChangeNotifier {
-  Concursos _concursos;
+  Concursos? _concursos;
 
   ConcursosSettingsChangeNotifier();
 
@@ -20,7 +20,7 @@ class ConcursosSettingsChangeNotifier with ChangeNotifier {
   void onReorder(int start, int current) {
 
     // dragging from top to bottom
-    var concursosBeanList = _concursos.concursosBeanList;
+    List<ConcursoBean> concursosBeanList = _concursos!.concursosBeanList;
 
     if (start < current) {
       int end = current - 1;
