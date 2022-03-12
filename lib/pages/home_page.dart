@@ -16,29 +16,38 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   List<CardConcursos>? cards;
   ConcursosSettingsChangeNotifier? concursosProvider;
   Concursos? concursos;
+  BannerAd _bannerAd = AdMobService.getBannerAd(AdMobService.concursosBannerId);
 
   @override
   void initState() {
     super.initState();
-    AdMobService.getConcursosBanner().load();
+    _bannerAd.load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     var mediaQueryData = MediaQuery.of(context);
     var isPortrait = mediaQueryData.orientation == Orientation.portrait;
 
     var screenWidth = mediaQueryData.size.width;
     var portraitSize = screenWidth / 2;
     var landscapeSize = screenWidth / 4;
-    var tileSize = isPortrait ?
-    (portraitSize > Constants.tileMaxSize ? Constants.tileMaxSize: portraitSize)
-        : (landscapeSize > Constants.tileMaxSize ? Constants.tileMaxSize: landscapeSize) ;
+    var tileSize = isPortrait
+        ? (portraitSize > Constants.tileMaxSize
+            ? Constants.tileMaxSize
+            : portraitSize)
+        : (landscapeSize > Constants.tileMaxSize
+            ? Constants.tileMaxSize
+            : landscapeSize);
 
     var spacing = mediaQueryData.size.height / 100;
 
@@ -58,48 +67,38 @@ class _HomePageState extends State<HomePage> {
         drawer: Drawer(
           child: AppDrawer(),
         ),
-        body: Padding(
-          padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
-          child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    GridView(
-                      padding: EdgeInsets.all(spacing),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        crossAxisSpacing: spacing,
-                        mainAxisSpacing: spacing,
-                        maxCrossAxisExtent: tileSize,
-                      ),
-                      children: cards!,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                    ),
-                Container(
-                  alignment: Alignment.center,
-                  child: AdWidget(ad: AdMobService.getConcursosBanner()),
-                  width: AdMobService.getConcursosBanner().size.width.toDouble(),
-                  height: AdMobService.getConcursosBanner().size.height.toDouble(),
+        body: Center(
+          child: Column(
+            children: [
+              Flexible(
+                child: GridView(
+                  padding: EdgeInsets.all(spacing),
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    crossAxisSpacing: spacing,
+                    mainAxisSpacing: spacing,
+                    maxCrossAxisExtent: tileSize,
+                  ),
+                  children: cards!,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: false,
                 ),
+              ),
+              AdMobService.getBannerAdWidget(_bannerAd),
             ],
-                ),
-              )),
+          ),
         ),
       );
-
     } else {
-      return Padding(
-        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(Strings.appName),
-          ),
-          drawer: Drawer(
-            child: AppDrawer(),
-          ),
-          body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(Strings.appName),
         ),
+        drawer: Drawer(
+          child: AppDrawer(),
+        ),
+        body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
       );
     }
   }
+
 }

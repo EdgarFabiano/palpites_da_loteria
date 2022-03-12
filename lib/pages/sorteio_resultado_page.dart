@@ -1,8 +1,8 @@
-
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
@@ -38,6 +38,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   int _activeTabIndex = 0;
   TabController? _tabController;
   Resultado? _resultado;
+  BannerAd _bannerAd = AdMobService.getBannerAd(AdMobService.sorteioBannerId);
 
   fetchResultado(String concursoName) async {
     var url = LoteriaAPIService.getEndpointFor(concursoName);
@@ -45,9 +46,8 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
 
     if (response.statusCode == 200 && response.data is Map) {
       compute(parseResultado, response.data as Map<String, dynamic>)
-          .then((value) => {
-        _resultado = value
-      }).whenComplete(() => setState(() {}));
+          .then((value) => {_resultado = value})
+          .whenComplete(() => setState(() {}));
     }
   }
 
@@ -64,11 +64,15 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     fetchResultado(widget._concurso.name);
     _tabController = TabController(vsync: this, length: _tabs.length);
     _tabController!.addListener(_setActiveTabIndex);
+    _bannerAd.load();
   }
 
   @override
   void dispose() {
+    print('Disposing $_tabController');
     _tabController!.dispose();
+    print('Disposing $_bannerAd');
+    _bannerAd.dispose();
     super.dispose();
   }
 
@@ -77,37 +81,41 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     var tabSorteio = TabSorteio(widget._concurso);
     var tabResultado = TabResultado(widget._concurso);
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
-      child: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-              backgroundColor: widget._concurso.colorBean.getColor(context),
-              bottom: TabBar(
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+            backgroundColor: widget._concurso.colorBean.getColor(context),
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: _tabs,
+            ),
+            title: Text(widget._concurso.name),
+            actions: <Widget>[
+              _activeTabIndex == 0 ? PopUpMenu() : SizedBox.shrink(),
+              _activeTabIndex == 1 && _resultado != null
+                  ? IconButton(
+                      icon: const Icon(Icons.share),
+                      tooltip: 'Compartilhar resultado',
+                      onPressed: () {
+                        Share.share(_resultado!.shareString());
+                      },
+                    )
+                  : SizedBox.shrink(),
+            ]),
+        body: Column(
+          children: [
+            Flexible(
+              child: TabBarView(
                 controller: _tabController,
-                tabs: _tabs,
+                children: [
+                  tabSorteio,
+                  tabResultado,
+                ],
               ),
-              title: Text(widget._concurso.name),
-              actions: <Widget>[
-                _activeTabIndex == 0 ? PopUpMenu() : SizedBox.shrink(),
-                _activeTabIndex == 1 && _resultado != null
-                    ? IconButton(
-                        icon: const Icon(Icons.share),
-                        tooltip: 'Compartilhar resultado',
-                        onPressed: () {
-                          Share.share(_resultado!.shareString());
-                        },
-                      )
-                    : SizedBox.shrink(),
-              ]),
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              tabSorteio,
-              tabResultado,
-            ],
-          ),
+            ),
+            AdMobService.getBannerAdWidget(_bannerAd),
+          ],
         ),
       ),
     );

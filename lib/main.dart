@@ -61,14 +61,3 @@ class ConcursosMaterialApp extends StatelessWidget {
     );
   }
 }
-
-/*
-data: (brightness) => new ThemeData(
-        primarySwatch: Colors.indigo,
-        brightness: brightness,
-        pageTransitionsTheme: PageTransitionsTheme(builders: {
-          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-        }),
-      ),
-* */

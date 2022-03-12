@@ -40,30 +40,45 @@ class AdMobService {
 
   /*concursos-banner*/
   static final String concursosBannerId =
-      'ca-app-pub-5932227223136302/9652914887';
+  Constants.isTesting ? bannerTestAdUnitId :
+  'ca-app-pub-5932227223136302/9652914887';
 
-  static BannerAd _concursosBanner = BannerAd(
-    adUnitId: getConcursosBannerId(),
-    size: AdSize.smartBanner,
-    request: request,
-    listener: BannerAdListener(
-      onAdFailedToLoad: (Ad ad, LoadAdError error) {
-        ad.dispose();
-        print('Ad failed to load: $error');
-      },
-    ),
-  );
+  static final String sorteioBannerId =
+  Constants.isTesting ? bannerTestAdUnitId :
+  'ca-app-pub-5932227223136302/6252940206';
 
-  static String getConcursosBannerId() {
-    if (!Constants.isTesting) {
-      return concursosBannerId;
-    }
-    return bannerTestAdUnitId;
+  static BannerAd getBannerAd(String id) {
+    BannerAd banner = BannerAd(
+        adUnitId: id,
+        request: AdManagerAdRequest(),
+        listener: AdManagerBannerAdListener(
+          onAdLoaded: (Ad ad) {
+            print('$ad loaded.');
+          },
+          onAdFailedToLoad: (Ad ad, LoadAdError error) {
+            print('$ad Failed To Load: $error');
+            ad.dispose();
+          },
+          onAdOpened: (Ad ad) => print('$ad Ad Opened.'),
+          onAdClosed: (Ad ad) {
+            print('$ad Ad Closed.');
+            ad.dispose();
+            },
+        ), size: AdSize.largeBanner,
+      );
+
+    return banner;
   }
 
-  static BannerAd getConcursosBanner() {
-    return _concursosBanner;
+  static Widget getBannerAdWidget (BannerAd bannerAd) {
+    return Container(
+      child: AdWidget(ad: bannerAd),
+      width: bannerAd.size.width.toDouble(),
+      height: bannerAd.size.height.toDouble(),
+      alignment: Alignment.center,
+    );
   }
+
 
   /*sorteio-interstitial*/
   static final String sorteioInterstitialId =

@@ -6,7 +6,6 @@
         <color android:color="#303030" />
     </item>
 
-    <!-- You can insert your own image assets here -->
     <item>
         <bitmap
             android:gravity="center"
