@@ -11,7 +11,6 @@ import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
 Options _cacheOptions =
@@ -45,8 +44,6 @@ class TabResultado extends StatefulWidget {
 class _TabResultadoState extends State<TabResultado>
     with AutomaticKeepAliveClientMixin {
   Future<Resultado>? _futureResultado;
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
   final _concursoTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   int _ultimoConcurso = 0;
@@ -97,6 +94,7 @@ class _TabResultadoState extends State<TabResultado>
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _concursoAtual = int.parse(_concursoTextController.text);
+                  if (_concursoAtual > _ultimoConcurso) _concursoAtual = _ultimoConcurso;
                   setState(() {
                     _futureResultado = fetchResultado(
                         widget.concursoBean.name, _concursoAtual);
@@ -109,15 +107,6 @@ class _TabResultadoState extends State<TabResultado>
         );
       },
     );
-  }
-
-  void _onRefresh() async {
-    setState(() {
-      _concursoAtual = _ultimoConcurso;
-      _futureResultado =
-          fetchResultado(widget.concursoBean.name, _concursoAtual)
-              .whenComplete(() => _refreshController.refreshCompleted());
-    });
   }
 
   @override
@@ -147,7 +136,6 @@ class _TabResultadoState extends State<TabResultado>
   @override
   void dispose() {
     _concursoTextController.dispose();
-    _refreshController.dispose();
     super.dispose();
   }
 
@@ -177,30 +165,20 @@ class _TabResultadoState extends State<TabResultado>
                     children: [
                       !isDisconnected ? Divider(height: 0) : SizedBox.shrink(),
                       Expanded(
-                        child: SmartRefresher(
-                          enablePullDown: !isDisconnected,
-                          onRefresh: _onRefresh,
-                          controller: _refreshController,
-                          child: ListView(
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, top: 5, bottom: 35),
-                            children: _getResultadoWidgets(resultado, context),
-                          ),
+                        child: ListView(
+                          padding: EdgeInsets.only(
+                              left: 15, right: 15, top: 5, bottom: 35),
+                          children: _getResultadoWidgets(resultado, context),
                         ),
                       )
                     ],
                   );
                 } else if (snapshot.hasError) {
-                  return SmartRefresher(
-                    enablePullDown: !isDisconnected,
-                    onRefresh: _onRefresh,
-                    controller: _refreshController,
-                    child: Column(
-                      children: [
-                        Expanded(
-                            child: Center(child: Icon(Icons.signal_wifi_off))),
-                      ],
-                    ),
+                  return Column(
+                    children: [
+                      Expanded(
+                          child: Center(child: Icon(Icons.signal_wifi_off))),
+                    ],
                   );
                 }
               }
