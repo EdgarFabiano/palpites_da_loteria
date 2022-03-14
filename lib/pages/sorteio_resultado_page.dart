@@ -11,9 +11,10 @@ import 'package:palpites_da_loteria/widgets/tab_resultado.dart';
 import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../defaults/constants.dart';
+
 DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
-Options _cacheOptions =
-    buildCacheOptions(Duration(days: 7), forceRefresh: true);
+Options _cacheOptions = buildCacheOptions(Duration(days: 7));
 Dio _dio = Dio();
 
 Resultado parseResultado(Map<String, dynamic> responseBody) {
@@ -64,7 +65,9 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     fetchResultado(widget._concurso.name);
     _tabController = TabController(vsync: this, length: _tabs.length);
     _tabController!.addListener(_setActiveTabIndex);
-    _bannerAd.load();
+    if (Constants.showAds) {
+      _bannerAd.load();
+    }
   }
 
   @override

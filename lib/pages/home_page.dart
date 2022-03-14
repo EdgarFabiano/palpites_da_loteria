@@ -24,7 +24,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _bannerAd.load();
+    if (Constants.showAds) {
+      _bannerAd.load();
+    }
   }
 
   @override

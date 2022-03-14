@@ -94,7 +94,8 @@ class _TabResultadoState extends State<TabResultado>
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _concursoAtual = int.parse(_concursoTextController.text);
-                  if (_concursoAtual > _ultimoConcurso) _concursoAtual = _ultimoConcurso;
+                  if (_concursoAtual > _ultimoConcurso)
+                    _concursoAtual = _ultimoConcurso;
                   setState(() {
                     _futureResultado = fetchResultado(
                         widget.concursoBean.name, _concursoAtual);
@@ -152,7 +153,9 @@ class _TabResultadoState extends State<TabResultado>
     return Column(
       children: [
         isDisconnected ? InternetNotAvailable() : SizedBox.shrink(),
-        !isDisconnected && _concursoAtual != 0 ? _getButtonsTop() : SizedBox.shrink(),
+        !isDisconnected && _concursoAtual != 0
+            ? _getButtonsTop()
+            : SizedBox.shrink(),
         Expanded(
           child: FutureBuilder<Resultado>(
             future: _futureResultado,

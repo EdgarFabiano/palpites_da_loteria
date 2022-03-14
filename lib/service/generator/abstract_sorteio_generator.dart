@@ -1,10 +1,10 @@
 
-import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/widgets/dezena.dart';
+
+import '../../model/sorteio_frequencia.dart';
 
 abstract class AbstractSorteioGenerator {
 
-  List<int> sortear(int gameSize, ConcursoBean concurso);
+  Future<SorteioFrequencia> sortear(int gameSize, ConcursoBean concurso);
 
 }

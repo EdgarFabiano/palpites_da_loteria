@@ -1,4 +1,3 @@
-
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
@@ -17,8 +16,10 @@ class AdMobService {
   static final AdRequest request = AdRequest();
 
   static List<String> testDevices() {
-    return ['4B0FDC40963AB3E77AED679FF240F802',
-      '118F4E581E0D5DAA4F78D3B1A29E861C'];
+    return [
+      '4B0FDC40963AB3E77AED679FF240F802',
+      '118F4E581E0D5DAA4F78D3B1A29E861C'
+    ];
   }
 
   static String getAppId() {
@@ -39,46 +40,49 @@ class AdMobService {
   }
 
   /*concursos-banner*/
-  static final String concursosBannerId =
-  Constants.isTesting ? bannerTestAdUnitId :
-  'ca-app-pub-5932227223136302/9652914887';
+  static final String concursosBannerId = Constants.isTesting
+      ? bannerTestAdUnitId
+      : 'ca-app-pub-5932227223136302/9652914887';
 
-  static final String sorteioBannerId =
-  Constants.isTesting ? bannerTestAdUnitId :
-  'ca-app-pub-5932227223136302/6252940206';
+  static final String sorteioBannerId = Constants.isTesting
+      ? bannerTestAdUnitId
+      : 'ca-app-pub-5932227223136302/6252940206';
 
   static BannerAd getBannerAd(String id) {
     BannerAd banner = BannerAd(
-        adUnitId: id,
-        request: AdManagerAdRequest(),
-        listener: AdManagerBannerAdListener(
-          onAdLoaded: (Ad ad) {
-            print('$ad loaded.');
-          },
-          onAdFailedToLoad: (Ad ad, LoadAdError error) {
-            print('$ad Failed To Load: $error');
-            ad.dispose();
-          },
-          onAdOpened: (Ad ad) => print('$ad Ad Opened.'),
-          onAdClosed: (Ad ad) {
-            print('$ad Ad Closed.');
-            ad.dispose();
-            },
-        ), size: AdSize.largeBanner,
-      );
+      adUnitId: id,
+      request: AdManagerAdRequest(),
+      listener: AdManagerBannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('$ad loaded.');
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('$ad Failed To Load: $error');
+          ad.dispose();
+        },
+        onAdOpened: (Ad ad) => print('$ad Ad Opened.'),
+        onAdClosed: (Ad ad) {
+          print('$ad Ad Closed.');
+          ad.dispose();
+        },
+      ),
+      size: AdSize.largeBanner,
+    );
 
     return banner;
   }
 
-  static Widget getBannerAdWidget (BannerAd bannerAd) {
-    return Container(
-      child: AdWidget(ad: bannerAd),
-      width: bannerAd.size.width.toDouble(),
-      height: bannerAd.size.height.toDouble(),
-      alignment: Alignment.center,
-    );
+  static Widget getBannerAdWidget(BannerAd bannerAd) {
+    if (Constants.showAds) {
+      return Container(
+        child: AdWidget(ad: bannerAd),
+        width: bannerAd.size.width.toDouble(),
+        height: bannerAd.size.height.toDouble(),
+        alignment: Alignment.center,
+      );
+    }
+    return SizedBox.shrink();
   }
-
 
   /*sorteio-interstitial*/
   static final String sorteioInterstitialId =
@@ -98,28 +102,31 @@ class AdMobService {
   }
 
   static void createSorteioInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId: getSorteioInterstitialId(),
-        request: request,
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
-            _sorteioInterstitial = ad;
-            _numInterstitialLoadAttempts = 0;
-            _sorteioInterstitial!.setImmersiveMode(true);
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
-            _numInterstitialLoadAttempts += 1;
-            _sorteioInterstitial = null;
-            if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
-              createSorteioInterstitialAd();
-            }
-          },
-        ));
+    if (Constants.showAds) {
+      InterstitialAd.load(
+          adUnitId: getSorteioInterstitialId(),
+          request: request,
+          adLoadCallback: InterstitialAdLoadCallback(
+            onAdLoaded: (InterstitialAd ad) {
+              print('$ad loaded');
+              _sorteioInterstitial = ad;
+              _numInterstitialLoadAttempts = 0;
+              _sorteioInterstitial!.setImmersiveMode(true);
+            },
+            onAdFailedToLoad: (LoadAdError error) {
+              print('InterstitialAd failed to load: $error.');
+              _numInterstitialLoadAttempts += 1;
+              _sorteioInterstitial = null;
+              if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+                createSorteioInterstitialAd();
+              }
+            },
+          ));
+    }
   }
 
   static void showSorteioInterstitialAd() {
+    if (Constants.showAds) {
     if (_sorteioInterstitial == null) {
       print('Warning: attempt to show interstitial before loaded.');
       return;
@@ -138,7 +145,9 @@ class AdMobService {
         createSorteioInterstitialAd();
       },
     );
-    _sorteioInterstitial!.show();
+
+      _sorteioInterstitial!.show();
+    }
     _sorteioInterstitial = null;
   }
 
@@ -158,48 +167,53 @@ class AdMobService {
   }
 
   static void createResultadoInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId: getResultadoInterstitialId(),
-        request: request,
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
-            _resultadoInterstitial = ad;
-            _numInterstitialLoadAttempts = 0;
-            _resultadoInterstitial!.setImmersiveMode(true);
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
-            _numInterstitialLoadAttempts += 1;
-            _resultadoInterstitial = null;
-            if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
-              createResultadoInterstitialAd();
-            }
-          },
-        ));
+    if (Constants.showAds) {
+      InterstitialAd.load(
+          adUnitId: getResultadoInterstitialId(),
+          request: request,
+          adLoadCallback: InterstitialAdLoadCallback(
+            onAdLoaded: (InterstitialAd ad) {
+              print('$ad loaded');
+              _resultadoInterstitial = ad;
+              _numInterstitialLoadAttempts = 0;
+              _resultadoInterstitial!.setImmersiveMode(true);
+            },
+            onAdFailedToLoad: (LoadAdError error) {
+              print('InterstitialAd failed to load: $error.');
+              _numInterstitialLoadAttempts += 1;
+              _resultadoInterstitial = null;
+              if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+                createResultadoInterstitialAd();
+              }
+            },
+          ));
+    }
   }
 
   static void showResultadoInterstitialAd() {
-    if (_resultadoInterstitial == null) {
-      print('Warning: attempt to show interstitial before loaded.');
-      return;
+    if (Constants.showAds) {
+      if (_resultadoInterstitial == null) {
+        print('Warning: attempt to show interstitial before loaded.');
+        return;
+      }
+      _resultadoInterstitial!.fullScreenContentCallback =
+          FullScreenContentCallback(
+        onAdShowedFullScreenContent: (InterstitialAd ad) =>
+            print('ad onAdShowedFullScreenContent.'),
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          print('$ad onAdDismissedFullScreenContent.');
+          ad.dispose();
+          createResultadoInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+          print('$ad onAdFailedToShowFullScreenContent: $error');
+          ad.dispose();
+          createResultadoInterstitialAd();
+        },
+      );
+
+      _resultadoInterstitial!.show();
     }
-    _resultadoInterstitial!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        createResultadoInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-        createResultadoInterstitialAd();
-      },
-    );
-    _resultadoInterstitial!.show();
     _resultadoInterstitial = null;
   }
-
 }
