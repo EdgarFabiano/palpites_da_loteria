@@ -10,6 +10,7 @@ import 'package:palpites_da_loteria/widgets/popup_menu.dart';
 import 'package:palpites_da_loteria/widgets/tab_resultado.dart';
 import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../defaults/constants.dart';
 
@@ -40,6 +41,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   TabController? _tabController;
   Resultado? _resultado;
   BannerAd _bannerAd = AdMobService.getBannerAd(AdMobService.sorteioBannerId);
+  GlobalKey _showcaseKey = GlobalKey();
 
   fetchResultado(String concursoName) async {
     var url = LoteriaAPIService.getEndpointFor(concursoName);
@@ -68,6 +70,9 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     if (Constants.showAds) {
       _bannerAd.load();
     }
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      ShowCaseWidget.of(context)!.startShowCase([_showcaseKey]);
+    });
   }
 
   @override
@@ -88,22 +93,30 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-            backgroundColor: widget._concurso.colorBean.getColor(context),
+            backgroundColor:
+            widget._concurso.colorBean.getColor(context),
             bottom: TabBar(
               controller: _tabController,
               tabs: _tabs,
             ),
             title: Text(widget._concurso.name),
             actions: <Widget>[
-              _activeTabIndex == 0 ? PopUpMenu() : SizedBox.shrink(),
+              _activeTabIndex == 0
+                  ? Showcase(
+                key: _showcaseKey,
+                title: 'Menu',
+                description: 'Click here to see menu options',
+                child: PopUpMenu(),
+              )
+                  : SizedBox.shrink(),
               _activeTabIndex == 1 && _resultado != null
                   ? IconButton(
-                      icon: const Icon(Icons.share),
-                      tooltip: 'Compartilhar resultado',
-                      onPressed: () {
-                        Share.share(_resultado!.shareString());
-                      },
-                    )
+                icon: const Icon(Icons.share),
+                tooltip: 'Compartilhar resultado',
+                onPressed: () {
+                  Share.share(_resultado!.shareString());
+                },
+              )
                   : SizedBox.shrink(),
             ]),
         body: Column(
