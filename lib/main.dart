@@ -7,7 +7,7 @@ import 'package:palpites_da_loteria/service/concurso_service.dart'
 import 'package:palpites_da_loteria/pages/home_page.dart';
 import 'package:palpites_da_loteria/widgets/concursos_settings_change_notifier.dart';
 import 'package:provider/provider.dart';
-import 'package:showcaseview/showcaseview.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +32,14 @@ class PalpitesLoteriaApp extends StatelessWidget {
           ChangeNotifierProvider<ConcursosSettingsChangeNotifier>(
             create: (_) => concursosSettingsChangeNotifier,
           ),
+          /*StreamProvider<DataConnectionStatus>(
+            create: (context) {
+              return DataConnectivityService()
+                  .connectivityStreamController
+                  .stream;
+            },
+            initialData: DataConnectionStatus.connected,
+          )*/
         ],
       ),
     );
@@ -45,14 +53,10 @@ class ConcursosMaterialApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: Strings.appName,
-      theme:
-          ThemeData(brightness: Brightness.light, primarySwatch: Colors.indigo),
-      darkTheme:
-          ThemeData(brightness: Brightness.dark, primarySwatch: Colors.indigo),
+      theme: ThemeData(brightness: Brightness.light, primarySwatch: Colors.indigo),
+      darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.indigo),
       themeMode: EasyDynamicTheme.of(context).themeMode,
-      home: ShowCaseWidget(
-        builder: Builder(builder: (context) => HomePage()),
-      ),
+      home: HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }
