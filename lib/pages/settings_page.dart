@@ -1,4 +1,4 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
@@ -13,12 +13,10 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  List<ListItemConcurso> _items;
+  List<ListItemConcurso> _items = [];
 
   void _switchTheme(BuildContext context) {
-    var b = Theme.of(context).brightness;
-    DynamicTheme.of(context).setBrightness(
-        b == Brightness.dark ? Brightness.light : Brightness.dark);
+    EasyDynamicTheme.of(context).changeTheme();
   }
 
   void _onReorder(int start, int current) {
@@ -53,72 +51,66 @@ class _SettingsPageState extends State<SettingsPage> {
     var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
     Concursos _concursos = concursosProvider.getConcursos();
 
-    if (concursosProvider != null && _concursos != null) {
-      _items = _concursos.concursosBeanList
-          .map((concurso) =>
-          ListItemConcurso(concurso, _concursos, key: Key("listItem" + concurso.name),))
-          .toList();
-      reorderableListView = ReorderableListView(
-        children: _items,
-        onReorder: (start, current) {
-          _onReorder(start, current);
-          concursosProvider.onReorder(start, current);
-        },
-      );
-    } else {
-      reorderableListView = Container();
-    }
+    _items = _concursos.concursosBeanList
+        .map((concurso) =>
+        ListItemConcurso(concurso, _concursos, key: Key("listItem" + concurso.name),))
+        .toList();
+    reorderableListView = ReorderableListView(
+      children: _items,
+      onReorder: (start, current) {
+        _onReorder(start, current);
+        concursosProvider.onReorder(start, current);
+      },
+    );
+
 
     return Scaffold(
       appBar: AppBar(
         title: Text(Strings.settings),
       ),
-      body: Padding(
-        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
-        child: ListView.builder(
-          physics: ClampingScrollPhysics(),
-          itemCount: 1,
-          itemBuilder: (context, index) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Theme
-                      .of(context)
-                      .brightness == Brightness.dark
-                      ? Icons.brightness_3
-                      : Icons.brightness_high),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Modo noturno"),
-                      Switch(
-                        value: Theme
-                            .of(context)
-                            .brightness == Brightness.dark,
-                        onChanged: (value) {
-                          _switchTheme(context);
-                        },
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    _switchTheme(context);
-                  },
+      body: ListView.builder(
+        physics: ClampingScrollPhysics(),
+        itemCount: 1,
+        itemBuilder: (context, index) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Theme
+                    .of(context)
+                    .brightness == Brightness.dark
+                    ? Icons.brightness_3
+                    : Icons.brightness_high),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Modo noturno"),
+                    Switch(
+                      value: Theme
+                          .of(context)
+                          .brightness == Brightness.dark,
+                      onChanged: (value) {
+                        _switchTheme(context);
+                      },
+                    ),
+                  ],
                 ),
-                Divider(),
-                ListTile(
-                  title: Text("Tela inicial"),
-                ),
-                Divider(),
-                SizedBox(
-                  height: 500,
-                  child: reorderableListView,
-                ),
-              ],
-            );
-          },
-        ),
+                onTap: () {
+                  _switchTheme(context);
+                },
+              ),
+              Divider(),
+              ListTile(
+                title: Text("Tela inicial"),
+              ),
+              Divider(),
+              SizedBox(
+                height: 500,
+                child: reorderableListView,
+              ),
+            ],
+          );
+        },
       ),
     );
   }

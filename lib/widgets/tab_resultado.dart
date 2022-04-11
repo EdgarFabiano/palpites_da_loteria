@@ -1,53 +1,20 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
-import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
-import 'package:firebase_admob/firebase_admob.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
-import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
-Options _cacheOptions =
-    buildCacheOptions(Duration(minutes: 5), forceRefresh: true);
-Dio _dio = Dio();
-
-Resultado parseResultado(Map<String, dynamic> responseBody) {
-  return Resultado.fromJson(responseBody);
-}
-
-Future<Resultado> fetchResultado(String concursoName, int concurso) async {
-  var url =
-      LoteriaAPIService.getEndpointFor(concursoName) + "&concurso=$concurso";
-  Response response = await _dio.get(url, options: _cacheOptions);
-  if (response.statusCode == 200 && response.data is Map) {
-    return compute(parseResultado, response.data as Map<String, dynamic>);
-  } else {
-    return Future.value(Resultado());
-  }
-}
-
-bool await(Duration duration) {
-  sleep(duration);
-  return true;
-}
-
-Future<bool> futureAwait() {
-  return compute(await, Duration(seconds: 0));
-}
+import '../model/resultado_api.dart';
 
 class TabResultado extends StatefulWidget {
   final ConcursoBean concursoBean;
+  final Function refreshResultadoCompartilhavel;
 
-  const TabResultado(this.concursoBean, {Key key}) : super(key: key);
+  const TabResultado(this.concursoBean, this.refreshResultadoCompartilhavel, {Key? key}) : super(key: key);
 
   @override
   _TabResultadoState createState() => _TabResultadoState();
@@ -55,17 +22,15 @@ class TabResultado extends StatefulWidget {
 
 class _TabResultadoState extends State<TabResultado>
     with AutomaticKeepAliveClientMixin {
-  Future<Resultado> _futureResultado;
-  RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+  Future<ResultadoAPI>? _futureResultado;
   final _concursoTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  int _ultimoConcurso;
-  int _concursoAtual;
-  bool _mostrarResultado = false;
+  int _ultimoConcurso = 0;
+  int _concursoAtual = 0;
+  LoteriaAPIService _loteriaAPIService = LoteriaAPIService();
 
   Future<void> _showDialogConcurso() async {
-    _concursoTextController.text = _concursoAtual?.toString();
+    _concursoTextController.text = _concursoAtual.toString();
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -82,7 +47,7 @@ class _TabResultadoState extends State<TabResultado>
                     controller: _concursoTextController,
                     keyboardType: TextInputType.number,
                     validator: (value) {
-                      if (!RegExp('[0-9]').hasMatch(value)) {
+                      if (!RegExp('[0-9]').hasMatch(value!)) {
                         return "Valor inválido";
                       } else if (int.parse(value) > _ultimoConcurso) {
                         return "Valor máximo: $_ultimoConcurso";
@@ -106,10 +71,15 @@ class _TabResultadoState extends State<TabResultado>
             TextButton(
               child: Text('Buscar'),
               onPressed: () {
-                if (_formKey.currentState.validate()) {
+                if (_formKey.currentState!.validate()) {
                   _concursoAtual = int.parse(_concursoTextController.text);
-                  _futureResultado =
-                      fetchResultado(widget.concursoBean.name, _concursoAtual);
+                  if (_concursoAtual > _ultimoConcurso)
+                    _concursoAtual = _ultimoConcurso;
+                  setState(() {
+                    _futureResultado = _loteriaAPIService.fetchResultado(
+                        widget.concursoBean.name, _concursoAtual);
+                    widget.refreshResultadoCompartilhavel(_concursoAtual);
+                  });
                   Navigator.of(context).pop();
                 }
               },
@@ -120,107 +90,73 @@ class _TabResultadoState extends State<TabResultado>
     );
   }
 
-  void _onRefresh() async {
-    setState(() {
-      _futureResultado =
-          fetchResultado(widget.concursoBean.name, _ultimoConcurso)
-              .whenComplete(() => _refreshController.refreshCompleted())
-              .whenComplete(() => _concursoAtual = _ultimoConcurso);
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    _dio.interceptors.add(_dioCacheManager.interceptor);
-    _futureResultado = fetchResultado(widget.concursoBean.name, _concursoAtual);
-    futureAwait().whenComplete(() {
-      if (Random().nextInt(10) > 4) {
-        return InterstitialAd(
-            adUnitId: AdMobService.getResultadoInterstitialId(),
-            targetingInfo: MobileAdTargetingInfo(
-                testDevices: AdMobService.testDevices()),
-            listener: (MobileAdEvent event) {
-              if (event == MobileAdEvent.clicked ||
-                  event == MobileAdEvent.closed ||
-                  event == MobileAdEvent.impression ||
-                  event == MobileAdEvent.leftApplication) {
-                AdMobService.resultadoInterstitial?.dispose();
-                setState(() {
-                  _mostrarResultado = true;
-                });
-              }
-            })
-          ..load()
-          ..show();
-      } else {
-        _mostrarResultado = true;
-      }
+    _futureResultado = _loteriaAPIService
+        .fetchLatestResultado(widget.concursoBean.name)
+        .then((value) {
+      setState(() {
+          _ultimoConcurso = value.concurso!;
+          _concursoAtual = value.concurso!;
+      });
+      return Future.value(value);
     });
+    if (Random().nextInt(10) > 4) {
+      AdMobService.createResultadoInterstitialAd();
+      AdMobService.showResultadoInterstitialAd();
+    }
   }
 
   @override
   void dispose() {
     _concursoTextController.dispose();
-    _refreshController.dispose();
     super.dispose();
+  }
+
+  Future<bool> _isDisconnected() async {
+    return !await InternetConnectionChecker().hasConnection;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var isDisconnected = Provider.of<DataConnectionStatus>(context) ==
-        DataConnectionStatus.disconnected;
+    bool isDisconnected = false;
+    _isDisconnected().then((value) => isDisconnected = value);
 
     return Column(
       children: [
         isDisconnected ? InternetNotAvailable() : SizedBox.shrink(),
+        !isDisconnected && _concursoAtual != 0
+            ? _getButtonsTop()
+            : SizedBox.shrink(),
         Expanded(
-          child: FutureBuilder<Resultado>(
+          child: FutureBuilder<ResultadoAPI>(
             future: _futureResultado,
             builder: (context, snapshot) {
-              if(_mostrarResultado) {
                 if (snapshot.hasData &&
                     snapshot.connectionState == ConnectionState.done) {
-                  var resultado = snapshot.data;
-                  if (_ultimoConcurso == null) {
-                    _ultimoConcurso = resultado.numero_concurso;
-                  }
-                  if (_concursoAtual == null) {
-                    _concursoAtual = _ultimoConcurso;
-                  }
+                  ResultadoAPI resultado = snapshot.data!;
                   return Column(
                     children: [
-                      !isDisconnected ? _getButtonsTop() : SizedBox.shrink(),
                       !isDisconnected ? Divider(height: 0) : SizedBox.shrink(),
                       Expanded(
-                        child: SmartRefresher(
-                          enablePullDown: !isDisconnected,
-                          onRefresh: _onRefresh,
-                          controller: _refreshController,
-                          child: ListView(
-                            padding: EdgeInsets.only(
-                                left: 15, right: 15, top: 5, bottom: 35),
-                            children: _getResultadoWidgets(resultado, context),
-                          ),
+                        child: ListView(
+                          padding: EdgeInsets.only(
+                              left: 15, right: 15, top: 5, bottom: 35),
+                          children: _getResultadoWidgets(resultado, context),
                         ),
                       )
                     ],
                   );
                 } else if (snapshot.hasError) {
-                  return SmartRefresher(
-                    enablePullDown: !isDisconnected,
-                    onRefresh: _onRefresh,
-                    controller: _refreshController,
-                    child: Column(
-                      children: [
-                        Expanded(
-                            child: Center(child: Icon(Icons.signal_wifi_off))),
-                      ],
-                    ),
+                  return Column(
+                    children: [
+                      Expanded(
+                          child: Center(child: Icon(Icons.signal_wifi_off))),
+                    ],
                   );
                 }
-              }
               return Column(
                 children: [
                   Expanded(child: Center(child: CircularProgressIndicator())),
@@ -233,7 +169,7 @@ class _TabResultadoState extends State<TabResultado>
     );
   }
 
-  _getResultadoWidgets(Resultado resultado, BuildContext context) {
+  _getResultadoWidgets(ResultadoAPI resultado, BuildContext context) {
     List<Widget> builder = [];
 
     var defaultTableBorder = BorderSide(
@@ -247,7 +183,7 @@ class _TabResultadoState extends State<TabResultado>
         child: Padding(
           padding: EdgeInsets.only(top: 10, bottom: 10),
           child: Text(
-            resultado.acumulou ? "ACUMULOU!" : "TEVE GANHADOR",
+            resultado.acumulou! ? "ACUMULOU!" : "TEVE GANHADOR",
             style: TextStyle(fontSize: 25),
           ),
         ),
@@ -259,13 +195,13 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.numero_concurso != null && resultado.data_concurso != null) {
+    if (resultado.concurso != null && resultado.data != null) {
       builder.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Padding(
             padding: EdgeInsets.all(10),
-            child: Text("Concurso: " + resultado.numero_concurso.toString()),
+            child: Text("Concurso: " + resultado.concurso.toString()),
           ),
           Padding(
             padding: EdgeInsets.all(10),
@@ -275,7 +211,7 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.dezenas != null && resultado.dezenas.isNotEmpty) {
+    if (resultado.dezenas != null && resultado.dezenas!.isNotEmpty) {
       builder.add(Card(
         color: widget.concursoBean.colorBean.getColor(context),
         child: Padding(
@@ -291,7 +227,114 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.dezenas_2 != null && resultado.dezenas_2.isNotEmpty) {
+    if (resultado.mesSorte != null && resultado.mesSorte != "") {
+      builder.add(Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: Center(child: Text("Mês da sorte: " + resultado.mesSorte!)),
+      ));
+    }
+
+    if (resultado.timeCoracao != null && resultado.timeCoracao != "") {
+      builder.add(Padding(
+        padding: EdgeInsets.only(top: 10),
+        child:
+            Center(child: Text("Time do coração: " + resultado.timeCoracao!)),
+      ));
+    }
+
+    // if (resultado.arrecadacao_total != null &&
+    //     resultado.valor_acumulado != null) {
+    //   builder.add(Padding(
+    //     padding: EdgeInsets.only(top: 10.0),
+    //     child: Row(
+    //       children: [
+    //         Expanded(
+    //           child: Card(
+    //             child: Padding(
+    //               padding: const EdgeInsets.all(10.0),
+    //               child: Column(
+    //                 children: [
+    //                   Text(
+    //                     "Arrecadação total",
+    //                     style: TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                   Divider(),
+    //                   Text(
+    //                     resultado.getArrecadacaoTotalDisplayValue(),
+    //                   )
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //         Expanded(
+    //           child: Card(
+    //             child: Padding(
+    //               padding: const EdgeInsets.all(10.0),
+    //               child: Column(
+    //                 children: [
+    //                   Text(
+    //                     "Acumulado",
+    //                     style: TextStyle(
+    //                       fontWeight: FontWeight.bold,
+    //                     ),
+    //                   ),
+    //                   Divider(),
+    //                   Text(
+    //                     resultado.getValorAcumuladoDisplayValue(),
+    //                   )
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    //         )
+    //       ],
+    //     ),
+    //   ));
+    // }
+
+    // if (resultado.nome_acumulado_especial != null &&
+    //     resultado.nome_acumulado_especial != '' &&
+    //     resultado.valor_acumulado_especial != null &&
+    //     resultado.valor_acumulado_especial != 0) {
+    //   builder.add(
+    //     Padding(
+    //       padding: const EdgeInsets.only(top: 10.0),
+    //       child: Center(
+    //         child: Text(
+    //           "Acumulado  '${resultado.nome_acumulado_especial}'",
+    //           style: TextStyle(
+    //             fontWeight: FontWeight.bold,
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    //   builder.add(Padding(
+    //     padding: EdgeInsets.only(top: 8.0),
+    //     child: Center(
+    //       child: Text(
+    //         resultado.getValorAcumuladoEspecialDisplayValue() + '!',
+    //       ),
+    //     ),
+    //   ));
+    // }
+
+    if (resultado.premiacoes != null && resultado.premiacoes!.isNotEmpty) {
+      builder.add(Card(
+        child: Table(
+          border: TableBorder(
+            bottom: defaultTableBorder,
+            horizontalInside: defaultTableBorder,
+          ),
+          children: _criarTabelaPremiacao(resultado.premiacoes!),
+        ),
+      ));
+    }
+
+    if (resultado.dezenas_2 != null && resultado.dezenas_2!.isNotEmpty) {
       builder.add(Card(
         color: widget.concursoBean.colorBean.getColor(context),
         child: Padding(
@@ -307,107 +350,71 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.local_realizacao != null &&
-        resultado.local_realizacao != "") {
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 10),
-        child: Center(
-            child: Text("Local de realização: " + resultado.local_realizacao)),
-      ));
-    }
-
-    if (resultado.arrecadacao_total != null &&
-        resultado.valor_acumulado != null) {
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 10.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Arrecadação total",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Divider(),
-                      Text(
-                        resultado.getArrecadacaoTotalDisplayValue(),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Acumulado",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Divider(),
-                      Text(
-                        resultado.getValorAcumuladoDisplayValue(),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            )
-          ],
+    if (resultado.premiacoes_2 != null && resultado.premiacoes_2!.isNotEmpty) {
+      builder.add(Card(
+        child: Table(
+          border: TableBorder(
+            bottom: defaultTableBorder,
+            horizontalInside: defaultTableBorder,
+          ),
+          children: _criarTabelaPremiacao(resultado.premiacoes_2!),
         ),
       ));
     }
 
-    if ((resultado.valor_estimado_proximo_concurso != null &&
-        resultado.valor_estimado_proximo_concurso != 0) ||
-        (resultado.data_proximo_concurso != null &&
-            resultado.data_proximo_concurso != '')) {
-      List<Widget> proxConcurso = [];
-
-      if (resultado.valor_estimado_proximo_concurso != null &&
-          resultado.valor_estimado_proximo_concurso != 0) {
-        proxConcurso.add(
-          Text(
-            "Prêmio estimado para o próximo concurso",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+    if (resultado.estadosPremiados != null &&
+        resultado.estadosPremiados!.isNotEmpty) {
+      builder.add(Card(
+        child: Table(
+          border: TableBorder(
+            bottom: defaultTableBorder,
+            horizontalInside: defaultTableBorder,
           ),
-        );
-        proxConcurso.add(Text(
-          resultado.getValorEstimadoProximoConcursoDisplayValue() + '!',
-        ));
-      }
+          children: _criarTabelaLocalGanhadores(resultado.estadosPremiados!),
+        ),
+      ));
+    }
 
-      if ((resultado.valor_estimado_proximo_concurso != null &&
-          resultado.valor_estimado_proximo_concurso != 0) &&
-          (resultado.data_proximo_concurso != null &&
-              resultado.data_proximo_concurso != '')) {
-        proxConcurso.add(Divider());
-      }
+    if (resultado.local != null && resultado.local != "") {
+      builder.add(Padding(
+        padding: EdgeInsets.only(top: 15),
+        child: Center(child: Text("Local de realização: " + resultado.local!)),
+      ));
+    }
 
-      if (resultado.data_proximo_concurso != null &&
-          resultado.data_proximo_concurso != '') {
-        proxConcurso.add(Text(
-          "Data do próximo concurso",
+    List<Widget> proxConcurso = [];
+
+    if (resultado.getValorEstimadoProximoConcursoDisplayValue() != '') {
+      proxConcurso.add(
+        Text(
+          "Prêmio estimado para o próximo concurso",
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
-        ));
-        proxConcurso.add(Text(resultado.getDataProximoConcursoDisplayValue()));
-      }
+        ),
+      );
+      proxConcurso.add(Text(
+        resultado.getValorEstimadoProximoConcursoDisplayValue(),
+      ));
+    }
 
+    if ((resultado.getValorEstimadoProximoConcursoDisplayValue() != '') &&
+        (resultado.getDataProximoConcursoDisplayValue() != '')) {
+      proxConcurso.add(Divider());
+    }
+
+    if (resultado.getDataProximoConcursoDisplayValue() != '') {
+      proxConcurso.add(Text(
+        "Data do próximo concurso",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      ));
+      proxConcurso.add(Text(resultado.getDataProximoConcursoDisplayValue()));
+    }
+
+    if ((resultado.getValorEstimadoProximoConcursoDisplayValue() != '') &&
+        (resultado.getDataProximoConcursoDisplayValue() != '')) {
       builder.add(Card(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -418,68 +425,10 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.nome_acumulado_especial != null &&
-        resultado.nome_acumulado_especial != '' &&
-        resultado.valor_acumulado_especial != null &&
-        resultado.valor_acumulado_especial != 0) {
-      builder.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Center(
-            child: Text(
-              "Acumulado  '${resultado.nome_acumulado_especial}'",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      );
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 8.0),
-        child: Center(
-          child: Text(
-            resultado.getValorAcumuladoEspecialDisplayValue() + '!',
-          ),
-        ),
-      ));
-    }
-
-    if (resultado.premiacao != null && resultado.premiacao.isNotEmpty) {
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 15),
-        child: Card(
-          child: Table(
-            border: TableBorder(
-              bottom: defaultTableBorder,
-              horizontalInside: defaultTableBorder,
-            ),
-            children: _criarTabelaPremiacao(resultado.premiacao),
-          ),
-        ),
-      ));
-    }
-
-    if (resultado.local_ganhadores != null &&
-        resultado.local_ganhadores.isNotEmpty) {
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 15),
-        child: Card(
-          child: Table(
-            border: TableBorder(
-              bottom: defaultTableBorder,
-              horizontalInside: defaultTableBorder,
-            ),
-            children: _criarTabelaLocalGanhadores(resultado.local_ganhadores),
-          ),
-        ),
-      ));
-    }
-
     return builder;
   }
 
-  _criarTabelaPremiacao(List<Premiacao> premiacao) {
+  _criarTabelaPremiacao(List<Premiacoes> premiacao) {
     var cabecalho = _criarCabecalhoTable("Acertos, Ganhadores, Premiação");
     var list = premiacao.map((premiacaoItem) {
       return TableRow(children: [
@@ -493,13 +442,13 @@ class _TabResultadoState extends State<TabResultado>
         Container(
           alignment: Alignment.center,
           child: Text(
-            premiacaoItem.getQuantidadeGanhadoresDisplayValue(),
+            premiacaoItem.vencedores!.toString(),
           ),
           padding: EdgeInsets.all(10.0),
         ),
         Container(
           alignment: Alignment.center,
-          child: Text(premiacaoItem.getValorTotalDisplayValue()),
+          child: Text("R\$ ${premiacaoItem.premio!}"),
           padding: EdgeInsets.all(10.0),
         )
       ]);
@@ -509,20 +458,20 @@ class _TabResultadoState extends State<TabResultado>
     return list;
   }
 
-  _criarTabelaLocalGanhadores(List<LocalGanhador> premiacao) {
+  _criarTabelaLocalGanhadores(List<EstadosPremiados> premiacao) {
     var cabecalho = _criarCabecalhoTable("Local, Ganhadores");
     var list = premiacao.map((localGanhador) {
       return TableRow(children: [
         Container(
           alignment: Alignment.center,
           child: Text(
-            localGanhador.local,
+            localGanhador.nome! + " - " + localGanhador.uf!,
           ),
           padding: EdgeInsets.all(10.0),
         ),
         Container(
           alignment: Alignment.center,
-          child: Text(localGanhador.getQuantidadeGanhadoresDisplayValue()),
+          child: Text(localGanhador.vencedores!),
           padding: EdgeInsets.all(10.0),
         )
       ]);
@@ -561,20 +510,20 @@ class _TabResultadoState extends State<TabResultado>
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
-          visible: _concursoAtual != null && _concursoAtual > 1,
+          visible: _concursoAtual > 1,
           child: FlatButton(
-              onPressed: () =>
-                  setState(() {
+              onPressed: () => setState(() {
                     --_concursoAtual;
-                    _futureResultado = fetchResultado(
+                    _futureResultado = _loteriaAPIService.fetchResultado(
                         widget.concursoBean.name, _concursoAtual);
+                    widget.refreshResultadoCompartilhavel(_concursoAtual);
                   }),
               child: Text("Anterior")),
         ),
         FlatButton(
           onPressed: _showDialogConcurso,
           child: Text(
-            _concursoAtual != null ? _concursoAtual.toString() : "----",
+            _concursoAtual.toString(),
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -582,13 +531,13 @@ class _TabResultadoState extends State<TabResultado>
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
-          visible: _concursoAtual != null && _concursoAtual < _ultimoConcurso,
+          visible: _concursoAtual < _ultimoConcurso,
           child: FlatButton(
-              onPressed: () =>
-                  setState(() {
+              onPressed: () => setState(() {
                     ++_concursoAtual;
-                    _futureResultado = fetchResultado(
+                    _futureResultado = _loteriaAPIService.fetchResultado(
                         widget.concursoBean.name, _concursoAtual);
+                    widget.refreshResultadoCompartilhavel(_concursoAtual);
                   }),
               child: Text("Próximo")),
         ),

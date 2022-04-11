@@ -4,41 +4,41 @@ import 'package:palpites_da_loteria/service/format_service.dart';
 
 class Resultado {
 
-    bool acumulou;
-    double arrecadacao_total;
-    bool concurso_especial;
-    int concurso_proximo;
-    String data_concurso;
-    int data_concurso_milliseconds;
-    String data_proximo_concurso;
-    int data_proximo_concurso_milliseconds;
-    List<String> dezenas;
-    List<LocalGanhador> local_ganhadores;
-    String local_realizacao;
-    String nome;
-    int numero_concurso;
-    List<Premiacao> premiacao;
-    bool rateio_processamento;
-    double valor_acumulado;
-    double valor_estimado_proximo_concurso;
-    String nome_acumulado_especial;
-    double valor_acumulado_especial;
+    bool? acumulou;
+    double? arrecadacao_total;
+    bool? concurso_especial;
+    int? concurso_proximo;
+    String? data_concurso;
+    int? data_concurso_milliseconds;
+    String? data_proximo_concurso;
+    int? data_proximo_concurso_milliseconds;
+    List<String>? dezenas;
+    List<LocalGanhador>? local_ganhadores;
+    String? local_realizacao;
+    String? nome;
+    int? numero_concurso;
+    List<Premiacao>? premiacao;
+    bool? rateio_processamento;
+    double? valor_acumulado;
+    double? valor_estimado_proximo_concurso;
+    String? nome_acumulado_especial;
+    double? valor_acumulado_especial;
 
     //Dia de sorte
-    String dezena_mes_sorte;
-    String nome_mes_sorte;
+    String? dezena_mes_sorte;
+    String? nome_mes_sorte;
 
     //Dupla sena
-    List<String> dezenas_2;
-    List<Premiacao> premiacao_2;
+    List<String>? dezenas_2;
+    List<Premiacao>? premiacao_2;
 
     //Mega sena
-    int numero_final_concurso_acumulado;
-    double valor_final_concurso_acumulado;
+    int? numero_final_concurso_acumulado;
+    double? valor_final_concurso_acumulado;
 
     //Time mania
-    String dezena_time_coracao;
-    String nome_time_coracao;
+    String? dezena_time_coracao;
+    String? nome_time_coracao;
 
   Resultado({
     this.acumulou,
@@ -105,7 +105,7 @@ class Resultado {
 
   String getDataConcursoDisplayValue () {
     if (data_concurso != null)
-      return dateFormat(data_concurso);
+      return dateFormat(data_concurso!);
     return '';
   }
   String getArrecadacaoTotalDisplayValue () {
@@ -128,7 +128,7 @@ class Resultado {
 
   String getDataProximoConcursoDisplayValue () {
     if (data_proximo_concurso != null)
-      return dateFormat(data_proximo_concurso);
+      return dateFormat(data_proximo_concurso!);
     return '';
   }
 
@@ -140,20 +140,22 @@ class Resultado {
 
 
   String getDezenasDisplayValue() {
-    return getDezenasResultadoDisplayValue(dezenas);
+    return getDezenasResultadoDisplayValue(dezenas!);
   }
 
   String getDezenas2DisplayValue() {
-    return getDezenasResultadoDisplayValue(dezenas_2);
+    return getDezenasResultadoDisplayValue(dezenas_2!);
   }
 
   String shareString() {
     return 'Aplicativo Palpites da loteria\n'
         ' 👉 https://rb.gy/3dcmmn 🍀\n\n'
         'Resultado $nome\n\n' +
-        (acumulou ? 'ACUMULOU' : 'TEVE GANHADOR') + '\n\n' +
-        (dezenas != null && dezenas.isNotEmpty ? getDezenasDisplayValue() + '\n\n' : '')  +
-        (dezenas_2 != null && dezenas_2.isNotEmpty ? getDezenas2DisplayValue() + '\n\n' : '') +
+        (acumulou! ? 'ACUMULOU' : 'TEVE GANHADOR') + '\n\n' +
+        (dezenas != null && dezenas!.isNotEmpty ? getDezenasDisplayValue() + '\n\n' : '')  +
+        (dezenas_2 != null && dezenas_2!.isNotEmpty ? getDezenas2DisplayValue() + '\n\n' : '') +
+        ((nome_time_coracao != '' && nome_time_coracao != null) ? 'Time do coração: $nome_time_coracao \n\n' : '') +
+        ((nome_mes_sorte != '' && nome_mes_sorte != null) ? 'Mês da sorte: $nome_mes_sorte \n\n' : '') +
         'Concurso: $numero_concurso \n'
         'Data de realização: ' + getDataConcursoDisplayValue() + '\n\n'
         'Arrecadação total: ' + getArrecadacaoTotalDisplayValue() +'\n'

@@ -6,7 +6,7 @@ class PopUpMenu extends StatelessWidget {
     return PopupMenuButton(
       tooltip: "Estrategia de geração",
       itemBuilder: (context) {
-        var list = List<PopupMenuEntry<Object>>();
+        var list = <PopupMenuEntry<Object>>[];
         list.add(
           PopupMenuItem(
             child: Text("Estratégia de geração"),

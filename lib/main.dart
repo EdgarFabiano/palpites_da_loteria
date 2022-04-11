@@ -1,68 +1,63 @@
-import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:firebase_admob/firebase_admob.dart';
+import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/service/concurso_service.dart' as concursoService;
+import 'package:palpites_da_loteria/service/concurso_service.dart'
+    as concursoService;
 import 'package:palpites_da_loteria/pages/home_page.dart';
-import 'package:palpites_da_loteria/service/data_connectivity_service.dart';
 import 'package:palpites_da_loteria/widgets/concursos_settings_change_notifier.dart';
 import 'package:provider/provider.dart';
 
-import 'service/admob_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseAdMob.instance.initialize(appId: AdMobService.getAppId());
+  // FirebaseAdMob.instance.initialize(appId: AdMobService.getAppId());
+  MobileAds.instance.initialize();
   runApp(PalpitesLoteriaApp());
 }
 
 class PalpitesLoteriaApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    ConcursosSettingsChangeNotifier concursosSettingsChangeNotifier = ConcursosSettingsChangeNotifier();
-    concursoService.getUsersConcursosFuture().then((value) => concursosSettingsChangeNotifier.setConcursos(value));
+    ConcursosSettingsChangeNotifier concursosSettingsChangeNotifier =
+        ConcursosSettingsChangeNotifier();
+    concursoService
+        .getUsersConcursosFuture()
+        .then((value) => concursosSettingsChangeNotifier.setConcursos(value));
 
-    return new DynamicTheme(
-        defaultBrightness: Brightness.light,
-        data: (brightness) => new ThemeData(
-              primarySwatch: Colors.indigo,
-              brightness: brightness,
-              pageTransitionsTheme: PageTransitionsTheme(builders: {
-                TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-              }),
-            ),
-        themedWidgetBuilder: (context, theme) {
-          return MultiProvider(
-            child: ConcursosMaterialApp(theme),
-            providers: [
-              ChangeNotifierProvider<ConcursosSettingsChangeNotifier>(
-                create: (_) => concursosSettingsChangeNotifier,
-              ),
-              StreamProvider<DataConnectionStatus>(create: (context) {
-                return DataConnectivityService()
-                    .connectivityStreamController
-                    .stream;
-              })
-            ],
-          );
-        });
+    return new EasyDynamicThemeWidget(
+      child: MultiProvider(
+        child: ConcursosMaterialApp(),
+        providers: [
+          ChangeNotifierProvider<ConcursosSettingsChangeNotifier>(
+            create: (_) => concursosSettingsChangeNotifier,
+          ),
+          /*StreamProvider<DataConnectionStatus>(
+            create: (context) {
+              return DataConnectivityService()
+                  .connectivityStreamController
+                  .stream;
+            },
+            initialData: DataConnectionStatus.connected,
+          )*/
+        ],
+      ),
+    );
   }
 }
 
 class ConcursosMaterialApp extends StatelessWidget {
-  final ThemeData _theme;
-
-  ConcursosMaterialApp(this._theme);
+  ConcursosMaterialApp();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: Strings.appName,
-        theme: _theme,
-        home: HomePage(),
-        debugShowCheckedModeBanner: false,);
+      title: Strings.appName,
+      theme: ThemeData(brightness: Brightness.light, primarySwatch: Colors.indigo),
+      darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.indigo),
+      themeMode: EasyDynamicTheme.of(context).themeMode,
+      home: HomePage(),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }

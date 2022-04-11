@@ -3,6 +3,7 @@
 class Constants {
 
   static bool isTesting = false;
+  static bool showAds = true;
 
   static const String concursosSharedPreferencesKey = 'concursos';
   static const String concursosBaselineJson = 'assets/json/baseline.json';

@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 class Dezena extends StatefulWidget {
   final String _dezena;
   final Color _color;
-  final bool _show0;
+  bool tapped = false;
 
-  const Dezena(this._dezena, this._color, this._show0, {Key key}) : super(key: key);
+  Dezena(this._dezena, this._color, [this.tapped = false, Key? key]) : super(key: key);
 
   @override
   _DezenaState createState() => _DezenaState();
 }
 
 class _DezenaState extends State<Dezena> {
-  bool tapped = false;
+
 
   Widget _getDezenaDisplayWidget() {
     String text = widget._dezena.toString();
-    if (tapped) {
+    if (widget.tapped) {
       text = "X";
-    } else if (int.parse(widget._dezena) < 10 && widget._show0) {
+    } else if (int.parse(widget._dezena) < 10) {
       text = "0" + widget._dezena.toString();
     }
     return Text(
@@ -34,7 +34,7 @@ class _DezenaState extends State<Dezena> {
   @override
   Widget build(BuildContext context) {
     Widget circle = GestureDetector(
-      onTap: () => setState(() => tapped = !tapped),
+      onTap: () => setState(() => widget.tapped = !widget.tapped),
       child: Card(
         elevation: 2,
         color: widget._color,

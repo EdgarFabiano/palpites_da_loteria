@@ -1,14 +1,18 @@
-
 import 'package:palpites_da_loteria/service/format_service.dart';
 
 class LocalGanhador {
-  bool canalEletronico;
-  String cidade;
-  String local;
-  int quantidadeGanhadores;
-  String uf;
+  bool? canalEletronico;
+  String? cidade;
+  String? local;
+  int? quantidadeGanhadores;
+  String? uf;
 
-  LocalGanhador({this.canalEletronico, this.cidade, this.local, this.quantidadeGanhadores, this.uf});
+  LocalGanhador(
+      {this.canalEletronico,
+      this.cidade,
+      this.local,
+      this.quantidadeGanhadores,
+      this.uf});
 
   factory LocalGanhador.fromJson(Map<String, dynamic> json) {
     return LocalGanhador(
@@ -30,7 +34,7 @@ class LocalGanhador {
     return data;
   }
 
-  getQuantidadeGanhadoresDisplayValue () {
+  getQuantidadeGanhadoresDisplayValue() {
     return formatNumber(quantidadeGanhadores);
   }
 }

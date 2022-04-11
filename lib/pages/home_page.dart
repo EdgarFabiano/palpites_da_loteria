@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
@@ -15,38 +16,48 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  List<CardConcursos> cards;
-  ConcursosSettingsChangeNotifier concursosProvider;
-  Concursos concursos;
+  List<CardConcursos>? cards;
+  ConcursosSettingsChangeNotifier? concursosProvider;
+  Concursos? concursos;
+  BannerAd _bannerAd = AdMobService.getBannerAd(AdMobService.concursosBannerId);
 
   @override
   void initState() {
     super.initState();
-    AdMobService.startConcursosBanner()..load();
-    // AdMobService.displayConcursosBanner();
+    if (Constants.showAds) {
+      _bannerAd.load();
+    }
+  }
+
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     var mediaQueryData = MediaQuery.of(context);
     var isPortrait = mediaQueryData.orientation == Orientation.portrait;
 
     var screenWidth = mediaQueryData.size.width;
     var portraitSize = screenWidth / 2;
     var landscapeSize = screenWidth / 4;
-    var tileSize = isPortrait ?
-    (portraitSize > Constants.tileMaxSize ? Constants.tileMaxSize: portraitSize)
-        : (landscapeSize > Constants.tileMaxSize ? Constants.tileMaxSize: landscapeSize) ;
+    var tileSize = isPortrait
+        ? (portraitSize > Constants.tileMaxSize
+            ? Constants.tileMaxSize
+            : portraitSize)
+        : (landscapeSize > Constants.tileMaxSize
+            ? Constants.tileMaxSize
+            : landscapeSize);
 
     var spacing = mediaQueryData.size.height / 100;
 
     concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
-    concursos = concursosProvider.getConcursos();
+    concursos = concursosProvider?.getConcursos();
 
     if (concursosProvider != null && concursos != null) {
-      cards = concursos
+      cards = concursos!
           .where((element) => element.enabled)
           .map((concurso) => CardConcursos(concurso))
           .toList();
@@ -58,34 +69,38 @@ class _HomePageState extends State<HomePage> {
         drawer: Drawer(
           child: AppDrawer(),
         ),
-        body: Padding(
-          padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
-          child: Center(
-              child: GridView(
-                padding: EdgeInsets.all(spacing),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  crossAxisSpacing: spacing,
-                  mainAxisSpacing: spacing,
-                  maxCrossAxisExtent: tileSize,
+        body: Center(
+          child: Column(
+            children: [
+              Flexible(
+                child: GridView(
+                  padding: EdgeInsets.all(spacing),
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    crossAxisSpacing: spacing,
+                    mainAxisSpacing: spacing,
+                    maxCrossAxisExtent: tileSize,
+                  ),
+                  children: cards!,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: false,
                 ),
-                children: cards,
-              )),
+              ),
+              AdMobService.getBannerAdWidget(_bannerAd),
+            ],
+          ),
         ),
       );
-
     } else {
-      return Padding(
-        padding: EdgeInsets.only(bottom: AdMobService.bannerPadding(context)),
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(Strings.appName),
-          ),
-          drawer: Drawer(
-            child: AppDrawer(),
-          ),
-          body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(Strings.appName),
         ),
+        drawer: Drawer(
+          child: AppDrawer(),
+        ),
+        body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
       );
     }
   }
+
 }
