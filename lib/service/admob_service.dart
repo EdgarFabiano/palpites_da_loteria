@@ -15,13 +15,6 @@ class AdMobService {
 
   static final AdRequest request = AdRequest();
 
-  static List<String> testDevices() {
-    return [
-      '4B0FDC40963AB3E77AED679FF240F802',
-      '118F4E581E0D5DAA4F78D3B1A29E861C'
-    ];
-  }
-
   static String getAppId() {
     if (!Constants.isTesting) {
       return appId;

@@ -1,9 +1,7 @@
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
+import 'package:palpites_da_loteria/model/resultado_api.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/popup_menu.dart';
@@ -12,14 +10,6 @@ import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../defaults/constants.dart';
-
-DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
-Options _cacheOptions = buildCacheOptions(Duration(days: 7));
-Dio _dio = Dio();
-
-Resultado parseResultado(Map<String, dynamic> responseBody) {
-  return Resultado.fromJson(responseBody);
-}
 
 class SorteioResultadoPage extends StatefulWidget {
   final ConcursoBean _concurso;
@@ -38,19 +28,9 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   ];
   int _activeTabIndex = 0;
   TabController? _tabController;
-  Resultado? _resultado;
+  ResultadoAPI? _resultado;
   BannerAd _bannerAd = AdMobService.getBannerAd(AdMobService.sorteioBannerId);
-
-  fetchResultado(String concursoName) async {
-    var url = LoteriaAPIService.getEndpointFor(concursoName);
-    Response response = await _dio.get(url, options: _cacheOptions);
-
-    if (response.statusCode == 200 && response.data is Map) {
-      compute(parseResultado, response.data as Map<String, dynamic>)
-          .then((value) => {_resultado = value})
-          .whenComplete(() => setState(() {}));
-    }
-  }
+  LoteriaAPIService _loteriaAPIService = LoteriaAPIService();
 
   void _setActiveTabIndex() {
     setState(() {
@@ -58,11 +38,27 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     });
   }
 
+  void refreshResultado(int consurso) {
+    _loteriaAPIService.fetchResultado(widget._concurso.name, consurso)
+      .then((value) {
+        setState(() {
+          _resultado = value;
+        });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    _dio.interceptors.add(_dioCacheManager.interceptor);
-    fetchResultado(widget._concurso.name);
+    _loteriaAPIService
+        .fetchLatestResultado(widget._concurso.name)
+        .then((value) {
+      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        setState(() {
+          _resultado = value;
+        });
+      });
+    });
     _tabController = TabController(vsync: this, length: _tabs.length);
     _tabController!.addListener(_setActiveTabIndex);
     if (Constants.showAds) {
@@ -82,7 +78,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   @override
   Widget build(BuildContext context) {
     var tabSorteio = TabSorteio(widget._concurso);
-    var tabResultado = TabResultado(widget._concurso);
+    var tabResultado = TabResultado(widget._concurso, refreshResultado);
 
     return DefaultTabController(
       length: 2,

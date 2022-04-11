@@ -154,6 +154,8 @@ class Resultado {
         (acumulou! ? 'ACUMULOU' : 'TEVE GANHADOR') + '\n\n' +
         (dezenas != null && dezenas!.isNotEmpty ? getDezenasDisplayValue() + '\n\n' : '')  +
         (dezenas_2 != null && dezenas_2!.isNotEmpty ? getDezenas2DisplayValue() + '\n\n' : '') +
+        ((nome_time_coracao != '' && nome_time_coracao != null) ? 'Time do coração: $nome_time_coracao \n\n' : '') +
+        ((nome_mes_sorte != '' && nome_mes_sorte != null) ? 'Mês da sorte: $nome_mes_sorte \n\n' : '') +
         'Concurso: $numero_concurso \n'
         'Data de realização: ' + getDataConcursoDisplayValue() + '\n\n'
         'Arrecadação total: ' + getArrecadacaoTotalDisplayValue() +'\n'
