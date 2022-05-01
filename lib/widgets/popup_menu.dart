@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PopUpMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton(
+    var popupMenuButton = PopupMenuButton(
       tooltip: "Estrategia de geração",
       itemBuilder: (context) {
         var list = <PopupMenuEntry<Object>>[];
@@ -57,5 +57,6 @@ class PopUpMenu extends StatelessWidget {
         return list;
       },
     );
+    return Container();
   }
 }
