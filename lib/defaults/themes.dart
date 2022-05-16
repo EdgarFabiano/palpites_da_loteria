@@ -16,10 +16,8 @@ class DefaultThemes {
 
   static Color getRefreshingCardColor(BuildContext context) {
     if (Theme.of(context).brightness == Brightness.light) {
-      print("white");
       return Colors.white70;
     } else {
-      print("black");
       return Colors.black12;
     }
   }
