@@ -9,6 +9,10 @@ import '../../model/sorteio_frequencia.dart';
 
 class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
 
+  bool isAscending;
+
+  FrequenciaSorteioGenerator(this.isAscending);
+
   Future<http.Response> fetchAlbum() {
     return http.get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
   }
@@ -16,7 +20,7 @@ class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
   @override
   Future<SorteioFrequencia> sortear(int gameSize, ConcursoBean concurso) {
 
-    return Future.value(SorteioFrequencia(frequencias: []));
+    return Future.value(SorteioFrequencia(frequencias: [], frequencias2: []));
   }
 
 }

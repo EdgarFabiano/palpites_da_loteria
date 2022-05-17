@@ -1,12 +1,12 @@
-import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:palpites_da_loteria/model/enum/filtro_periodo.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/generator/abstract_sorteio_generator.dart';
-import 'package:palpites_da_loteria/service/generator/random_sorteio_generator.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
 import 'package:group_button/group_button.dart';
 
+import '../model/enum/estrategia_geracao.dart';
 import '../model/sorteio_frequencia.dart';
 
 class TabSorteio extends StatefulWidget {
@@ -20,11 +20,14 @@ class TabSorteio extends StatefulWidget {
 
 class _TabSorteioState extends State<TabSorteio>
     with AutomaticKeepAliveClientMixin {
-  AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
+  EstrategiaGeracao estrategiaGeracao = EstrategiaGeracao.ALEATORIO;
+  AbstractSorteioGenerator _sorteioGenerator =
+      EstrategiaGeracao.ALEATORIO.sorteioGenerator;
   double _numeroDeDezenasASortear = 0;
   int _chance = 3;
   Future<SorteioFrequencia>? _futureSorteio;
   final controller = GroupButtonController();
+  FiltroPeriodo dropdownValue = FiltroPeriodo.TRES_MESES;
 
   void _sortear(double increment) {
     _numeroDeDezenasASortear += increment;
@@ -131,8 +134,12 @@ class _TabSorteioState extends State<TabSorteio>
             onSelected: (value, index, isSelected) {
               controller.unselectAll();
               controller.selectIndex(index);
+              estrategiaGeracao = EstrategiaGeracao.values[index];
+              _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
+              _sortearComAnuncio(0);
             },
-            buttons: ["Aleatório", "Mais saídas", "Mais atrasadas"],
+            buttons:
+                EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
             options: GroupButtonOptions(
               selectedShadow: const [],
               selectedTextStyle: TextStyle(
@@ -151,6 +158,46 @@ class _TabSorteioState extends State<TabSorteio>
               alignment: Alignment.center,
               elevation: 2,
             ),
+          ),
+        ),
+        Visibility(
+          visible: estrategiaGeracao != EstrategiaGeracao.ALEATORIO,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(dropdownValue.labelValue),
+                  SizedBox(width: 20,),
+                  DropdownButton<FiltroPeriodo>(
+                    value: dropdownValue,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    elevation: 16,
+                    underline: Container(
+                      height: 2,
+                      color: widget.concursoBean.colorBean.getColor(context),
+                    ),
+                    onChanged: (FiltroPeriodo? newValue) {
+                      setState(() {
+                        dropdownValue = newValue!;
+                        _sortearComAnuncio(0);
+                      });
+                    },
+                    items: FiltroPeriodo.values.map<DropdownMenuItem<FiltroPeriodo>>((FiltroPeriodo value) {
+                      return DropdownMenuItem<FiltroPeriodo>(
+                        value: value,
+                        child: Text(value.displayTitle),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Container(),
+                ],
+              )
+            ],
           ),
         ),
         Divider(
