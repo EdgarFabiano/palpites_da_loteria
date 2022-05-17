@@ -1,9 +1,11 @@
+import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/generator/abstract_sorteio_generator.dart';
 import 'package:palpites_da_loteria/service/generator/random_sorteio_generator.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
+import 'package:group_button/group_button.dart';
 
 import '../model/sorteio_frequencia.dart';
 
@@ -19,10 +21,10 @@ class TabSorteio extends StatefulWidget {
 class _TabSorteioState extends State<TabSorteio>
     with AutomaticKeepAliveClientMixin {
   AbstractSorteioGenerator _sorteioGenerator = new RandomSorteioGenerator();
-  bool _primeiraVez = true;
   double _numeroDeDezenasASortear = 0;
   int _chance = 3;
   Future<SorteioFrequencia>? _futureSorteio;
+  final controller = GroupButtonController();
 
   void _sortear(double increment) {
     _numeroDeDezenasASortear += increment;
@@ -45,6 +47,8 @@ class _TabSorteioState extends State<TabSorteio>
   void initState() {
     super.initState();
     AdMobService.createSorteioInterstitialAd();
+    controller.selectIndex(0);
+    WidgetsBinding.instance?.addPostFrameCallback(((timeStamp) => _sortear(0)));
     _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
   }
 
@@ -66,11 +70,6 @@ class _TabSorteioState extends State<TabSorteio>
         ),
         color: widget.concursoBean.colorBean.getColor(context),
         onPressed: () => _sortearComAnuncio(0));
-
-    if (_primeiraVez) {
-      _sortearComAnuncio(0);
-      _primeiraVez = false;
-    }
 
     var minSize = widget.concursoBean.minSize.toDouble();
     var maxSize = widget.concursoBean.maxSize.toDouble();
@@ -122,8 +121,41 @@ class _TabSorteioState extends State<TabSorteio>
         Visibility(
             visible: maxSize != minSize,
             child: Divider(
-              height: 0,
+              height: 10,
             )),
+        Padding(
+          padding: EdgeInsets.only(top: 5),
+          child: GroupButton(
+            isRadio: false,
+            controller: controller,
+            onSelected: (value, index, isSelected) {
+              controller.unselectAll();
+              controller.selectIndex(index);
+            },
+            buttons: ["Aleatório", "Mais saídas", "Mais atrasadas"],
+            options: GroupButtonOptions(
+              selectedShadow: const [],
+              selectedTextStyle: TextStyle(
+                color: Colors.white,
+              ),
+              selectedColor: widget.concursoBean.colorBean.getColor(context),
+              unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
+              borderRadius: BorderRadius.circular(10),
+              groupingType: GroupingType.wrap,
+              direction: Axis.horizontal,
+              mainGroupAlignment: MainGroupAlignment.start,
+              crossGroupAlignment: CrossGroupAlignment.start,
+              groupRunAlignment: GroupRunAlignment.start,
+              textAlign: TextAlign.center,
+              textPadding: EdgeInsets.zero,
+              alignment: Alignment.center,
+              elevation: 2,
+            ),
+          ),
+        ),
+        Divider(
+          height: 10,
+        ),
         Expanded(
           child: FutureBuilder<SorteioFrequencia>(
             future: _futureSorteio,
