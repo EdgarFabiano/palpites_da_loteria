@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/enum/filtro_periodo.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
+import 'package:palpites_da_loteria/service/format_service.dart';
 import 'package:palpites_da_loteria/service/generator/abstract_sorteio_generator.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
 import 'package:group_button/group_button.dart';
@@ -26,8 +27,12 @@ class _TabSorteioState extends State<TabSorteio>
   double _numeroDeDezenasASortear = 0;
   int _chance = 3;
   Future<SorteioFrequencia>? _futureSorteio;
-  final controller = GroupButtonController();
-  FiltroPeriodo dropdownValue = FiltroPeriodo.TRES_MESES;
+  GroupButtonController _buttonGroupController = GroupButtonController();
+  FiltroPeriodo _dropdownValueFiltroPeriodo = FiltroPeriodo.TRES_MESES;
+  TextEditingController _startDateController = TextEditingController();
+  TextEditingController _endDateController = TextEditingController();
+  DateTimeRange _dateTimeRange =
+  DateTimeRange(start: DateTime.now(), end: DateTime.now());
 
   void _sortear(double increment) {
     _numeroDeDezenasASortear += increment;
@@ -50,9 +55,10 @@ class _TabSorteioState extends State<TabSorteio>
   void initState() {
     super.initState();
     AdMobService.createSorteioInterstitialAd();
-    controller.selectIndex(0);
+    _buttonGroupController.selectIndex(0);
     WidgetsBinding.instance?.addPostFrameCallback(((timeStamp) => _sortear(0)));
     _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
+    _updateDateTimeRange(_dropdownValueFiltroPeriodo.startDate, _dropdownValueFiltroPeriodo.endDate);
   }
 
   @override
@@ -76,7 +82,10 @@ class _TabSorteioState extends State<TabSorteio>
 
     var minSize = widget.concursoBean.minSize.toDouble();
     var maxSize = widget.concursoBean.maxSize.toDouble();
-    var width = MediaQuery.of(context).size.width;
+    var width = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     return Column(
       children: [
@@ -92,9 +101,10 @@ class _TabSorteioState extends State<TabSorteio>
                   maintainAnimation: true,
                   maintainState: true,
                   visible:
-                      _numeroDeDezenasASortear > widget.concursoBean.minSize,
+                  _numeroDeDezenasASortear > widget.concursoBean.minSize,
                   child: FlatButton.icon(
-                      onPressed: () => setState(() {
+                      onPressed: () =>
+                          setState(() {
                             _sortear(-1);
                           }),
                       icon: Icon(Icons.exposure_neg_1),
@@ -109,9 +119,10 @@ class _TabSorteioState extends State<TabSorteio>
                   maintainAnimation: true,
                   maintainState: true,
                   visible:
-                      _numeroDeDezenasASortear < widget.concursoBean.maxSize,
+                  _numeroDeDezenasASortear < widget.concursoBean.maxSize,
                   child: FlatButton.icon(
-                      onPressed: () => setState(() {
+                      onPressed: () =>
+                          setState(() {
                             _sortear(1);
                           }),
                       icon: Icon(Icons.exposure_plus_1),
@@ -130,23 +141,26 @@ class _TabSorteioState extends State<TabSorteio>
           padding: EdgeInsets.only(top: 5),
           child: GroupButton(
             isRadio: false,
-            controller: controller,
+            controller: _buttonGroupController,
             onSelected: (value, index, isSelected) {
-              controller.unselectAll();
-              controller.selectIndex(index);
+              _buttonGroupController.unselectAll();
+              _buttonGroupController.selectIndex(index);
               estrategiaGeracao = EstrategiaGeracao.values[index];
               _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
               _sortearComAnuncio(0);
             },
             buttons:
-                EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
+            EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
             options: GroupButtonOptions(
               selectedShadow: const [],
               selectedTextStyle: TextStyle(
                 color: Colors.white,
               ),
               selectedColor: widget.concursoBean.colorBean.getColor(context),
-              unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
+              unselectedTextStyle: Theme
+                  .of(context)
+                  .textTheme
+                  .bodyLarge,
               borderRadius: BorderRadius.circular(10),
               groupingType: GroupingType.wrap,
               direction: Axis.horizontal,
@@ -167,10 +181,12 @@ class _TabSorteioState extends State<TabSorteio>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(dropdownValue.labelValue),
-                  SizedBox(width: 20,),
+                  Text(_dropdownValueFiltroPeriodo.labelValue),
+                  SizedBox(
+                    width: 20,
+                  ),
                   DropdownButton<FiltroPeriodo>(
-                    value: dropdownValue,
+                    value: _dropdownValueFiltroPeriodo,
                     icon: const Icon(Icons.keyboard_arrow_down),
                     elevation: 16,
                     underline: Container(
@@ -179,23 +195,75 @@ class _TabSorteioState extends State<TabSorteio>
                     ),
                     onChanged: (FiltroPeriodo? newValue) {
                       setState(() {
-                        dropdownValue = newValue!;
+                        _dropdownValueFiltroPeriodo = newValue!;
+                        if (_dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO) {
+                          _updateDateTimeRange(
+                              _dateTimeRange.start,
+                              _dateTimeRange.end);
+                        } else {
+                          _updateDateTimeRange(
+                              _dropdownValueFiltroPeriodo.startDate,
+                              _dropdownValueFiltroPeriodo.endDate);
+                        }
                         _sortearComAnuncio(0);
                       });
                     },
-                    items: FiltroPeriodo.values.map<DropdownMenuItem<FiltroPeriodo>>((FiltroPeriodo value) {
-                      return DropdownMenuItem<FiltroPeriodo>(
-                        value: value,
-                        child: Text(value.displayTitle),
-                      );
-                    }).toList(),
+                    items: FiltroPeriodo.values
+                        .map<DropdownMenuItem<FiltroPeriodo>>(
+                            (FiltroPeriodo value) {
+                          return DropdownMenuItem<FiltroPeriodo>(
+                            value: value,
+                            child: Text(value.displayTitle),
+                          );
+                        }).toList(),
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Container(),
-                ],
+              Visibility(
+                visible: _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: TextField(
+                        controller: _startDateController,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.calendar_today),
+                            labelText: "Data início",
+                        ),
+                        readOnly: true,
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: _dateTimeRange.start,
+                              firstDate: DateTime(1994),
+                              lastDate: DateTime.now());
+                          _updateDateTimeRange(pickedDate!, _dateTimeRange.end);
+                        },
+                      ),
+                      flex: 1,
+                    ),
+                    Flexible(
+                      child: TextField(
+                        controller: _endDateController,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.calendar_today),
+                            labelText: "Data fim"
+                        ),
+                        readOnly: true,
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: _dateTimeRange.end,
+                              firstDate: DateTime(1994),
+                              //DateTime.now() - not to allow to choose before today.
+                              lastDate: DateTime.now());
+                          _updateDateTimeRange(_dateTimeRange.start, pickedDate!);
+                        },
+                      ),
+                      flex: 1,
+                    )
+                  ],
+                ),
               )
             ],
           ),
@@ -211,11 +279,13 @@ class _TabSorteioState extends State<TabSorteio>
                   snapshot.connectionState == ConnectionState.done) {
                 SorteioFrequencia sorteioFrequencia = snapshot.data!;
                 var dezenas = sorteioFrequencia.frequencias
-                    .map((value) => Dezena(value.dezena.toString(),
+                    .map((value) =>
+                    Dezena(value.dezena.toString(),
                         widget.concursoBean.colorBean.getColor(context)))
                     .toList();
                 var dezenas2 = sorteioFrequencia.frequencias2!
-                    .map((value) => Dezena(value.dezena.toString(),
+                    .map((value) =>
+                    Dezena(value.dezena.toString(),
                         widget.concursoBean.colorBean.getColor(context)))
                     .toList();
                 return Column(
@@ -270,6 +340,14 @@ class _TabSorteioState extends State<TabSorteio>
         ),
       ],
     );
+  }
+
+  void _updateDateTimeRange(DateTime startDate, DateTime endDate) {
+    _dateTimeRange = DateTimeRange(
+        start: startDate,
+        end: endDate);
+    _startDateController.text = formatarData(_dateTimeRange.start);
+    _endDateController.text = formatarData(_dateTimeRange.end);
   }
 
   @override

@@ -20,7 +20,8 @@ class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
   @override
   Future<SorteioFrequencia> sortear(int gameSize, ConcursoBean concurso) {
 
-    return Future.value(SorteioFrequencia(frequencias: [], frequencias2: []));
+    return Future.value(SorteioFrequencia(frequencias: [Frequencia(dezena: 1), Frequencia(dezena: 2), Frequencia(dezena: 3), Frequencia(dezena: 4), Frequencia(dezena: 5), Frequencia(dezena: 6)],
+        frequencias2: [Frequencia(dezena: 1), Frequencia(dezena: 2), Frequencia(dezena: 3), Frequencia(dezena: 4), Frequencia(dezena: 5), Frequencia(dezena: 6)]));
   }
 
 }
