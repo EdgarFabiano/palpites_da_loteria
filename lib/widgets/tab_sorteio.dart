@@ -9,6 +9,7 @@ import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 import '../model/enum/estrategia_geracao.dart';
 import '../model/sorteio_frequencia.dart';
+import 'dezenas_loading.dart';
 
 class TabSorteio extends StatefulWidget {
   final ConcursoBean concursoBean;
@@ -63,8 +64,7 @@ class _TabSorteioState extends State<TabSorteio>
 
   @override
   Widget build(BuildContext context) {
-    Dezena dezena = Dezena("10", Color(0xFFA));
-    dezena.tapped = true;
+    super.build(context);
     var refreshButton = RaisedButton.icon(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
@@ -334,8 +334,24 @@ class _TabSorteioState extends State<TabSorteio>
                 );
               }
               return Column(
-                children: [
-                  Expanded(child: Center(child: CircularProgressIndicator())),
+                children: <Widget>[
+                  DezenasLoading(_numeroDeDezenasASortear.toInt(), widget.concursoBean),
+                  Visibility(
+                      visible: widget.concursoBean.name == "D. SENA",
+                      child: Expanded(
+                        child: Column(
+                          children: [
+                            Divider(
+                              height: 0,
+                            ),
+                            DezenasLoading(_numeroDeDezenasASortear.toInt(), widget.concursoBean),
+                          ],
+                        ),
+                      )),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 50),
+                    child: refreshButton,
+                  ),
                 ],
               );
             },
