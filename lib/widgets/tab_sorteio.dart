@@ -311,6 +311,16 @@ class _TabSorteioState extends State<TabSorteio>
                             children: dezenas2,
                           ),
                         )),
+                    Visibility(
+                      visible: sorteioFrequencia.qtdConcursos > 0,
+                      child: RichText(
+                          text: TextSpan(children: <TextSpan>[
+                        TextSpan(text: 'Com base em '),
+                        TextSpan(text:'${formatNumber(sorteioFrequencia.qtdConcursos)}',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(text: ' sorteios'),
+                      ])),
+                    ),
                     refreshButton
                   ],
                 );

@@ -4,10 +4,10 @@
 class SorteioFrequencia {
   List<Frequencia> frequencias = [];
   List<Frequencia>? frequencias2;
-  int? qtdConcursos;
+  int qtdConcursos = 0;
 
   SorteioFrequencia(
-      {required this.frequencias, this.frequencias2, this.qtdConcursos});
+      {required this.frequencias, this.frequencias2, this.qtdConcursos = 0});
 
   static SorteioFrequencia empty() {
     return SorteioFrequencia(frequencias: []);
