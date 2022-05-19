@@ -4,14 +4,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/generator/abstract_sorteio_generator.dart';
-import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 import '../../model/sorteio_frequencia.dart';
 
 class RandomSorteioGenerator implements AbstractSorteioGenerator {
 
   @override
-  Future<SorteioFrequencia> sortear(int gameSize, ConcursoBean concurso) {
+  Future<SorteioFrequencia> sortear(ConcursoBean concurso, int gameSize, [DateTimeRange? dateTimeRange]) {
     List<Frequencia> frequencias = getFrequencias(gameSize, concurso);
     List<Frequencia> frequencias2 = getFrequencias(gameSize, concurso);
     var sorteioFrequencia = SorteioFrequencia(frequencias: frequencias, frequencias2: frequencias2);

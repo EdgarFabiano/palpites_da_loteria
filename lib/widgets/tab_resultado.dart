@@ -77,7 +77,7 @@ class _TabResultadoState extends State<TabResultado>
                     _concursoAtual = _ultimoConcurso;
                   setState(() {
                     _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean.name, _concursoAtual);
+                        widget.concursoBean, _concursoAtual);
                     widget.refreshResultadoCompartilhavel(_concursoAtual);
                   });
                   Navigator.of(context).pop();
@@ -94,7 +94,7 @@ class _TabResultadoState extends State<TabResultado>
   void initState() {
     super.initState();
     _futureResultado = _loteriaAPIService
-        .fetchLatestResultado(widget.concursoBean.name)
+        .fetchLatestResultado(widget.concursoBean)
         .then((value) {
       setState(() {
           _ultimoConcurso = value.concurso!;
@@ -515,7 +515,7 @@ class _TabResultadoState extends State<TabResultado>
               onPressed: () => setState(() {
                     --_concursoAtual;
                     _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean.name, _concursoAtual);
+                        widget.concursoBean, _concursoAtual);
                     widget.refreshResultadoCompartilhavel(_concursoAtual);
                   }),
               child: Text("Anterior")),
@@ -536,7 +536,7 @@ class _TabResultadoState extends State<TabResultado>
               onPressed: () => setState(() {
                     ++_concursoAtual;
                     _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean.name, _concursoAtual);
+                        widget.concursoBean, _concursoAtual);
                     widget.refreshResultadoCompartilhavel(_concursoAtual);
                   }),
               child: Text("Próximo")),

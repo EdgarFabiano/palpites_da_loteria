@@ -9,6 +9,10 @@ class SorteioFrequencia {
   SorteioFrequencia(
       {required this.frequencias, this.frequencias2, this.qtdConcursos});
 
+  static SorteioFrequencia empty() {
+    return SorteioFrequencia(frequencias: []);
+  }
+
   SorteioFrequencia.fromJson(Map<String, dynamic> json) {
     if (json['frequencias'] != null) {
       frequencias = <Frequencia>[];

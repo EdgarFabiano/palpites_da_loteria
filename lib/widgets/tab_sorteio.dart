@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:group_button/group_button.dart';
 import 'package:palpites_da_loteria/model/enum/filtro_periodo.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/format_service.dart';
 import 'package:palpites_da_loteria/service/generator/abstract_sorteio_generator.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
-import 'package:group_button/group_button.dart';
 
 import '../model/enum/estrategia_geracao.dart';
 import '../model/sorteio_frequencia.dart';
@@ -37,7 +37,7 @@ class _TabSorteioState extends State<TabSorteio>
   void _sortear(double increment) {
     _numeroDeDezenasASortear += increment;
     _futureSorteio = _sorteioGenerator.sortear(
-        _numeroDeDezenasASortear.toInt(), widget.concursoBean);
+        widget.concursoBean, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
   }
 
   void _sortearComAnuncio(double increment) {
@@ -278,16 +278,19 @@ class _TabSorteioState extends State<TabSorteio>
               if (snapshot.hasData &&
                   snapshot.connectionState == ConnectionState.done) {
                 SorteioFrequencia sorteioFrequencia = snapshot.data!;
-                var dezenas = sorteioFrequencia.frequencias
+                List<Dezena> dezenas = sorteioFrequencia.frequencias
                     .map((value) =>
                     Dezena(value.dezena.toString(),
                         widget.concursoBean.colorBean.getColor(context)))
                     .toList();
-                var dezenas2 = sorteioFrequencia.frequencias2!
-                    .map((value) =>
-                    Dezena(value.dezena.toString(),
-                        widget.concursoBean.colorBean.getColor(context)))
-                    .toList();
+                List<Dezena> dezenas2 = [];
+                if (sorteioFrequencia.frequencias2 != null) {
+                  dezenas2 = sorteioFrequencia.frequencias2!
+                      .map((value) =>
+                      Dezena(value.dezena.toString(),
+                          widget.concursoBean.colorBean.getColor(context)))
+                      .toList();
+                }
                 return Column(
                   children: <Widget>[
                     Expanded(

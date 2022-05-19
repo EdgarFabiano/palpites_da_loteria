@@ -39,7 +39,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   }
 
   void refreshResultado(int consurso) {
-    _loteriaAPIService.fetchResultado(widget._concurso.name, consurso)
+    _loteriaAPIService.fetchResultado(widget._concurso, consurso)
       .then((value) {
         setState(() {
           _resultado = value;
@@ -51,7 +51,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   void initState() {
     super.initState();
     _loteriaAPIService
-        .fetchLatestResultado(widget._concurso.name)
+        .fetchLatestResultado(widget._concurso)
         .then((value) {
       WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
         setState(() {
