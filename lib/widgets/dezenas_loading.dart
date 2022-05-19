@@ -24,10 +24,10 @@ class _DezenasLoadingState extends State<DezenasLoading> {
         child: CircularProgressIndicator(color: Colors.white),
       ),
     ));
-    return Expanded(
+    return Flexible(
       child: GridView.extent(
         maxCrossAxisExtent: width / 8 + 20,
-        shrinkWrap: false,
+        shrinkWrap: true,
         padding: EdgeInsets.all(10),
         children: dezenas,
       ),

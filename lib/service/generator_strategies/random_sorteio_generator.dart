@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/service/generator/abstract_sorteio_generator.dart';
 
 import '../../model/sorteio_frequencia.dart';
+import 'abstract_sorteio_generator.dart';
 
 class RandomSorteioGenerator implements AbstractSorteioGenerator {
 

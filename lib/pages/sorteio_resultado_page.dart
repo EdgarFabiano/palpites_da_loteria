@@ -4,7 +4,6 @@ import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/model/resultado_api.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
-import 'package:palpites_da_loteria/widgets/popup_menu.dart';
 import 'package:palpites_da_loteria/widgets/tab_resultado.dart';
 import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
 import 'package:share_plus/share_plus.dart';
@@ -91,7 +90,6 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
             ),
             title: Text(widget._concurso.name),
             actions: <Widget>[
-              _activeTabIndex == 0 ? PopUpMenu() : SizedBox.shrink(),
               _activeTabIndex == 1 && _resultado != null
                   ? IconButton(
                       icon: const Icon(Icons.share),

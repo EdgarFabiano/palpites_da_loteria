@@ -1,8 +1,8 @@
 
 import 'package:flutter/foundation.dart';
-import 'package:palpites_da_loteria/service/generator/abstract_sorteio_generator.dart';
-import 'package:palpites_da_loteria/service/generator/frequencia_sorteio_generator.dart';
-import 'package:palpites_da_loteria/service/generator/random_sorteio_generator.dart';
+import 'package:palpites_da_loteria/service/generator_strategies/abstract_sorteio_generator.dart';
+import 'package:palpites_da_loteria/service/generator_strategies/frequencia_sorteio_generator.dart';
+import 'package:palpites_da_loteria/service/generator_strategies/random_sorteio_generator.dart';
 
 enum EstrategiaGeracao {
   ALEATORIO, MAIS_SAIDAS, MAIS_ATRASADAS
@@ -15,9 +15,9 @@ extension EstrategiaGeracaoExtension on EstrategiaGeracao {
       case EstrategiaGeracao.ALEATORIO:
         return 'Aleatório';
       case EstrategiaGeracao.MAIS_SAIDAS:
-        return 'Mais saídas';
+        return 'Mais frequentes';
       case EstrategiaGeracao.MAIS_ATRASADAS:
-        return 'Mais atrasadas';
+        return 'Menos frequentes';
       default:
         return '';
     }

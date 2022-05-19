@@ -47,7 +47,7 @@ extension FiltroPeriodoExtension on FiltroPeriodo {
       case FiltroPeriodo.UM_ANO:
         return DateTime(dateTimeNow.year - 1, dateTimeNow.month, dateTimeNow.day);
       case FiltroPeriodo.TODOS:
-        return DateTime(1900, 1, 1); //Não há sorteios realizados antes disso
+        return DateTime(1994, 1, 1); //Não há sorteios realizados antes disso
       case FiltroPeriodo.CUSTOMIZADO:
       default:
         return dateTimeNow;

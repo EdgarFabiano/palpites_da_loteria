@@ -47,8 +47,8 @@ class Frequencia {
   Frequencia({required this.dezena, this.quantidade});
 
   Frequencia.fromJson(Map<String, dynamic> json) {
-    dezena = json['dezena'];
-    quantidade = json['quantidade'];
+    dezena = json['dezena'] == null ? 0 : json['dezena'];
+    quantidade = json['quantidade'] == null ? 0 : json['quantidade'];
   }
 
   Map<String, dynamic> toJson() {

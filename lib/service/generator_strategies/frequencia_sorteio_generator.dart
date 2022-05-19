@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/service/generator/abstract_sorteio_generator.dart';
 
 import '../../model/sorteio_frequencia.dart';
+import 'abstract_sorteio_generator.dart';
 
 SorteioFrequencia parseResultado(Map<String, dynamic> responseBody) {
   return SorteioFrequencia.fromJson(responseBody);
