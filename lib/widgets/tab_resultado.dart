@@ -14,7 +14,9 @@ class TabResultado extends StatefulWidget {
   final ConcursoBean concursoBean;
   final Function refreshResultadoCompartilhavel;
 
-  const TabResultado(this.concursoBean, this.refreshResultadoCompartilhavel, {Key? key}) : super(key: key);
+  const TabResultado(this.concursoBean, this.refreshResultadoCompartilhavel,
+      {Key? key})
+      : super(key: key);
 
   @override
   _TabResultadoState createState() => _TabResultadoState();
@@ -97,8 +99,8 @@ class _TabResultadoState extends State<TabResultado>
         .fetchLatestResultado(widget.concursoBean)
         .then((value) {
       setState(() {
-          _ultimoConcurso = value.concurso!;
-          _concursoAtual = value.concurso!;
+        _ultimoConcurso = value.concurso!;
+        _concursoAtual = value.concurso!;
       });
       return Future.value(value);
     });
@@ -134,29 +136,28 @@ class _TabResultadoState extends State<TabResultado>
           child: FutureBuilder<ResultadoAPI>(
             future: _futureResultado,
             builder: (context, snapshot) {
-                if (snapshot.hasData &&
-                    snapshot.connectionState == ConnectionState.done) {
-                  ResultadoAPI resultado = snapshot.data!;
-                  return Column(
-                    children: [
-                      !isDisconnected ? Divider(height: 0) : SizedBox.shrink(),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.only(
-                              left: 15, right: 15, top: 5, bottom: 35),
-                          children: _getResultadoWidgets(resultado, context),
-                        ),
-                      )
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return Column(
-                    children: [
-                      Expanded(
-                          child: Center(child: Icon(Icons.signal_wifi_off))),
-                    ],
-                  );
-                }
+              if (snapshot.hasData &&
+                  snapshot.connectionState == ConnectionState.done) {
+                ResultadoAPI resultado = snapshot.data!;
+                return Column(
+                  children: [
+                    !isDisconnected ? Divider(height: 0) : SizedBox.shrink(),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, top: 5, bottom: 35),
+                        children: _getResultadoWidgets(resultado, context),
+                      ),
+                    )
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return Column(
+                  children: [
+                    Expanded(child: Center(child: Icon(Icons.signal_wifi_off))),
+                  ],
+                );
+              }
               return Column(
                 children: [
                   Expanded(child: Center(child: CircularProgressIndicator())),
@@ -178,22 +179,20 @@ class _TabResultadoState extends State<TabResultado>
       width: 0.2,
     );
 
-    if (resultado.acumulou != null) {
-      builder.add(Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 10, bottom: 10),
-          child: Text(
-            resultado.acumulou! ? "ACUMULOU!" : "TEVE GANHADOR",
-            style: TextStyle(fontSize: 25),
-          ),
+    builder.add(Center(
+      child: Padding(
+        padding: EdgeInsets.only(top: 10, bottom: 10),
+        child: Text(
+          resultado.acumulou ? "ACUMULOU!" : "TEVE GANHADOR",
+          style: TextStyle(fontSize: 25),
         ),
-      ));
+      ),
+    ));
 
-      builder.add(Divider(
-        indent: 50,
-        endIndent: 50,
-      ));
-    }
+    builder.add(Divider(
+      indent: 50,
+      endIndent: 50,
+    ));
 
     if (resultado.concurso != null && resultado.data != null) {
       builder.add(Row(
@@ -227,18 +226,22 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.mesSorte != null && resultado.mesSorte != "") {
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 10),
-        child: Center(child: Text("Mês da sorte: " + resultado.mesSorte!)),
-      ));
-    }
-
-    if (resultado.timeCoracao != null && resultado.timeCoracao != "") {
-      builder.add(Padding(
-        padding: EdgeInsets.only(top: 10),
-        child:
-            Center(child: Text("Time do coração: " + resultado.timeCoracao!)),
+    if (resultado.timeCoracaoOuMesSorte != null &&
+        resultado.timeCoracaoOuMesSorte != "") {
+      builder.add(Card(
+        color: widget.concursoBean.colorBean.getColor(context),
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Center(
+            child: Text(
+              resultado.timeCoracaoOuMesSorte!,
+              style: TextStyle(
+                fontSize: 26,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
       ));
     }
 
@@ -442,13 +445,13 @@ class _TabResultadoState extends State<TabResultado>
         Container(
           alignment: Alignment.center,
           child: Text(
-            premiacaoItem.vencedores!.toString(),
+            premiacaoItem.vencedores!,
           ),
           padding: EdgeInsets.all(10.0),
         ),
         Container(
           alignment: Alignment.center,
-          child: Text("R\$ ${premiacaoItem.premio!}"),
+          child: Text("${premiacaoItem.premio!}"),
           padding: EdgeInsets.all(10.0),
         )
       ]);

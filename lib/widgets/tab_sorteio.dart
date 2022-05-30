@@ -57,7 +57,7 @@ class _TabSorteioState extends State<TabSorteio>
     super.initState();
     AdMobService.createSorteioInterstitialAd();
     _buttonGroupController.selectIndex(0);
-    WidgetsBinding.instance?.addPostFrameCallback(((timeStamp) => _sortear(0)));
+    WidgetsBinding.instance.addPostFrameCallback(((timeStamp) => _sortear(0)));
     _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
     _updateDateTimeRange(_dropdownValueFiltroPeriodo.startDate,
         _dropdownValueFiltroPeriodo.endDate);
@@ -313,15 +313,35 @@ class _TabSorteioState extends State<TabSorteio>
                         )),
                     Visibility(
                       visible: sorteioFrequencia.qtdConcursos > 0,
-                      child: RichText(
-                          text: TextSpan(children: <TextSpan>[
-                        TextSpan(text: 'Com base em '),
-                        TextSpan(text:'${formatNumber(sorteioFrequencia.qtdConcursos)}',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        TextSpan(text: ' sorteios'),
-                      ])),
+                      child: Column(
+                        children: [
+                          RichText(
+                              text: TextSpan(children: <TextSpan>[
+                            TextSpan(text: 'Com base em '),
+                            TextSpan(
+                                text:
+                                    '${formatNumber(sorteioFrequencia.qtdConcursos)}',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: ' sorteios'),
+                          ])),
+                          RichText(
+                              text: TextSpan(children: <TextSpan>[
+                            TextSpan(text: 'De '),
+                            TextSpan(
+                                text: '${formatarData(_dateTimeRange.start)}',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: ' a '),
+                            TextSpan(
+                                text: '${formatarData(_dateTimeRange.end)}',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                          ]))
+                        ],
+                      ),
                     ),
-                    refreshButton
+                    Visibility(
+                        visible:
+                            estrategiaGeracao == EstrategiaGeracao.ALEATORIO,
+                        child: refreshButton),
                   ],
                 );
               } else if (snapshot.hasError) {
