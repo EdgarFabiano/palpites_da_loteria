@@ -100,6 +100,41 @@ class ConcursoBean {
   String toString() {
     return 'ConcursoBean{name: $name, enabled: $enabled, colorBean: $colorBean}';
   }
+
+  String getEnpoint() {
+    switch (this.name) {
+      case "MEGA-SENA":
+      case "MG. SENA":
+        return "mega-sena";
+
+      case "LOTOFÁCIL":
+      case "LT. FÁCIL":
+        return "lotofacil";
+
+      case "QUINA":
+      case "QN":
+        return "quina";
+
+      case "LOTOMANIA":
+      case "LT. MANIA":
+        return "lotomania";
+
+      case "TIMEMANIA":
+      case "TM. MANIA":
+        return "timemania";
+
+      case "DUPLA SENA":
+      case "D. SENA":
+        return "dupla-sena";
+
+      case "DIA DE SORTE":
+      case "D. DE SORTE":
+        return "dia-de-sorte";
+
+      default:
+        return "";
+    }
+  }
 }
 
 class ColorBean {

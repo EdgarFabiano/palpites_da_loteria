@@ -2,7 +2,11 @@ import 'package:date_format/date_format.dart';
 import 'package:intl/intl.dart';
 
 String dateFormat(String date) {
-  return formatDate(DateTime.parse(date), [dd, '/', mm, '/', yyyy]).toString();
+  return formatarData(DateTime.parse(date));
+}
+
+String formatarData(DateTime date) {
+  return formatDate(date, [dd, '/', mm, '/', yyyy]).toString();
 }
 
 String formatNumber(dynamic valor) {
