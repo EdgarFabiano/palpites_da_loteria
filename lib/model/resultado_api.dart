@@ -148,7 +148,7 @@ class ResultadoAPI {
                 ? getDezenas2DisplayValue() + '\n\n'
                 : '') +
             ((timeCoracaoOuMesSorte != '' && timeCoracaoOuMesSorte != null)
-                ? 'Time do coração: $timeCoracaoOuMesSorte \n\n'
+                ? '$timeCoracaoOuMesSorte \n\n'
                 : '') +
             'Concurso: $concurso \n' +
             'Data de realização: ' +
