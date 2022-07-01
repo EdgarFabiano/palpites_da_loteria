@@ -1,12 +1,9 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:palpites_da_loteria/service/generator_strategies/abstract_sorteio_generator.dart';
 import 'package:palpites_da_loteria/service/generator_strategies/frequencia_sorteio_generator.dart';
 import 'package:palpites_da_loteria/service/generator_strategies/random_sorteio_generator.dart';
 
-enum EstrategiaGeracao {
-  ALEATORIO, MAIS_SAIDAS, MAIS_ATRASADAS
-}
+enum EstrategiaGeracao { ALEATORIO, MAIS_SAIDAS, MAIS_ATRASADAS }
 
 extension EstrategiaGeracaoExtension on EstrategiaGeracao {
   String get name => describeEnum(this);
@@ -28,9 +25,9 @@ extension EstrategiaGeracaoExtension on EstrategiaGeracao {
       case EstrategiaGeracao.ALEATORIO:
         return RandomSorteioGenerator();
       case EstrategiaGeracao.MAIS_SAIDAS:
-        return FrequenciaSorteioGenerator(true);
-      case EstrategiaGeracao.MAIS_ATRASADAS:
         return FrequenciaSorteioGenerator(false);
+      case EstrategiaGeracao.MAIS_ATRASADAS:
+        return FrequenciaSorteioGenerator(true);
       default:
         return RandomSorteioGenerator();
     }
