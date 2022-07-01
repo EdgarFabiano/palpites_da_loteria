@@ -34,6 +34,7 @@ class _TabSorteioState extends State<TabSorteio>
   TextEditingController _endDateController = TextEditingController();
   DateTimeRange _dateTimeRange =
       DateTimeRange(start: DateTime.now(), end: DateTime.now());
+  bool _showFrequencia = true;
 
   void _sortear(double increment) {
     _numeroDeDezenasASortear += increment;
@@ -169,99 +170,116 @@ class _TabSorteioState extends State<TabSorteio>
         ),
         Visibility(
           visible: estrategiaGeracao != EstrategiaGeracao.ALEATORIO,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(_dropdownValueFiltroPeriodo.labelValue),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  DropdownButton<FiltroPeriodo>(
-                    value: _dropdownValueFiltroPeriodo,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    elevation: 16,
-                    underline: Container(
-                      height: 2,
-                      color: widget.concursoBean.colorBean.getColor(context),
-                    ),
-                    onChanged: (FiltroPeriodo? newValue) {
-                      setState(() {
-                        _dropdownValueFiltroPeriodo = newValue!;
-                        if (_dropdownValueFiltroPeriodo ==
-                            FiltroPeriodo.CUSTOMIZADO) {
-                          _updateDateTimeRange(
-                              _dateTimeRange.start, _dateTimeRange.end);
-                        } else {
-                          _updateDateTimeRange(
-                              _dropdownValueFiltroPeriodo.startDate,
-                              _dropdownValueFiltroPeriodo.endDate);
-                        }
-                        sortearComAnuncio(0);
-                      });
-                    },
-                    items: FiltroPeriodo.values
-                        .map<DropdownMenuItem<FiltroPeriodo>>(
-                            (FiltroPeriodo value) {
-                      return DropdownMenuItem<FiltroPeriodo>(
-                        value: value,
-                        child: Text(value.displayTitle),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-              Visibility(
-                visible:
-                    _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
-                child: Row(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Flexible(
-                      child: TextField(
-                        controller: _startDateController,
-                        decoration: InputDecoration(
-                          icon: Icon(Icons.calendar_today),
-                          labelText: "Data início",
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(_dropdownValueFiltroPeriodo.labelValue),
+                        DropdownButton<FiltroPeriodo>(
+                          value: _dropdownValueFiltroPeriodo,
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          elevation: 16,
+                          underline: Container(
+                            height: 2,
+                            color:
+                                widget.concursoBean.colorBean.getColor(context),
+                          ),
+                          onChanged: (FiltroPeriodo? newValue) {
+                            setState(() {
+                              _dropdownValueFiltroPeriodo = newValue!;
+                              if (_dropdownValueFiltroPeriodo ==
+                                  FiltroPeriodo.CUSTOMIZADO) {
+                                _updateDateTimeRange(
+                                    _dateTimeRange.start, _dateTimeRange.end);
+                              } else {
+                                _updateDateTimeRange(
+                                    _dropdownValueFiltroPeriodo.startDate,
+                                    _dropdownValueFiltroPeriodo.endDate);
+                              }
+                              sortearComAnuncio(0);
+                            });
+                          },
+                          items: FiltroPeriodo.values
+                              .map<DropdownMenuItem<FiltroPeriodo>>(
+                                  (FiltroPeriodo value) {
+                            return DropdownMenuItem<FiltroPeriodo>(
+                              value: value,
+                              child: Text(value.displayTitle),
+                            );
+                          }).toList(),
                         ),
-                        readOnly: true,
-                        onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: _dateTimeRange.start,
-                              firstDate: DateTime(1990),
-                              lastDate: _dateTimeRange.end);
-                          _updateDateTimeRange(pickedDate!, _dateTimeRange.end);
-                          sortearComAnuncio(0);
-                        },
-                      ),
-                      flex: 1,
+                      ],
                     ),
-                    Flexible(
-                      child: TextField(
-                        controller: _endDateController,
-                        decoration: InputDecoration(
-                            icon: Icon(Icons.calendar_today),
-                            labelText: "Data fim"),
-                        readOnly: true,
-                        onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: _dateTimeRange.end,
-                              firstDate: _dateTimeRange.start,
-                              //DateTime.now() - not to allow to choose before today.
-                              lastDate: DateTime.now());
-                          _updateDateTimeRange(
-                              _dateTimeRange.start, pickedDate!);
-                          sortearComAnuncio(0);
-                        },
-                      ),
-                      flex: 1,
-                    )
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text("Mostrar frequências"),
+                        Switch(
+                            value: _showFrequencia,
+                            onChanged: (value) =>
+                                _onChangeShowFrequencia(value)),
+                      ],
+                    ),
                   ],
                 ),
-              )
-            ],
+                Visibility(
+                  visible:
+                      _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: TextField(
+                          controller: _startDateController,
+                          decoration: InputDecoration(
+                            icon: Icon(Icons.calendar_today),
+                            labelText: "Data início",
+                          ),
+                          readOnly: true,
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: _dateTimeRange.start,
+                                firstDate: DateTime(1990),
+                                lastDate: _dateTimeRange.end);
+                            _updateDateTimeRange(
+                                pickedDate!, _dateTimeRange.end);
+                            sortearComAnuncio(0);
+                          },
+                        ),
+                        flex: 1,
+                      ),
+                      Flexible(
+                        child: TextField(
+                          controller: _endDateController,
+                          decoration: InputDecoration(
+                              icon: Icon(Icons.calendar_today),
+                              labelText: "Data fim"),
+                          readOnly: true,
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: _dateTimeRange.end,
+                                firstDate: _dateTimeRange.start,
+                                //DateTime.now() - not to allow to choose before today.
+                                lastDate: DateTime.now());
+                            _updateDateTimeRange(
+                                _dateTimeRange.start, pickedDate!);
+                            sortearComAnuncio(0);
+                          },
+                        ),
+                        flex: 1,
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
         Divider(
@@ -275,14 +293,22 @@ class _TabSorteioState extends State<TabSorteio>
                   snapshot.connectionState == ConnectionState.done) {
                 SorteioFrequencia sorteioFrequencia = snapshot.data!;
                 List<Dezena> dezenas = sorteioFrequencia.frequencias
-                    .map((value) => Dezena(value.dezena.toString(),
-                        widget.concursoBean.colorBean.getColor(context)))
+                    .map((value) => Dezena(
+                          value.dezena.toString(),
+                          widget.concursoBean.colorBean.getColor(context),
+                          _showFrequencia,
+                          value.quantidade,
+                        ))
                     .toList();
                 List<Dezena> dezenas2 = [];
                 if (sorteioFrequencia.frequencias2 != null) {
                   dezenas2 = sorteioFrequencia.frequencias2!
-                      .map((value) => Dezena(value.dezena.toString(),
-                          widget.concursoBean.colorBean.getColor(context)))
+                      .map((value) => Dezena(
+                            value.dezena.toString(),
+                            widget.concursoBean.colorBean.getColor(context),
+                            _showFrequencia,
+                            value.quantidade,
+                          ))
                       .toList();
                 }
                 return Column(
@@ -371,6 +397,12 @@ class _TabSorteioState extends State<TabSorteio>
         ),
       ],
     );
+  }
+
+  _onChangeShowFrequencia(bool value) {
+    setState(() {
+      _showFrequencia = value;
+    });
   }
 
   void _updateDateTimeRange(DateTime startDate, DateTime endDate) {

@@ -3,22 +3,21 @@ import 'package:flutter/material.dart';
 class Dezena extends StatefulWidget {
   final String _dezena;
   final Color _color;
-  bool tapped = false;
+  final int? _frequencia;
+  bool _showFrequencia;
 
-  Dezena(this._dezena, this._color, [this.tapped = false, Key? key]) : super(key: key);
+  Dezena(this._dezena, this._color,
+      [this._showFrequencia = false, this._frequencia, Key? key])
+      : super(key: key);
 
   @override
   _DezenaState createState() => _DezenaState();
 }
 
 class _DezenaState extends State<Dezena> {
-
-
   Widget _getDezenaDisplayWidget() {
     String text = widget._dezena.toString();
-    if (widget.tapped) {
-      text = "X";
-    } else if (int.parse(widget._dezena) < 10) {
+    if (int.parse(widget._dezena) < 10) {
       text = "0" + widget._dezena.toString();
     }
     return Text(
@@ -33,15 +32,30 @@ class _DezenaState extends State<Dezena> {
 
   @override
   Widget build(BuildContext context) {
-    Widget circle = GestureDetector(
-      onTap: () => setState(() => widget.tapped = !widget.tapped),
-      child: Card(
-        elevation: 2,
-        color: widget._color,
-        shape: CircleBorder(),
-        child: Center(
-          child: _getDezenaDisplayWidget(),
-        ),
+    Widget circle = Card(
+      elevation: 2,
+      color: widget._color,
+      shape: CircleBorder(),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: _getDezenaDisplayWidget(),
+          ),
+          Visibility(
+            visible: widget._showFrequencia && widget._frequencia != null,
+            child: Divider(height: 5),
+          ),
+          Visibility(
+              visible: widget._showFrequencia && widget._frequencia != null,
+              child: Text(
+                widget._frequencia.toString(),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
+                ),
+              )),
+        ],
       ),
     );
 
