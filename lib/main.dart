@@ -1,18 +1,19 @@
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
+import 'package:palpites_da_loteria/pages/home_page.dart';
 import 'package:palpites_da_loteria/service/concurso_service.dart'
     as concursoService;
-import 'package:palpites_da_loteria/pages/home_page.dart';
 import 'package:palpites_da_loteria/widgets/concursos_settings_change_notifier.dart';
 import 'package:provider/provider.dart';
-
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // FirebaseAdMob.instance.initialize(appId: AdMobService.getAppId());
   MobileAds.instance.initialize();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(PalpitesLoteriaApp());
 }
 
@@ -53,8 +54,10 @@ class ConcursosMaterialApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: Strings.appName,
-      theme: ThemeData(brightness: Brightness.light, primarySwatch: Colors.indigo),
-      darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.indigo),
+      theme:
+          ThemeData(brightness: Brightness.light, primarySwatch: Colors.indigo),
+      darkTheme:
+          ThemeData(brightness: Brightness.dark, primarySwatch: Colors.indigo),
       themeMode: EasyDynamicTheme.of(context).themeMode,
       home: HomePage(),
       debugShowCheckedModeBanner: false,
