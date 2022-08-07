@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/pages/home_loading_page.dart';
+import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/widgets/card_concursos.dart';
 import 'package:palpites_da_loteria/widgets/concursos_settings_change_notifier.dart';
 import 'package:provider/provider.dart';
@@ -102,5 +102,4 @@ class _HomePageState extends State<HomePage> {
       );
     }
   }
-
 }
