@@ -32,9 +32,9 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    ndkVersion "18.1.5063045"
+    ndkVersion "21.1.6352462"
     compileSdkVersion 32
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "30.0.3"
 
     lintOptions {
         disable 'InvalidPackage'
