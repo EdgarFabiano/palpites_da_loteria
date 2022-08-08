@@ -50,23 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA4bH_5BQdwRyNqbCXcc4-MDKUq-E3227c',
-    appId: '1:662670439503:android:b870f5f42c127fad47263a',
-    messagingSenderId: '662670439503',
-    projectId: 'palpites-da-loteria',
-    databaseURL: 'https://palpites-da-loteria.firebaseio.com',
-    storageBucket: 'palpites-da-loteria.appspot.com',
+    apiKey: 'AIzaSyBlPkhvkQxph1_nc3hjDqTo7DPtHyGQDTc',
+    appId: '1:13086829220:android:93007a04cbb95aec5bd431',
+    messagingSenderId: '13086829220',
+    projectId: 'palpites-da-loteria-2',
+    storageBucket: 'palpites-da-loteria-2.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDTo0QRquisnPJwEowanO8NTji1taN0hXk',
-    appId: '1:662670439503:ios:e13c1ecb6e91de5b47263a',
-    messagingSenderId: '662670439503',
-    projectId: 'palpites-da-loteria',
-    databaseURL: 'https://palpites-da-loteria.firebaseio.com',
-    storageBucket: 'palpites-da-loteria.appspot.com',
-    androidClientId: '662670439503-kie9jo0ut7i126bkhga1om2kflrlflnk.apps.googleusercontent.com',
-    iosClientId: '662670439503-timm5bu5lqeb1sfckspajhm60bluc5t2.apps.googleusercontent.com',
+    apiKey: 'AIzaSyC2WRAlr7XaiXKxrZi7IDrMhDE3POrs-v0',
+    appId: '1:13086829220:ios:c3aa7c6952b42d485bd431',
+    messagingSenderId: '13086829220',
+    projectId: 'palpites-da-loteria-2',
+    storageBucket: 'palpites-da-loteria-2.appspot.com',
+    iosClientId: '13086829220-1rb34iho3oev9i4pkr8mvdo0o69gc6dt.apps.googleusercontent.com',
     iosBundleId: 'com.example.palpitesDaLoteria',
   );
 }
