@@ -1,5 +1,5 @@
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 
 class AdMobService {
@@ -9,7 +9,7 @@ class AdMobService {
   static final String interstitialTestAdUnitId =
       'ca-app-pub-3940256099942544/1033173712';
 
-  static final String appId = 'ca-app-pub-5932227223136302~5495066076';
+  static final String appId = 'ca-app-pub-5932227223136302~3905280679';
 
   static const int maxFailedLoadAttempts = 3;
 
@@ -35,11 +35,11 @@ class AdMobService {
   /*concursos-banner*/
   static final String concursosBannerId = Constants.isTesting
       ? bannerTestAdUnitId
-      : 'ca-app-pub-5932227223136302/9652914887';
+      : 'ca-app-pub-5932227223136302/6422249913';
 
   static final String sorteioBannerId = Constants.isTesting
       ? bannerTestAdUnitId
-      : 'ca-app-pub-5932227223136302/6252940206';
+      : 'ca-app-pub-5932227223136302/9648561943';
 
   static BannerAd getBannerAd(String id) {
     BannerAd banner = BannerAd(
@@ -79,7 +79,7 @@ class AdMobService {
 
   /*sorteio-interstitial*/
   static final String sorteioInterstitialId =
-      'ca-app-pub-5932227223136302/1351753033';
+      'ca-app-pub-5932227223136302/8769211650';
 
   static InterstitialAd? _sorteioInterstitial;
 
@@ -120,24 +120,25 @@ class AdMobService {
 
   static void showSorteioInterstitialAd() {
     if (Constants.showAds) {
-    if (_sorteioInterstitial == null) {
-      print('Warning: attempt to show interstitial before loaded.');
-      return;
-    }
-    _sorteioInterstitial!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        createSorteioInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-        createSorteioInterstitialAd();
-      },
-    );
+      if (_sorteioInterstitial == null) {
+        print('Warning: attempt to show interstitial before loaded.');
+        return;
+      }
+      _sorteioInterstitial!.fullScreenContentCallback =
+          FullScreenContentCallback(
+        onAdShowedFullScreenContent: (InterstitialAd ad) =>
+            print('ad onAdShowedFullScreenContent.'),
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          print('$ad onAdDismissedFullScreenContent.');
+          ad.dispose();
+          createSorteioInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+          print('$ad onAdFailedToShowFullScreenContent: $error');
+          ad.dispose();
+          createSorteioInterstitialAd();
+        },
+      );
 
       _sorteioInterstitial!.show();
     }
@@ -146,7 +147,7 @@ class AdMobService {
 
   /*resultado-interstitial*/
   static final String resultadoInterstitialId =
-      'ca-app-pub-5932227223136302/4509287460';
+      'ca-app-pub-5932227223136302/8307560117';
 
   static InterstitialAd? _resultadoInterstitial;
 
