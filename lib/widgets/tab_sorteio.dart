@@ -373,7 +373,7 @@ class _TabSorteioState extends State<TabSorteio>
               } else if (snapshot.hasError) {
                 return Column(
                   children: [
-                    Expanded(child: Center(child: Icon(Icons.error))),
+                    Expanded(child: Center(child: Icon(Icons.signal_wifi_off))),
                   ],
                 );
               }

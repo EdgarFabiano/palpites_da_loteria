@@ -24,7 +24,8 @@ Future<void> _requestReview() async {
       }
       _inAppReview.openStoreListing();
       return false;
-    }).catchError((err) => Fluttertoast.showToast(msg: "Operação indisponível no momento"));
+    }).catchError((err) =>
+        Fluttertoast.showToast(msg: "Operação indisponível no momento"));
   }
 }
 
@@ -34,7 +35,6 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -78,8 +78,9 @@ class _AppDrawerState extends State<AppDrawer> {
           title: Text("Mais apps como este"),
           onTap: () {
             try {
-              launch("https://play.google.com/store/apps/dev?id=9122266344608230682&hl=pt_BR");
-            } on PlatformException catch(e) {
+              launch(
+                  "https://play.google.com/store/apps/dev?id=9122266344608230682&hl=pt_BR");
+            } on PlatformException {
               Fluttertoast.showToast(msg: "Operação indisponível no momento");
             }
           },
