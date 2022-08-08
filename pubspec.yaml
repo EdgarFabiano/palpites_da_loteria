@@ -23,28 +23,26 @@ module:
 dependencies:
   flutter:
     sdk: flutter
-  date_format: 2.0.4
-  device_info: 2.0.2
-  dio: 4.0.4
+  cupertino_icons: ^1.0.4
+  date_format: ^2.0.6
+  device_info: ^2.0.3
+  dio: ^4.0.6
   dio_http_cache: 0.3.0
   easy_dynamic_theme: ^2.2.0
-  google_mobile_ads: 1.1.0
-  group_button: ^5.0.1
   firebase_analytics: ^9.1.4
-  firebase_core: 1.12.0
-  fluttertoast: 8.0.8
-  http: 0.13.4
+  firebase_core: ^1.20.0
+  firebase_crashlytics: ^2.8.6
+  fluttertoast: ^8.0.9
+  google_mobile_ads: ^2.0.0
+  group_button: ^5.0.1
+  http: ^0.13.5
   in_app_review: 2.0.4
   internet_connection_checker: ^0.0.1+3
   intl: 0.17.0
-  provider: 6.0.2
-  reorderables: 0.4.2
-  share_plus: 3.0.5
+  provider: ^6.0.3
+  reorderables: ^0.5.0
+  share_plus: ^4.0.10
   shared_preferences: ^2.0.5
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.4
 
 dev_dependencies:
   flutter_test:

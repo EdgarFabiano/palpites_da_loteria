@@ -24,6 +24,7 @@ if (flutterVersionName == null) {
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
@@ -32,9 +33,9 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    ndkVersion "18.1.5063045"
+    ndkVersion "21.1.6352462"
     compileSdkVersion 32
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "30.0.3"
 
     lintOptions {
         disable 'InvalidPackage'

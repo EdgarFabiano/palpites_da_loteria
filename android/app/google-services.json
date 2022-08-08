@@ -1,35 +1,41 @@
 {
   "project_info": {
-    "project_number": "662670439503",
-    "firebase_url": "https://palpites-da-loteria.firebaseio.com",
-    "project_id": "palpites-da-loteria",
-    "storage_bucket": "palpites-da-loteria.appspot.com"
+    "project_number": "13086829220",
+    "project_id": "palpites-da-loteria-2",
+    "storage_bucket": "palpites-da-loteria-2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:662670439503:android:b870f5f42c127fad47263a",
+        "mobilesdk_app_id": "1:13086829220:android:93007a04cbb95aec5bd431",
         "android_client_info": {
           "package_name": "com.efs.palpites_da_loteria2"
         }
       },
       "oauth_client": [
         {
-          "client_id": "662670439503-tfs0dfcbs03cd5m1nfjd096rujbsvcru.apps.googleusercontent.com",
+          "client_id": "13086829220-j3avh4iee9cegqr09o9qi9rdog2bcenc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA4bH_5BQdwRyNqbCXcc4-MDKUq-E3227c"
+          "current_key": "AIzaSyBlPkhvkQxph1_nc3hjDqTo7DPtHyGQDTc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "662670439503-tfs0dfcbs03cd5m1nfjd096rujbsvcru.apps.googleusercontent.com",
+              "client_id": "13086829220-j3avh4iee9cegqr09o9qi9rdog2bcenc.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "13086829220-1rb34iho3oev9i4pkr8mvdo0o69gc6dt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.palpitesDaLoteria"
+              }
             }
           ]
         }
