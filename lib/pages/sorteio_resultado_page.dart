@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/model/resultado_api.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
@@ -9,6 +8,7 @@ import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../defaults/constants.dart';
+import '../model/loteria_banner_ad.dart';
 
 class SorteioResultadoPage extends StatefulWidget {
   final ConcursoBean _concurso;
@@ -28,7 +28,8 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   int _activeTabIndex = 0;
   TabController? _tabController;
   ResultadoAPI? _resultado;
-  BannerAd _bannerAd = AdMobService.getBannerAd(AdMobService.sorteioBannerId);
+  LoteriaBannerAd _bannerAd =
+      AdMobService.getBannerAd(AdMobService.sorteioBannerId);
   LoteriaAPIService _loteriaAPIService = LoteriaAPIService();
 
   void _setActiveTabIndex() {

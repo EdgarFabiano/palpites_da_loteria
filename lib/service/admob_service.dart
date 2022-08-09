@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 
+import '../model/loteria_banner_ad.dart';
+
 class AdMobService {
   static final String appId = 'ca-app-pub-5932227223136302~3905280679';
   static final String concursosBannerId =
@@ -19,8 +21,8 @@ class AdMobService {
   static final AdRequest request = AdRequest();
 
   /*banner*/
-  static BannerAd getBannerAd(String id) {
-    BannerAd banner = BannerAd(
+  static LoteriaBannerAd getBannerAd(String id) {
+    LoteriaBannerAd banner = LoteriaBannerAd(
       adUnitId: id,
       request: AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(
@@ -43,8 +45,8 @@ class AdMobService {
     return banner;
   }
 
-  static Widget getBannerAdWidget(BannerAd bannerAd) {
-    if (Constants.showAds) {
+  static Widget getBannerAdWidget(LoteriaBannerAd bannerAd) {
+    if (Constants.showAds && bannerAd.isLoaded) {
       return Container(
         child: AdWidget(ad: bannerAd),
         width: bannerAd.size.width.toDouble(),

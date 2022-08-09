@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/pages/home_loading_page.dart';
@@ -8,6 +7,7 @@ import 'package:palpites_da_loteria/widgets/card_concursos.dart';
 import 'package:palpites_da_loteria/widgets/concursos_settings_change_notifier.dart';
 import 'package:provider/provider.dart';
 
+import '../model/loteria_banner_ad.dart';
 import 'app_drawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,7 +19,8 @@ class _HomePageState extends State<HomePage> {
   List<CardConcursos>? cards;
   ConcursosSettingsChangeNotifier? concursosProvider;
   Concursos? concursos;
-  BannerAd _bannerAd = AdMobService.getBannerAd(AdMobService.concursosBannerId);
+  LoteriaBannerAd _bannerAd =
+      AdMobService.getBannerAd(AdMobService.concursosBannerId);
 
   @override
   void initState() {
