@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
+import 'package:palpites_da_loteria/pages/my_saved_games_page.dart';
 import 'package:palpites_da_loteria/pages/settings_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -60,8 +61,17 @@ class _AppDrawerState extends State<AppDrawer> {
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
         ),
         ListTile(
+          leading: Icon(Icons.favorite),
+          title: Text(Strings.mySavedGames),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.push(context,
+                CupertinoPageRoute(builder: (context) => MySavedGamesPage()));
+          },
+        ),
+        ListTile(
           leading: Icon(Icons.settings),
-          title: Text("Configurações"),
+          title: Text(Strings.settings),
           onTap: () {
             Navigator.of(context).pop();
             Navigator.push(context,
@@ -70,12 +80,12 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         ListTile(
           leading: Icon(Icons.star),
-          title: Text("Avaliar"),
+          title: Text(Strings.evaluate),
           onTap: _requestReview,
         ),
         ListTile(
           leading: Icon(Icons.store),
-          title: Text("Mais apps como este"),
+          title: Text(Strings.moreAppsLikeThis),
           onTap: () {
             try {
               launch(
