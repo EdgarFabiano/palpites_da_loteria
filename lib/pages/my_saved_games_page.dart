@@ -125,9 +125,10 @@ class _MySavedGamesPageState extends State<MySavedGamesPage> {
             padding: EdgeInsets.all(5),
             text: Strings.googleLogin,
             onPressed: () {
-              setState(() {
-                _isLoading = true;
-              });
+              if (mounted)
+                setState(() {
+                  _isLoading = true;
+                });
               return _authService
                   .signInWithGoogle()
                   .then((value) => _isLoading = false);

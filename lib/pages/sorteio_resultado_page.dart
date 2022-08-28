@@ -33,16 +33,18 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   LoteriaAPIService _loteriaAPIService = LoteriaAPIService();
 
   void _setActiveTabIndex() {
-    setState(() {
-      _activeTabIndex = _tabController!.index;
-    });
+    if (mounted)
+      setState(() {
+        _activeTabIndex = _tabController!.index;
+      });
   }
 
   void refreshResultado(int consurso) {
     _loteriaAPIService.fetchResultado(widget._concurso, consurso).then((value) {
-      setState(() {
-        _resultado = value;
-      });
+      if (mounted)
+        setState(() {
+          _resultado = value;
+        });
     });
   }
 
@@ -51,9 +53,10 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     super.initState();
     _loteriaAPIService.fetchLatestResultado(widget._concurso).then((value) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        setState(() {
-          _resultado = value;
-        });
+        if (mounted)
+          setState(() {
+            _resultado = value;
+          });
       });
     });
     _tabController = TabController(vsync: this, length: _tabs.length);

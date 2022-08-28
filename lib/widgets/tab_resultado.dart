@@ -77,11 +77,12 @@ class _TabResultadoState extends State<TabResultado>
                   _concursoAtual = int.parse(_concursoTextController.text);
                   if (_concursoAtual > _ultimoConcurso)
                     _concursoAtual = _ultimoConcurso;
-                  setState(() {
-                    _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean, _concursoAtual);
-                    widget.refreshResultadoCompartilhavel(_concursoAtual);
-                  });
+                  if (mounted)
+                    setState(() {
+                      _futureResultado = _loteriaAPIService.fetchResultado(
+                          widget.concursoBean, _concursoAtual);
+                      widget.refreshResultadoCompartilhavel(_concursoAtual);
+                    });
                   Navigator.of(context).pop();
                 }
               },
@@ -98,10 +99,11 @@ class _TabResultadoState extends State<TabResultado>
     _futureResultado = _loteriaAPIService
         .fetchLatestResultado(widget.concursoBean)
         .then((value) {
-      setState(() {
-        _ultimoConcurso = value.concurso!;
-        _concursoAtual = value.concurso!;
-      });
+      if (mounted)
+        setState(() {
+          _ultimoConcurso = value.concurso!;
+          _concursoAtual = value.concurso!;
+        });
       return Future.value(value);
     });
     if (Random().nextInt(10) > 4) {
@@ -506,6 +508,7 @@ class _TabResultadoState extends State<TabResultado>
   bool get wantKeepAlive => true;
 
   _getButtonsTop() {
+    var textStyle = Theme.of(context).textTheme.bodyText1;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -514,20 +517,23 @@ class _TabResultadoState extends State<TabResultado>
           maintainAnimation: true,
           maintainState: true,
           visible: _concursoAtual > 1,
-          child: FlatButton(
+          child: TextButton(
               onPressed: () => setState(() {
                     --_concursoAtual;
                     _futureResultado = _loteriaAPIService.fetchResultado(
                         widget.concursoBean, _concursoAtual);
                     widget.refreshResultadoCompartilhavel(_concursoAtual);
                   }),
-              child: Text("Anterior")),
+              child: Text(
+                "Anterior",
+                style: textStyle,
+              )),
         ),
-        FlatButton(
+        TextButton(
           onPressed: _showDialogConcurso,
           child: Text(
             _concursoAtual.toString(),
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: textStyle,
           ),
         ),
         Visibility(
@@ -535,14 +541,17 @@ class _TabResultadoState extends State<TabResultado>
           maintainAnimation: true,
           maintainState: true,
           visible: _concursoAtual < _ultimoConcurso,
-          child: FlatButton(
+          child: TextButton(
               onPressed: () => setState(() {
                     ++_concursoAtual;
                     _futureResultado = _loteriaAPIService.fetchResultado(
                         widget.concursoBean, _concursoAtual);
                     widget.refreshResultadoCompartilhavel(_concursoAtual);
                   }),
-              child: Text("Próximo")),
+              child: Text(
+                "Próximo",
+                style: textStyle,
+              )),
         ),
       ],
     );

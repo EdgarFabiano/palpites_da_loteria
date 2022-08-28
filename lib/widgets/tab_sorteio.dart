@@ -43,14 +43,15 @@ class _TabSorteioState extends State<TabSorteio>
   }
 
   void sortearComAnuncio(double increment) {
-    setState(() {
-      _sortear(increment);
-      _chance++;
-      if (_chance >= 5) {
-        AdMobService.showSorteioInterstitialAd();
-        _chance = 0;
-      }
-    });
+    if (mounted)
+      setState(() {
+        _sortear(increment);
+        _chance++;
+        if (_chance >= 5) {
+          AdMobService.showSorteioInterstitialAd();
+          _chance = 0;
+        }
+      });
   }
 
   @override
@@ -101,11 +102,12 @@ class _TabSorteioState extends State<TabSorteio>
                   maintainState: true,
                   visible:
                       _numeroDeDezenasASortear > widget.concursoBean.minSize,
-                  child: FlatButton.icon(
+                  child: TextButton.icon(
                       onPressed: () => setState(() {
                             _sortear(-1);
                           }),
-                      icon: Icon(Icons.exposure_neg_1),
+                      icon: Icon(Icons.exposure_neg_1,
+                          color: Theme.of(context).textTheme.bodyText1?.color),
                       label: Text("")),
                 ),
                 Text(
@@ -118,11 +120,12 @@ class _TabSorteioState extends State<TabSorteio>
                   maintainState: true,
                   visible:
                       _numeroDeDezenasASortear < widget.concursoBean.maxSize,
-                  child: FlatButton.icon(
+                  child: TextButton.icon(
                       onPressed: () => setState(() {
                             _sortear(1);
                           }),
-                      icon: Icon(Icons.exposure_plus_1),
+                      icon: Icon(Icons.exposure_plus_1,
+                          color: Theme.of(context).textTheme.bodyText1?.color),
                       label: Text("")),
                 ),
               ],
@@ -191,19 +194,20 @@ class _TabSorteioState extends State<TabSorteio>
                                 widget.concursoBean.colorBean.getColor(context),
                           ),
                           onChanged: (FiltroPeriodo? newValue) {
-                            setState(() {
-                              _dropdownValueFiltroPeriodo = newValue!;
-                              if (_dropdownValueFiltroPeriodo ==
-                                  FiltroPeriodo.CUSTOMIZADO) {
-                                _updateDateTimeRange(
-                                    _dateTimeRange.start, _dateTimeRange.end);
-                              } else {
-                                _updateDateTimeRange(
-                                    _dropdownValueFiltroPeriodo.startDate,
-                                    _dropdownValueFiltroPeriodo.endDate);
-                              }
-                              sortearComAnuncio(0);
-                            });
+                            if (mounted)
+                              setState(() {
+                                _dropdownValueFiltroPeriodo = newValue!;
+                                if (_dropdownValueFiltroPeriodo ==
+                                    FiltroPeriodo.CUSTOMIZADO) {
+                                  _updateDateTimeRange(
+                                      _dateTimeRange.start, _dateTimeRange.end);
+                                } else {
+                                  _updateDateTimeRange(
+                                      _dropdownValueFiltroPeriodo.startDate,
+                                      _dropdownValueFiltroPeriodo.endDate);
+                                }
+                                sortearComAnuncio(0);
+                              });
                           },
                           items: FiltroPeriodo.values
                               .map<DropdownMenuItem<FiltroPeriodo>>(
@@ -400,9 +404,10 @@ class _TabSorteioState extends State<TabSorteio>
   }
 
   _onChangeShowFrequencia(bool value) {
-    setState(() {
-      _showFrequencia = value;
-    });
+    if (mounted)
+      setState(() {
+        _showFrequencia = value;
+      });
   }
 
   void _updateDateTimeRange(DateTime startDate, DateTime endDate) {
