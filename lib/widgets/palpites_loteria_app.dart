@@ -37,7 +37,7 @@ class ConcursosMaterialApp extends StatelessWidget {
       theme:
           ThemeData(brightness: Brightness.light, primarySwatch: Colors.indigo),
       darkTheme:
-          ThemeData(brightness: Brightness.dark, primarySwatch: Colors.indigo),
+          ThemeData(brightness: Brightness.dark, primarySwatch: Colors.grey),
       themeMode: EasyDynamicTheme.of(context).themeMode,
       home: HomePage(),
       debugShowCheckedModeBanner: false,

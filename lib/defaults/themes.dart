@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 
 class DefaultThemes {
-
   static final Color primaryLight = Colors.indigo;
   static final Color primaryDark = Colors.black87;
 
@@ -13,29 +11,4 @@ class DefaultThemes {
   static final Color timemania = Color.fromARGB(255, 94, 232, 79);
   static final Color duplaSena = Color.fromARGB(255, 166, 42, 49);
   static final Color diaDeSorte = Color.fromARGB(255, 203, 133, 59);
-
-  static Color getRefreshingCardColor(BuildContext context) {
-    if (Theme.of(context).brightness == Brightness.light) {
-      return Colors.white70;
-    } else {
-      return Colors.black12;
-    }
-  }
-
-  static ThemeData appTheme(BuildContext context) {
-    return ThemeData(
-      brightness: Brightness.light,
-      primaryColor: primaryLight,
-//      secondaryHeaderColor: Colors.yellow,
-//      accentColor: Colors.red,
-    );
-  }
-
-  static ThemeData darkTheme(BuildContext context) {
-    return ThemeData(
-      brightness: Brightness.dark,
-      primaryColor: primaryDark,
-    );
-  }
-
 }
