@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:palpites_da_loteria/defaults/constants.dart';
 import 'package:palpites_da_loteria/defaults/strings.dart';
+import 'package:palpites_da_loteria/model/loteria_banner_ad.dart';
+import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/auth_service.dart';
 import 'package:palpites_da_loteria/widgets/user_info_popup.dart';
 
@@ -15,6 +18,8 @@ class MySavedGamesPage extends StatefulWidget {
 class _MySavedGamesPageState extends State<MySavedGamesPage> {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
+  LoteriaBannerAd _bannerAd =
+      AdMobService.getBannerAd(AdMobService.meusJogosBannerId);
 
   @override
   void initState() {
@@ -34,6 +39,10 @@ class _MySavedGamesPageState extends State<MySavedGamesPage> {
         });
       }
     });
+
+    if (Constants.showAds) {
+      _bannerAd.load();
+    }
   }
 
   @override
@@ -51,22 +60,37 @@ class _MySavedGamesPageState extends State<MySavedGamesPage> {
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (_authService.getCurrentUser() == null)
-            if (!_isLoading)
-              buildLoginForm()
-            else
-              Center(child: CircularProgressIndicator())
-          else
-            Center(
-              child: Container(),
-            )
-        ],
+      body: Center(
+        child: Column(
+          children: [
+            Flexible(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (_authService.getCurrentUser() == null)
+                    if (!_isLoading)
+                      buildLoginForm()
+                    else
+                      Center(child: CircularProgressIndicator())
+                  else
+                    Center(
+                      child: Container(),
+                    )
+                ],
+              ),
+            ),
+            AdMobService.getBannerAdWidget(_bannerAd),
+          ],
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
   }
 
   void _showDialog() {
