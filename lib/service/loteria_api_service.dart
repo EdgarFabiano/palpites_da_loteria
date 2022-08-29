@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/foundation.dart';
-import 'package:palpites_da_loteria/model/model_export.dart';
+
+import '../model/concursos.dart';
+import '../model/resultado_api.dart';
 
 DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
 Options _cacheOptions =

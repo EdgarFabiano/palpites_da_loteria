@@ -1,8 +1,7 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/service/concurso_service.dart' as concursoService;
+
+import '../model/concursos.dart';
+import '../service/concurso_service.dart' as concursoService;
 
 class ConcursosSettingsChangeNotifier with ChangeNotifier {
   Concursos? _concursos;
@@ -18,7 +17,6 @@ class ConcursosSettingsChangeNotifier with ChangeNotifier {
   }
 
   void onReorder(int start, int current) {
-
     // dragging from top to bottom
     List<ConcursoBean> concursosBeanList = _concursos!.concursosBeanList;
 
@@ -45,5 +43,4 @@ class ConcursosSettingsChangeNotifier with ChangeNotifier {
     concursoService.saveConcursos(_concursos);
     notifyListeners();
   }
-
 }

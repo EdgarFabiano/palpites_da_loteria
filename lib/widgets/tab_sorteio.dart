@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
-import 'package:palpites_da_loteria/model/enum/filtro_periodo.dart';
-import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/service/admob_service.dart';
-import 'package:palpites_da_loteria/service/format_service.dart';
-import 'package:palpites_da_loteria/widgets/dezena.dart';
 
+import '../model/concursos.dart';
 import '../model/enum/estrategia_geracao.dart';
+import '../model/enum/filtro_periodo.dart';
 import '../model/sorteio_frequencia.dart';
+import '../service/admob_service.dart';
+import '../service/format_service.dart';
 import '../service/generator_strategies/abstract_sorteio_generator.dart';
+import 'dezena.dart';
 import 'dezenas_loading.dart';
 
 class TabSorteio extends StatefulWidget {

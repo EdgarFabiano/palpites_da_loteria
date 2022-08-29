@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../defaults/defaults_export.dart';
+import '../model/concursos.dart';
 
 bool _updated = false;
 
@@ -22,13 +23,14 @@ Future<Concursos> getBaselineFuture() async {
 Future<Concursos> getUsersConcursosFuture() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? stringConcursos =
-  prefs.get(Constants.concursosSharedPreferencesKey) as String?;
+      prefs.get(Constants.concursosSharedPreferencesKey) as String?;
 
   if (stringConcursos == null) {
     await getBaselineFuture().then((onValue) => prefs.setString(
         Constants.concursosSharedPreferencesKey,
         json.encode(onValue.toJson())));
-    stringConcursos = prefs.get(Constants.concursosSharedPreferencesKey) as String?;
+    stringConcursos =
+        prefs.get(Constants.concursosSharedPreferencesKey) as String?;
     _updated = true;
   }
 
@@ -94,7 +96,8 @@ void saveConcursos(Concursos? concursos) async {
 
 void saveConcurso(ConcursoBean concurso) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String usersConcursos = prefs.get(Constants.concursosSharedPreferencesKey) as String;
+  String usersConcursos =
+      prefs.get(Constants.concursosSharedPreferencesKey) as String;
   Map<String, dynamic> map = Concursos.toMap(usersConcursos);
   Concursos concursos = Concursos.fromJson(map);
   concursos.concursosBeanList.forEach((element) {

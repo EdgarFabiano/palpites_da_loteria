@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:palpites_da_loteria/defaults/constants.dart';
-import 'package:palpites_da_loteria/defaults/strings.dart';
-import 'package:palpites_da_loteria/model/loteria_banner_ad.dart';
-import 'package:palpites_da_loteria/service/admob_service.dart';
-import 'package:palpites_da_loteria/service/auth_service.dart';
-import 'package:palpites_da_loteria/widgets/my_saved_games.dart';
-import 'package:palpites_da_loteria/widgets/user_info_popup.dart';
+
+import '../defaults/constants.dart';
+import '../defaults/strings.dart';
+import '../model/loteria_banner_ad.dart';
+import '../service/admob_service.dart';
+import '../service/auth_service.dart';
+import '../widgets/my_saved_games.dart';
+import '../widgets/user_info_popup.dart';
 
 class MySavedGamesPage extends StatefulWidget {
   MySavedGamesPage({Key? key}) : super(key: key);

@@ -1,8 +1,9 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/service/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../defaults/defaults_export.dart';
+import '../service/auth_service.dart';
 
 class UserInfoPopup extends StatelessWidget {
   UserInfoPopup({Key? key}) : super(key: key);

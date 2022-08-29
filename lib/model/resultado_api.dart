@@ -1,4 +1,4 @@
-import 'package:palpites_da_loteria/service/format_service.dart';
+import '../service/format_service.dart';
 
 class ResultadoAPI {
   String? loteria;

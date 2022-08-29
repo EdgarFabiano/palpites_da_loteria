@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/model/resultado_api.dart';
-import 'package:palpites_da_loteria/service/admob_service.dart';
-import 'package:palpites_da_loteria/service/loteria_api_service.dart';
-import 'package:palpites_da_loteria/widgets/tab_resultado.dart';
-import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../defaults/constants.dart';
+import '../model/concursos.dart';
 import '../model/loteria_banner_ad.dart';
+import '../model/resultado_api.dart';
+import '../service/admob_service.dart';
+import '../service/loteria_api_service.dart';
+import '../widgets/tab_resultado.dart';
+import '../widgets/tab_sorteio.dart';
 
 class SorteioResultadoPage extends StatefulWidget {
   final ConcursoBean _concurso;

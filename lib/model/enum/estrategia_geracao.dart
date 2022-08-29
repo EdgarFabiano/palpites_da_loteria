@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:palpites_da_loteria/service/generator_strategies/abstract_sorteio_generator.dart';
-import 'package:palpites_da_loteria/service/generator_strategies/frequencia_sorteio_generator.dart';
-import 'package:palpites_da_loteria/service/generator_strategies/random_sorteio_generator.dart';
+
+import '../../service/generator_strategies/abstract_sorteio_generator.dart';
+import '../../service/generator_strategies/frequencia_sorteio_generator.dart';
+import '../../service/generator_strategies/random_sorteio_generator.dart';
 
 enum EstrategiaGeracao { ALEATORIO, MAIS_SAIDAS, MAIS_ATRASADAS }
 

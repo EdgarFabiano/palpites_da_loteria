@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 
+import '../defaults/defaults_export.dart';
 import '../model/loteria_banner_ad.dart';
 
 class AdMobService {

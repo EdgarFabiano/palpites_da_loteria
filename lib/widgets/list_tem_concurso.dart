@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:provider/provider.dart';
 
+import '../defaults/defaults_export.dart';
+import '../model/concursos.dart';
 import 'concursos_settings_change_notifier.dart';
 
 class ListItemConcurso extends StatefulWidget {
   final ConcursoBean _concursoBean;
   final Concursos _concursos;
 
-  ListItemConcurso(this._concursoBean, this._concursos, {Key? key}) : super(key: key);
+  ListItemConcurso(this._concursoBean, this._concursos, {Key? key})
+      : super(key: key);
 
   ConcursoBean get concursoBean => _concursoBean;
 
@@ -18,24 +19,26 @@ class ListItemConcurso extends StatefulWidget {
 }
 
 class _ListItemConcursoState extends State<ListItemConcurso> {
-
   void changeEnabled(ConcursosSettingsChangeNotifier concursosProvider) {
     return setState(() {
-              widget._concursoBean.enabled = !widget._concursoBean.enabled;
-              var index = widget._concursos.concursosBeanList.indexOf(widget.concursoBean);
-              widget._concursos.concursosBeanList.fillRange(index, index, widget.concursoBean);
-              concursosProvider.setConcursos(widget._concursos);
-            });
+      widget._concursoBean.enabled = !widget._concursoBean.enabled;
+      var index =
+          widget._concursos.concursosBeanList.indexOf(widget.concursoBean);
+      widget._concursos.concursosBeanList
+          .fillRange(index, index, widget.concursoBean);
+      concursosProvider.setConcursos(widget._concursos);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
+    var concursosProvider =
+        Provider.of<ConcursosSettingsChangeNotifier>(context);
     return ListTile(
       key: Key(widget._concursoBean.name),
       leading: Icon(Icons.reorder),
       title: GestureDetector(
-        onTap: () => changeEnabled( concursosProvider),
+        onTap: () => changeEnabled(concursosProvider),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -44,7 +47,8 @@ class _ListItemConcursoState extends State<ListItemConcurso> {
                 Image.asset(
                   Constants.loteriasIconAssetPath,
                   width: 25,
-                  color: widget._concursoBean.colorBean.getColor(context)
+                  color: widget._concursoBean.colorBean
+                      .getColor(context)
                       .withAlpha(255),
                   colorBlendMode: BlendMode.modulate,
                 ),
@@ -54,7 +58,7 @@ class _ListItemConcursoState extends State<ListItemConcurso> {
             ),
             Switch(
               value: widget._concursoBean.enabled,
-              onChanged: (value) => changeEnabled( concursosProvider),
+              onChanged: (value) => changeEnabled(concursosProvider),
             )
           ],
         ),

@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/pages/my_saved_games_page.dart';
-import 'package:palpites_da_loteria/pages/settings_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../defaults/defaults_export.dart';
+import 'my_saved_games_page.dart';
+import 'settings_page.dart';
 
 final InAppReview _inAppReview = InAppReview.instance;
 
