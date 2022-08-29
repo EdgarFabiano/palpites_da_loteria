@@ -6,6 +6,7 @@ import 'package:palpites_da_loteria/defaults/strings.dart';
 import 'package:palpites_da_loteria/model/loteria_banner_ad.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/auth_service.dart';
+import 'package:palpites_da_loteria/widgets/my_saved_games.dart';
 import 'package:palpites_da_loteria/widgets/user_info_popup.dart';
 
 class MySavedGamesPage extends StatefulWidget {
@@ -75,7 +76,7 @@ class _MySavedGamesPageState extends State<MySavedGamesPage> {
                       Center(child: CircularProgressIndicator())
                   else
                     Center(
-                      child: Container(),
+                      child: MySavedGames(),
                     )
                 ],
               ),

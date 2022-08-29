@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -16,12 +17,16 @@ void main() async {
   if (!Constants.isTesting) {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   }
-  final remoteConfig = FirebaseRemoteConfig.instance;
-  await remoteConfig.setDefaults(const {
+  setRemoteConfigDefaults();
+  FirebaseFirestore.instance.settings = Settings(persistenceEnabled: true);
+  MobileAds.instance.initialize();
+  runApp(PalpitesLoteriaApp());
+}
+
+setRemoteConfigDefaults() {
+  FirebaseRemoteConfig.instance.setDefaults(const {
     "privacy_policy_url":
         "https://play.google.com/store/apps/datasafety?id=com.efs.palpites_da_loteria2",
     "use_terms_url": "https://www.iubenda.com/privacy-policy/53831292",
   });
-  MobileAds.instance.initialize();
-  runApp(PalpitesLoteriaApp());
 }

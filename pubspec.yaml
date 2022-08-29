@@ -23,6 +23,7 @@ module:
 dependencies:
   flutter:
     sdk: flutter
+  cloud_firestore: ^3.4.6
   cupertino_icons: ^1.0.4
   date_format: ^2.0.6
   device_info: ^2.0.3
