@@ -43,7 +43,7 @@ class AdMobService {
         facebookAppEvents.logEvent(
           name: 'banner_ad_impression',
           parameters: {
-            'ad': ad.toString(),
+            'ad': ad.adUnitId.toString(),
           },
         );
       }, onAdClicked: (Ad ad) {
@@ -51,7 +51,7 @@ class AdMobService {
         facebookAppEvents.logEvent(
           name: 'banner_ad_clicked',
           parameters: {
-            'ad': ad.toString(),
+            'ad': ad.adUnitId.toString(),
           },
         );
       }),
@@ -89,7 +89,7 @@ class AdMobService {
       facebookAppEvents.logEvent(
         name: 'interstitial_ad_impression',
         parameters: {
-          'ad': ad.toString(),
+          'ad': ad.adUnitId.toString(),
         },
       );
     },
@@ -97,7 +97,7 @@ class AdMobService {
       facebookAppEvents.logEvent(
         name: 'interstitial_ad_clicked',
         parameters: {
-          'ad': ad.toString(),
+          'ad': ad.adUnitId.toString(),
         },
       );
     },
