@@ -1,4 +1,3 @@
-import 'package:facebook_app_events/facebook_app_events.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
@@ -21,8 +20,6 @@ class AdMobService {
 
   static final AdRequest request = AdRequest();
 
-  static final facebookAppEvents = FacebookAppEvents();
-
   /*banner*/
   static LoteriaBannerAd getBannerAd(String id) {
     LoteriaBannerAd banner = LoteriaBannerAd(
@@ -40,20 +37,8 @@ class AdMobService {
         ad.dispose();
       }, onAdImpression: (Ad ad) {
         print('$ad Ad Impression.');
-        facebookAppEvents.logEvent(
-          name: 'banner_ad_impression',
-          parameters: {
-            'ad': ad.adUnitId.toString(),
-          },
-        );
       }, onAdClicked: (Ad ad) {
         print('$ad Ad Clicked.');
-        facebookAppEvents.logEvent(
-          name: 'banner_ad_clicked',
-          parameters: {
-            'ad': ad.adUnitId.toString(),
-          },
-        );
       }),
       size: AdSize.largeBanner,
     );
@@ -84,22 +69,6 @@ class AdMobService {
       print('$ad onAdFailedToShowFullScreenContent: $error');
       ad.dispose();
       createSorteioInterstitialAd();
-    },
-    onAdImpression: (InterstitialAd ad) {
-      facebookAppEvents.logEvent(
-        name: 'interstitial_ad_impression',
-        parameters: {
-          'ad': ad.adUnitId.toString(),
-        },
-      );
-    },
-    onAdClicked: (InterstitialAd ad) {
-      facebookAppEvents.logEvent(
-        name: 'interstitial_ad_clicked',
-        parameters: {
-          'ad': ad.adUnitId.toString(),
-        },
-      );
     },
   );
 
