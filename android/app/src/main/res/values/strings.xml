@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Palpites da Loteria</string>
+
+    <!-- Admob configuration -->
+    <string name="admob_app_id">ca-app-pub-5932227223136302~3905280679</string>
+
+    <!-- Facebook configuration -->
+    <string name="facebook_app_id">1307933736279453</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">36c27e007c21f8e7d924db3bda52fb9e</string>
+
+</resources>

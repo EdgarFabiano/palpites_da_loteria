@@ -27,23 +27,23 @@ class AdMobService {
     LoteriaBannerAd banner = LoteriaBannerAd(
       adUnitId: id,
       request: AdManagerAdRequest(),
-      listener: AdManagerBannerAdListener(
-        onAdLoaded: (Ad ad) {
-          print('$ad loaded.');
-        },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('$ad Failed To Load: $error');
-          ad.dispose();
-        },
-        onAdOpened: (Ad ad) => print('$ad Ad Opened.'),
-        onAdClosed: (Ad ad) {
-          print('$ad Ad Closed.');
-          ad.dispose();
-        },
-      ),
+      listener: AdManagerBannerAdListener(onAdLoaded: (Ad ad) {
+        print('$ad loaded.');
+      }, onAdFailedToLoad: (Ad ad, LoadAdError error) {
+        print('$ad Failed To Load: $error');
+        ad.dispose();
+      }, onAdOpened: (Ad ad) {
+        print('$ad Ad Opened.');
+      }, onAdClosed: (Ad ad) {
+        print('$ad Ad Closed.');
+        ad.dispose();
+      }, onAdImpression: (Ad ad) {
+        print('$ad Ad Impression.');
+      }, onAdClicked: (Ad ad) {
+        print('$ad Ad Clicked.');
+      }),
       size: AdSize.largeBanner,
     );
-
     return banner;
   }
 
@@ -59,6 +59,21 @@ class AdMobService {
     return SizedBox.shrink();
   }
 
+  static var _fullScreenContentCallback = FullScreenContentCallback(
+    onAdShowedFullScreenContent: (InterstitialAd ad) =>
+        print('$ad onAdShowedFullScreenContent.'),
+    onAdDismissedFullScreenContent: (InterstitialAd ad) {
+      print('$ad onAdDismissedFullScreenContent.');
+      ad.dispose();
+      createSorteioInterstitialAd();
+    },
+    onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+      print('$ad onAdFailedToShowFullScreenContent: $error');
+      ad.dispose();
+      createSorteioInterstitialAd();
+    },
+  );
+
   /*sorteio-interstitial*/
   static InterstitialAd? _sorteioInterstitial;
 
@@ -71,6 +86,8 @@ class AdMobService {
             onAdLoaded: (InterstitialAd ad) {
               print('$ad loaded');
               _sorteioInterstitial = ad;
+              _sorteioInterstitial!.fullScreenContentCallback =
+                  _fullScreenContentCallback;
               _numInterstitialLoadAttempts = 0;
               _sorteioInterstitial!.setImmersiveMode(true);
             },
@@ -92,22 +109,6 @@ class AdMobService {
         print('Warning: attempt to show interstitial before loaded.');
         return;
       }
-      _sorteioInterstitial!.fullScreenContentCallback =
-          FullScreenContentCallback(
-        onAdShowedFullScreenContent: (InterstitialAd ad) =>
-            print('$ad onAdShowedFullScreenContent.'),
-        onAdDismissedFullScreenContent: (InterstitialAd ad) {
-          print('$ad onAdDismissedFullScreenContent.');
-          ad.dispose();
-          createSorteioInterstitialAd();
-        },
-        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-          print('$ad onAdFailedToShowFullScreenContent: $error');
-          ad.dispose();
-          createSorteioInterstitialAd();
-        },
-      );
-
       _sorteioInterstitial!.show();
     }
     _sorteioInterstitial = null;
@@ -125,6 +126,8 @@ class AdMobService {
             onAdLoaded: (InterstitialAd ad) {
               print('$ad loaded');
               _resultadoInterstitial = ad;
+              _resultadoInterstitial!.fullScreenContentCallback =
+                  _fullScreenContentCallback;
               _numInterstitialLoadAttempts = 0;
               _resultadoInterstitial!.setImmersiveMode(true);
             },
@@ -146,21 +149,6 @@ class AdMobService {
         print('Warning: attempt to show interstitial before loaded.');
         return;
       }
-      _resultadoInterstitial!.fullScreenContentCallback =
-          FullScreenContentCallback(
-        onAdShowedFullScreenContent: (InterstitialAd ad) =>
-            print('$ad onAdShowedFullScreenContent.'),
-        onAdDismissedFullScreenContent: (InterstitialAd ad) {
-          print('$ad onAdDismissedFullScreenContent.');
-          ad.dispose();
-          createResultadoInterstitialAd();
-        },
-        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-          print('$ad onAdFailedToShowFullScreenContent: $error');
-          ad.dispose();
-          createResultadoInterstitialAd();
-        },
-      );
 
       _resultadoInterstitial!.show();
     }
