@@ -135,6 +135,11 @@ class ConcursoBean {
         return "";
     }
   }
+
+  /// Replaces all "-" values with "_" to comply with Firestore best practices
+  String getFirestoreKey() {
+    return getEnpoint().replaceAll("-", "_");
+  }
 }
 
 class ColorBean {
