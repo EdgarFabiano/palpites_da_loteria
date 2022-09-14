@@ -49,13 +49,19 @@ class AuthService {
   }
 
   // GOOGLE
-  Future<UserCredential> signInWithGoogle() async {
+  Future<UserCredential> signInWithGoogle(
+      void Function() onUseClosePopupCallback) async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
+    if (googleUser == null) {
+      onUseClosePopupCallback();
+      return Future.error('User closed sign in popup');
+    }
+
     // Obtain the auth details from the request
     final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+        await googleUser.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(

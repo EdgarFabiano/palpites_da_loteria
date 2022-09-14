@@ -127,17 +127,21 @@ class _MySavedGamesPageState extends State<MySavedGamesPage> {
             padding: EdgeInsets.all(5),
             text: Strings.googleLogin,
             onPressed: () {
-              if (mounted)
-                setState(() {
-                  _isLoading = true;
-                });
+              setIsLoading(true);
               return _authService
-                  .signInWithGoogle()
-                  .then((value) => _isLoading = false);
+                  .signInWithGoogle(() => setIsLoading(false))
+                  .then((value) => setIsLoading(false));
             },
           ),
         ],
       ),
     );
+  }
+
+  void setIsLoading(bool isLoading) {
+    if (mounted)
+      setState(() {
+        _isLoading = isLoading;
+      });
   }
 }
