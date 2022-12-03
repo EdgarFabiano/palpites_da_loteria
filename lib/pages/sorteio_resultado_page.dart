@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/model/resultado_api.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
-import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/tab_resultado.dart';
 import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
 import 'package:share_plus/share_plus.dart';
@@ -30,7 +28,6 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   ResultadoAPI? _resultado;
   LoteriaBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.sorteioBannerId);
-  LoteriaAPIService _loteriaAPIService = LoteriaAPIService();
 
   void _setActiveTabIndex() {
     setState(() {
@@ -38,24 +35,15 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     });
   }
 
-  void refreshResultado(int consurso) {
-    _loteriaAPIService.fetchResultado(widget._concurso, consurso).then((value) {
-      setState(() {
-        _resultado = value;
-      });
+  void refreshResultado(ResultadoAPI? resultadoAPI) {
+    setState(() {
+      _resultado = resultadoAPI;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _loteriaAPIService.fetchLatestResultado(widget._concurso).then((value) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        setState(() {
-          _resultado = value;
-        });
-      });
-    });
     _tabController = TabController(vsync: this, length: _tabs.length);
     _tabController!.addListener(_setActiveTabIndex);
     if (Constants.showAds) {

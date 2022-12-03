@@ -8,14 +8,11 @@ import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
 
-import '../model/resultado_api.dart';
-
 class TabResultado extends StatefulWidget {
   final ConcursoBean concursoBean;
-  final Function refreshResultadoCompartilhavel;
+  final Function refreshResultado;
 
-  const TabResultado(this.concursoBean, this.refreshResultadoCompartilhavel,
-      {Key? key})
+  const TabResultado(this.concursoBean, this.refreshResultado, {Key? key})
       : super(key: key);
 
   @override
@@ -25,6 +22,7 @@ class TabResultado extends StatefulWidget {
 class _TabResultadoState extends State<TabResultado>
     with AutomaticKeepAliveClientMixin {
   Future<ResultadoAPI>? _futureResultado;
+  ResultadoAPI? _resultadoAPI;
   final _concursoTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   int _ultimoConcurso = 0;
@@ -78,9 +76,7 @@ class _TabResultadoState extends State<TabResultado>
                   if (_concursoAtual > _ultimoConcurso)
                     _concursoAtual = _ultimoConcurso;
                   setState(() {
-                    _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean, _concursoAtual);
-                    widget.refreshResultadoCompartilhavel(_concursoAtual);
+                    _refreshResultado();
                   });
                   Navigator.of(context).pop();
                 }
@@ -92,12 +88,23 @@ class _TabResultadoState extends State<TabResultado>
     );
   }
 
+  void _refreshResultado() {
+    widget.refreshResultado(null);
+    _futureResultado = _loteriaAPIService
+        .fetchResultado(widget.concursoBean, _concursoAtual)
+        .then((value) {
+      widget.refreshResultado(value);
+      return Future.value(value);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _futureResultado = _loteriaAPIService
         .fetchLatestResultado(widget.concursoBean)
         .then((value) {
+      widget.refreshResultado(value);
       setState(() {
         _ultimoConcurso = value.concurso!;
         _concursoAtual = value.concurso!;
@@ -138,7 +145,8 @@ class _TabResultadoState extends State<TabResultado>
             builder: (context, snapshot) {
               if (snapshot.hasData &&
                   snapshot.connectionState == ConnectionState.done) {
-                ResultadoAPI resultado = snapshot.data!;
+                _resultadoAPI = snapshot.data!;
+                // widget.refreshResultado(_resultadoAPI);
                 return Column(
                   children: [
                     !isDisconnected ? Divider(height: 0) : SizedBox.shrink(),
@@ -146,7 +154,7 @@ class _TabResultadoState extends State<TabResultado>
                       child: ListView(
                         padding: EdgeInsets.only(
                             left: 15, right: 15, top: 5, bottom: 35),
-                        children: _getResultadoWidgets(resultado, context),
+                        children: _getResultadoWidgets(_resultadoAPI!, context),
                       ),
                     )
                   ],
@@ -517,9 +525,7 @@ class _TabResultadoState extends State<TabResultado>
           child: FlatButton(
               onPressed: () => setState(() {
                     --_concursoAtual;
-                    _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean, _concursoAtual);
-                    widget.refreshResultadoCompartilhavel(_concursoAtual);
+                    _refreshResultado();
                   }),
               child: Text("Anterior")),
         ),
@@ -538,9 +544,7 @@ class _TabResultadoState extends State<TabResultado>
           child: FlatButton(
               onPressed: () => setState(() {
                     ++_concursoAtual;
-                    _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean, _concursoAtual);
-                    widget.refreshResultadoCompartilhavel(_concursoAtual);
+                    _refreshResultado();
                   }),
               child: Text("Próximo")),
         ),
