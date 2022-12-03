@@ -58,8 +58,8 @@ class _TabSorteioState extends State<TabSorteio>
     super.initState();
     AdMobService.createSorteioInterstitialAd();
     _buttonGroupController.selectIndex(0);
-    WidgetsBinding.instance.addPostFrameCallback(((timeStamp) => _sortear(0)));
     _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
+    _sortear(0);
     _updateDateTimeRange(_dropdownValueFiltroPeriodo.startDate,
         _dropdownValueFiltroPeriodo.endDate);
   }
