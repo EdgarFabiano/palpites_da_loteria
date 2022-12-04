@@ -32,33 +32,35 @@ class _DezenaState extends State<Dezena> {
 
   @override
   Widget build(BuildContext context) {
-    Widget circle = Card(
+    return Card(
       elevation: 2,
       color: widget._color,
-      shape: CircleBorder(),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Center(
-            child: _getDezenaDisplayWidget(),
+          Flexible(
+            child: Center(
+              child: _getDezenaDisplayWidget(),
+            ),
           ),
           Visibility(
             visible: widget._showFrequencia && widget._frequencia != null,
-            child: Divider(height: 5),
+            child: Divider(height: 0),
           ),
-          Visibility(
-              visible: widget._showFrequencia && widget._frequencia != null,
-              child: Text(
-                widget._frequencia.toString(),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white,
-                ),
-              )),
+          Flexible(
+            child: Visibility(
+                visible: widget._showFrequencia && widget._frequencia != null,
+                child: Text(
+                  widget._frequencia.toString(),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                )),
+          ),
         ],
       ),
     );
-
-    return circle;
   }
 }

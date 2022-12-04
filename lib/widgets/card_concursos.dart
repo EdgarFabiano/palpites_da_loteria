@@ -43,12 +43,16 @@ class _CardConcursosState extends State<CardConcursos> {
               ),
               Padding(
                 padding: EdgeInsets.only(top: maxHeight / 10),
-                child: Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: maxHeight / 11,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    name,
+                    overflow: TextOverflow.fade,
+                    style: TextStyle(
+                      fontSize: maxHeight / 11,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

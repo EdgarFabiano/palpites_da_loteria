@@ -85,6 +85,7 @@ class _TabSorteioState extends State<TabSorteio>
     var minSize = widget.concursoBean.minSize.toDouble();
     var maxSize = widget.concursoBean.maxSize.toDouble();
     var width = MediaQuery.of(context).size.width;
+    double textScale = MediaQuery.of(context).textScaleFactor;
 
     return Column(
       children: [
@@ -174,8 +175,8 @@ class _TabSorteioState extends State<TabSorteio>
             padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,7 +316,7 @@ class _TabSorteioState extends State<TabSorteio>
                   children: <Widget>[
                     Flexible(
                       child: GridView.extent(
-                        maxCrossAxisExtent: width / 8 + 20,
+                        maxCrossAxisExtent: (width * textScale) / 5,
                         shrinkWrap: true,
                         padding: EdgeInsets.all(10),
                         children: dezenas,
@@ -331,7 +332,7 @@ class _TabSorteioState extends State<TabSorteio>
                         visible: widget.concursoBean.name == "D. SENA",
                         child: Flexible(
                           child: GridView.extent(
-                            maxCrossAxisExtent: width / 8 + 20,
+                            maxCrossAxisExtent: (width * textScale) / 5,
                             shrinkWrap: true,
                             padding: EdgeInsets.all(10),
                             children: dezenas2,

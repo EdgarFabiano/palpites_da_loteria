@@ -44,12 +44,14 @@ class _AppDrawerState extends State<AppDrawer> {
           child: Center(
             child: Column(
               children: <Widget>[
-                Image.asset(
-                  Constants.logoTransparentAssetPath,
-                  width: 120,
+                Flexible(
+                  child: Image.asset(
+                    Constants.logoTransparentAssetPath,
+                  ),
                 ),
                 Text(
-                  "Palpites da loteria",
+                  Constants.appName,
+                  overflow: TextOverflow.fade,
                   style: TextStyle(
                     color: Colors.white,
                   ),

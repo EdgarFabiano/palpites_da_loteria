@@ -203,8 +203,8 @@ class _TabResultadoState extends State<TabResultado>
     ));
 
     if (resultado.concurso != null && resultado.data != null) {
-      builder.add(Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      builder.add(Wrap(
+        alignment: WrapAlignment.spaceBetween,
         children: [
           Padding(
             padding: EdgeInsets.all(10),
