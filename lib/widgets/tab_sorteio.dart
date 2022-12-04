@@ -67,7 +67,332 @@ class _TabSorteioState extends State<TabSorteio>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var refreshButton = RaisedButton.icon(
+
+    return Column(
+      children: [
+        _buildIncrementors(),
+        Visibility(
+          visible: widget.concursoBean.maxSize != widget.concursoBean.minSize,
+          child: Divider(
+            height: 10,
+          ),
+        ),
+        _buildStrategySelector(),
+        _buildPeriodSelector(),
+        Divider(
+          height: 10,
+        ),
+        _buildBalls(),
+      ],
+    );
+  }
+
+  _buildStrategySelector() {
+    return Padding(
+      padding: EdgeInsets.only(top: 5),
+      child: GroupButton(
+        isRadio: false,
+        controller: _buttonGroupController,
+        onSelected: (value, index, isSelected) {
+          _buttonGroupController.unselectAll();
+          _buttonGroupController.selectIndex(index);
+          estrategiaGeracao = EstrategiaGeracao.values[index];
+          _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
+          sortearComAnuncio(0);
+        },
+        buttons: EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
+        options: GroupButtonOptions(
+          selectedShadow: const [],
+          selectedTextStyle: TextStyle(
+            color: Colors.white,
+          ),
+          selectedColor: widget.concursoBean.colorBean.getColor(context),
+          unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
+          borderRadius: BorderRadius.circular(10),
+          groupingType: GroupingType.wrap,
+          direction: Axis.horizontal,
+          mainGroupAlignment: MainGroupAlignment.start,
+          crossGroupAlignment: CrossGroupAlignment.start,
+          groupRunAlignment: GroupRunAlignment.start,
+          textAlign: TextAlign.center,
+          textPadding: EdgeInsets.zero,
+          alignment: Alignment.center,
+          elevation: 2,
+        ),
+      ),
+    );
+  }
+
+  _buildPeriodSelector() {
+    return Visibility(
+      visible: estrategiaGeracao != EstrategiaGeracao.ALEATORIO,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+        child: Column(
+          children: [
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(_dropdownValueFiltroPeriodo.labelValue),
+                    DropdownButton<FiltroPeriodo>(
+                      value: _dropdownValueFiltroPeriodo,
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      elevation: 16,
+                      underline: Container(
+                        height: 2,
+                        color: widget.concursoBean.colorBean.getColor(context),
+                      ),
+                      onChanged: (FiltroPeriodo? newValue) {
+                        setState(() {
+                          _dropdownValueFiltroPeriodo = newValue!;
+                          if (_dropdownValueFiltroPeriodo ==
+                              FiltroPeriodo.CUSTOMIZADO) {
+                            _updateDateTimeRange(
+                                _dateTimeRange.start, _dateTimeRange.end);
+                          } else {
+                            _updateDateTimeRange(
+                                _dropdownValueFiltroPeriodo.startDate,
+                                _dropdownValueFiltroPeriodo.endDate);
+                          }
+                          sortearComAnuncio(0);
+                        });
+                      },
+                      items: FiltroPeriodo.values
+                          .map<DropdownMenuItem<FiltroPeriodo>>(
+                              (FiltroPeriodo value) {
+                        return DropdownMenuItem<FiltroPeriodo>(
+                          value: value,
+                          child: Text(value.displayTitle),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text("Mostrar frequências"),
+                    Switch(
+                        value: _showFrequencia,
+                        onChanged: (value) => _onChangeShowFrequencia(value)),
+                  ],
+                ),
+              ],
+            ),
+            Visibility(
+              visible: _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
+              child: Row(
+                children: [
+                  Flexible(
+                    child: TextField(
+                      controller: _startDateController,
+                      decoration: InputDecoration(
+                        icon: Icon(Icons.calendar_today),
+                        labelText: "Data início",
+                      ),
+                      readOnly: true,
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: _dateTimeRange.start,
+                            firstDate: DateTime(1990),
+                            lastDate: _dateTimeRange.end);
+                        _updateDateTimeRange(pickedDate!, _dateTimeRange.end);
+                        sortearComAnuncio(0);
+                      },
+                    ),
+                    flex: 1,
+                  ),
+                  Flexible(
+                    child: TextField(
+                      controller: _endDateController,
+                      decoration: InputDecoration(
+                          icon: Icon(Icons.calendar_today),
+                          labelText: "Data fim"),
+                      readOnly: true,
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: _dateTimeRange.end,
+                            firstDate: _dateTimeRange.start,
+                            //DateTime.now() - not to allow to choose before today.
+                            lastDate: DateTime.now());
+                        _updateDateTimeRange(_dateTimeRange.start, pickedDate!);
+                        sortearComAnuncio(0);
+                      },
+                    ),
+                    flex: 1,
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildIncrementors() {
+    return Visibility(
+      visible: widget.concursoBean.maxSize != widget.concursoBean.minSize,
+      child: Padding(
+        padding: EdgeInsets.only(top: 5, left: 12, right: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Visibility(
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: _numeroDeDezenasASortear > widget.concursoBean.minSize,
+              child: FlatButton.icon(
+                  onPressed: () => setState(() {
+                        _sortear(-1);
+                      }),
+                  icon: Icon(Icons.exposure_neg_1),
+                  label: Text("")),
+            ),
+            Text(
+              _numeroDeDezenasASortear.toInt().toString(),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Visibility(
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: _numeroDeDezenasASortear < widget.concursoBean.maxSize,
+              child: FlatButton.icon(
+                  onPressed: () => setState(() {
+                        _sortear(1);
+                      }),
+                  icon: Icon(Icons.exposure_plus_1),
+                  label: Text("")),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildBalls() {
+    var width = MediaQuery.of(context).size.width;
+    double textScale = MediaQuery.of(context).textScaleFactor;
+    return Expanded(
+      child: FutureBuilder<SorteioFrequencia>(
+        future: _futureSorteio,
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.done) {
+            SorteioFrequencia sorteioFrequencia = snapshot.data!;
+            List<Dezena> dezenas = sorteioFrequencia.frequencias
+                .map((value) => Dezena(
+                      value.dezena.toString(),
+                      widget.concursoBean.colorBean.getColor(context),
+                      _showFrequencia,
+                      value.quantidade,
+                    ))
+                .toList();
+            List<Dezena> dezenas2 = [];
+            if (sorteioFrequencia.frequencias2 != null) {
+              dezenas2 = sorteioFrequencia.frequencias2!
+                  .map((value) => Dezena(
+                        value.dezena.toString(),
+                        widget.concursoBean.colorBean.getColor(context),
+                        _showFrequencia,
+                        value.quantidade,
+                      ))
+                  .toList();
+            }
+            return Column(
+              children: <Widget>[
+                Flexible(
+                  child: GridView.extent(
+                    maxCrossAxisExtent: (width * textScale) / 5,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(10),
+                    children: dezenas,
+                  ),
+                  flex: 1,
+                ),
+                Visibility(
+                    visible: widget.concursoBean.name == "D. SENA",
+                    child: Divider(
+                      height: 0,
+                    )),
+                Visibility(
+                    visible: widget.concursoBean.name == "D. SENA",
+                    child: Flexible(
+                      child: GridView.extent(
+                        maxCrossAxisExtent: (width * textScale) / 5,
+                        shrinkWrap: true,
+                        padding: EdgeInsets.all(10),
+                        children: dezenas2,
+                      ),
+                    )),
+                Visibility(
+                  visible: sorteioFrequencia.qtdConcursos > 0,
+                  child: Column(
+                    children: [
+                      RichText(
+                          text: TextSpan(children: <TextSpan>[
+                        TextSpan(text: 'Com base em '),
+                        TextSpan(
+                            text:
+                                '${formatNumber(sorteioFrequencia.qtdConcursos)}',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(text: ' sorteios'),
+                      ])),
+                      RichText(
+                          text: TextSpan(children: <TextSpan>[
+                        TextSpan(text: 'De '),
+                        TextSpan(
+                            text: '${formatarData(_dateTimeRange.start)}',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(text: ' a '),
+                        TextSpan(
+                            text: '${formatarData(_dateTimeRange.end)}',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                      ]))
+                    ],
+                  ),
+                ),
+                _buildRefreshButton(),
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Column(
+              children: [
+                Expanded(child: Center(child: Icon(Icons.signal_wifi_off))),
+              ],
+            );
+          }
+          return Column(
+            children: <Widget>[
+              DezenasLoading(
+                  _numeroDeDezenasASortear.toInt(), widget.concursoBean),
+              Visibility(
+                  visible: widget.concursoBean.name == "D. SENA",
+                  child: Divider(
+                    height: 0,
+                  )),
+              Visibility(
+                  visible: widget.concursoBean.name == "D. SENA",
+                  child: DezenasLoading(
+                      _numeroDeDezenasASortear.toInt(), widget.concursoBean)),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  _buildRefreshButton() {
+    return Visibility(
+      visible: estrategiaGeracao == EstrategiaGeracao.ALEATORIO,
+      child: RaisedButton.icon(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
@@ -80,323 +405,8 @@ class _TabSorteioState extends State<TabSorteio>
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
         color: widget.concursoBean.colorBean.getColor(context),
-        onPressed: () => sortearComAnuncio(0));
-
-    var minSize = widget.concursoBean.minSize.toDouble();
-    var maxSize = widget.concursoBean.maxSize.toDouble();
-    var width = MediaQuery.of(context).size.width;
-    double textScale = MediaQuery.of(context).textScaleFactor;
-
-    return Column(
-      children: [
-        Visibility(
-          visible: maxSize != minSize,
-          child: Padding(
-            padding: EdgeInsets.only(top: 5, left: 12, right: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Visibility(
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  visible:
-                      _numeroDeDezenasASortear > widget.concursoBean.minSize,
-                  child: FlatButton.icon(
-                      onPressed: () => setState(() {
-                            _sortear(-1);
-                          }),
-                      icon: Icon(Icons.exposure_neg_1),
-                      label: Text("")),
-                ),
-                Text(
-                  _numeroDeDezenasASortear.toInt().toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Visibility(
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  visible:
-                      _numeroDeDezenasASortear < widget.concursoBean.maxSize,
-                  child: FlatButton.icon(
-                      onPressed: () => setState(() {
-                            _sortear(1);
-                          }),
-                      icon: Icon(Icons.exposure_plus_1),
-                      label: Text("")),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Visibility(
-            visible: maxSize != minSize,
-            child: Divider(
-              height: 10,
-            )),
-        Padding(
-          padding: EdgeInsets.only(top: 5),
-          child: GroupButton(
-            isRadio: false,
-            controller: _buttonGroupController,
-            onSelected: (value, index, isSelected) {
-              _buttonGroupController.unselectAll();
-              _buttonGroupController.selectIndex(index);
-              estrategiaGeracao = EstrategiaGeracao.values[index];
-              _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
-              sortearComAnuncio(0);
-            },
-            buttons:
-                EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
-            options: GroupButtonOptions(
-              selectedShadow: const [],
-              selectedTextStyle: TextStyle(
-                color: Colors.white,
-              ),
-              selectedColor: widget.concursoBean.colorBean.getColor(context),
-              unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
-              borderRadius: BorderRadius.circular(10),
-              groupingType: GroupingType.wrap,
-              direction: Axis.horizontal,
-              mainGroupAlignment: MainGroupAlignment.start,
-              crossGroupAlignment: CrossGroupAlignment.start,
-              groupRunAlignment: GroupRunAlignment.start,
-              textAlign: TextAlign.center,
-              textPadding: EdgeInsets.zero,
-              alignment: Alignment.center,
-              elevation: 2,
-            ),
-          ),
-        ),
-        Visibility(
-          visible: estrategiaGeracao != EstrategiaGeracao.ALEATORIO,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
-            child: Column(
-              children: [
-                Wrap(
-                  alignment: WrapAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(_dropdownValueFiltroPeriodo.labelValue),
-                        DropdownButton<FiltroPeriodo>(
-                          value: _dropdownValueFiltroPeriodo,
-                          icon: const Icon(Icons.keyboard_arrow_down),
-                          elevation: 16,
-                          underline: Container(
-                            height: 2,
-                            color:
-                                widget.concursoBean.colorBean.getColor(context),
-                          ),
-                          onChanged: (FiltroPeriodo? newValue) {
-                            setState(() {
-                              _dropdownValueFiltroPeriodo = newValue!;
-                              if (_dropdownValueFiltroPeriodo ==
-                                  FiltroPeriodo.CUSTOMIZADO) {
-                                _updateDateTimeRange(
-                                    _dateTimeRange.start, _dateTimeRange.end);
-                              } else {
-                                _updateDateTimeRange(
-                                    _dropdownValueFiltroPeriodo.startDate,
-                                    _dropdownValueFiltroPeriodo.endDate);
-                              }
-                              sortearComAnuncio(0);
-                            });
-                          },
-                          items: FiltroPeriodo.values
-                              .map<DropdownMenuItem<FiltroPeriodo>>(
-                                  (FiltroPeriodo value) {
-                            return DropdownMenuItem<FiltroPeriodo>(
-                              value: value,
-                              child: Text(value.displayTitle),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text("Mostrar frequências"),
-                        Switch(
-                            value: _showFrequencia,
-                            onChanged: (value) =>
-                                _onChangeShowFrequencia(value)),
-                      ],
-                    ),
-                  ],
-                ),
-                Visibility(
-                  visible:
-                      _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: TextField(
-                          controller: _startDateController,
-                          decoration: InputDecoration(
-                            icon: Icon(Icons.calendar_today),
-                            labelText: "Data início",
-                          ),
-                          readOnly: true,
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: _dateTimeRange.start,
-                                firstDate: DateTime(1990),
-                                lastDate: _dateTimeRange.end);
-                            _updateDateTimeRange(
-                                pickedDate!, _dateTimeRange.end);
-                            sortearComAnuncio(0);
-                          },
-                        ),
-                        flex: 1,
-                      ),
-                      Flexible(
-                        child: TextField(
-                          controller: _endDateController,
-                          decoration: InputDecoration(
-                              icon: Icon(Icons.calendar_today),
-                              labelText: "Data fim"),
-                          readOnly: true,
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: _dateTimeRange.end,
-                                firstDate: _dateTimeRange.start,
-                                //DateTime.now() - not to allow to choose before today.
-                                lastDate: DateTime.now());
-                            _updateDateTimeRange(
-                                _dateTimeRange.start, pickedDate!);
-                            sortearComAnuncio(0);
-                          },
-                        ),
-                        flex: 1,
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-        Divider(
-          height: 10,
-        ),
-        Expanded(
-          child: FutureBuilder<SorteioFrequencia>(
-            future: _futureSorteio,
-            builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.done) {
-                SorteioFrequencia sorteioFrequencia = snapshot.data!;
-                List<Dezena> dezenas = sorteioFrequencia.frequencias
-                    .map((value) => Dezena(
-                          value.dezena.toString(),
-                          widget.concursoBean.colorBean.getColor(context),
-                          _showFrequencia,
-                          value.quantidade,
-                        ))
-                    .toList();
-                List<Dezena> dezenas2 = [];
-                if (sorteioFrequencia.frequencias2 != null) {
-                  dezenas2 = sorteioFrequencia.frequencias2!
-                      .map((value) => Dezena(
-                            value.dezena.toString(),
-                            widget.concursoBean.colorBean.getColor(context),
-                            _showFrequencia,
-                            value.quantidade,
-                          ))
-                      .toList();
-                }
-                return Column(
-                  children: <Widget>[
-                    Flexible(
-                      child: GridView.extent(
-                        maxCrossAxisExtent: (width * textScale) / 5,
-                        shrinkWrap: true,
-                        padding: EdgeInsets.all(10),
-                        children: dezenas,
-                      ),
-                      flex: 1,
-                    ),
-                    Visibility(
-                        visible: widget.concursoBean.name == "D. SENA",
-                        child: Divider(
-                          height: 0,
-                        )),
-                    Visibility(
-                        visible: widget.concursoBean.name == "D. SENA",
-                        child: Flexible(
-                          child: GridView.extent(
-                            maxCrossAxisExtent: (width * textScale) / 5,
-                            shrinkWrap: true,
-                            padding: EdgeInsets.all(10),
-                            children: dezenas2,
-                          ),
-                        )),
-                    Visibility(
-                      visible: sorteioFrequencia.qtdConcursos > 0,
-                      child: Column(
-                        children: [
-                          RichText(
-                              text: TextSpan(children: <TextSpan>[
-                            TextSpan(text: 'Com base em '),
-                            TextSpan(
-                                text:
-                                    '${formatNumber(sorteioFrequencia.qtdConcursos)}',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: ' sorteios'),
-                          ])),
-                          RichText(
-                              text: TextSpan(children: <TextSpan>[
-                            TextSpan(text: 'De '),
-                            TextSpan(
-                                text: '${formatarData(_dateTimeRange.start)}',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: ' a '),
-                            TextSpan(
-                                text: '${formatarData(_dateTimeRange.end)}',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ]))
-                        ],
-                      ),
-                    ),
-                    Visibility(
-                        visible:
-                            estrategiaGeracao == EstrategiaGeracao.ALEATORIO,
-                        child: refreshButton),
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return Column(
-                  children: [
-                    Expanded(child: Center(child: Icon(Icons.signal_wifi_off))),
-                  ],
-                );
-              }
-              return Column(
-                children: <Widget>[
-                  DezenasLoading(
-                      _numeroDeDezenasASortear.toInt(), widget.concursoBean),
-                  Visibility(
-                      visible: widget.concursoBean.name == "D. SENA",
-                      child: Divider(
-                        height: 0,
-                      )),
-                  Visibility(
-                      visible: widget.concursoBean.name == "D. SENA",
-                      child: DezenasLoading(_numeroDeDezenasASortear.toInt(),
-                          widget.concursoBean)),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
+        onPressed: () => sortearComAnuncio(0),
+      ),
     );
   }
 
