@@ -1,6 +1,7 @@
 class Constants {
   static bool showAds = true;
 
+  static const String appName = "Palpites da loteria";
   static const String concursosSharedPreferencesKey = 'concursos';
   static const String concursosBaselineJson = 'assets/json/baseline.json';
 
