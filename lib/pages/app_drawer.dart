@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/pages/settings_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../defaults/defaults_export.dart';
+import 'my_saved_games.dart';
+import 'settings_page.dart';
 
 final InAppReview _inAppReview = InAppReview.instance;
 
@@ -60,6 +62,15 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
           ),
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+        ),
+        ListTile(
+          leading: Icon(Icons.favorite),
+          title: Text("Meus jogos"),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.push(context,
+                CupertinoPageRoute(builder: (context) => MySavedGames()));
+          },
         ),
         ListTile(
           leading: Icon(Icons.settings),
