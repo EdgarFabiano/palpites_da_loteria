@@ -1,4 +1,4 @@
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,8 +26,10 @@ Future<void> _requestReview() async {
       }
       _inAppReview.openStoreListing();
       return false;
-    }).catchError((err) =>
-        Fluttertoast.showToast(msg: "Operação indisponível no momento"));
+    }).catchError((err) {
+      Fluttertoast.showToast(msg: "Operação indisponível no momento");
+      return Future.value(true);
+    });
   }
 }
 

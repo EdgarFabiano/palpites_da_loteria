@@ -8,6 +8,8 @@ import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
 
+import '../defaults/themes.dart';
+
 class TabResultado extends StatefulWidget {
   final ConcursoBean concursoBean;
   final Function refreshResultado;
@@ -522,31 +524,36 @@ class _TabResultadoState extends State<TabResultado>
           maintainAnimation: true,
           maintainState: true,
           visible: _concursoAtual > 1,
-          child: FlatButton(
-              onPressed: () => setState(() {
-                    --_concursoAtual;
-                    _refreshResultado();
-                  }),
-              child: Text("Anterior")),
+          child: TextButton(
+            onPressed: () => setState(() {
+              --_concursoAtual;
+              _refreshResultado();
+            }),
+            child: Text("Anterior"),
+            style: DefaultThemes.flatButtonStyle(context),
+          ),
         ),
-        FlatButton(
+        TextButton(
           onPressed: _showDialogConcurso,
           child: Text(
             _concursoAtual.toString(),
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
+          style: DefaultThemes.flatButtonStyle(context),
         ),
         Visibility(
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
           visible: _concursoAtual < _ultimoConcurso,
-          child: FlatButton(
-              onPressed: () => setState(() {
-                    ++_concursoAtual;
-                    _refreshResultado();
-                  }),
-              child: Text("Próximo")),
+          child: TextButton(
+            onPressed: () => setState(() {
+              ++_concursoAtual;
+              _refreshResultado();
+            }),
+            child: Text("Próximo"),
+            style: DefaultThemes.flatButtonStyle(context),
+          ),
         ),
       ],
     );

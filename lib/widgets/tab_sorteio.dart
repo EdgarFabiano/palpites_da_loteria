@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
+import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/enum/filtro_periodo.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
@@ -88,36 +89,39 @@ class _TabSorteioState extends State<TabSorteio>
   }
 
   _buildStrategySelector() {
-    return Padding(
-      padding: EdgeInsets.only(top: 5),
-      child: GroupButton(
-        isRadio: false,
-        controller: _buttonGroupController,
-        onSelected: (value, index, isSelected) {
-          _buttonGroupController.unselectAll();
-          _buttonGroupController.selectIndex(index);
-          estrategiaGeracao = EstrategiaGeracao.values[index];
-          _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
-          sortearComAnuncio(0);
-        },
-        buttons: EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
-        options: GroupButtonOptions(
-          selectedShadow: const [],
-          selectedTextStyle: TextStyle(
-            color: Colors.white,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GroupButton(
+          isRadio: false,
+          controller: _buttonGroupController,
+          onSelected: (value, index, isSelected) {
+            _buttonGroupController.unselectAll();
+            _buttonGroupController.selectIndex(index);
+            estrategiaGeracao = EstrategiaGeracao.values[index];
+            _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
+            sortearComAnuncio(0);
+          },
+          buttons: EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
+          options: GroupButtonOptions(
+            selectedShadow: const [],
+            selectedTextStyle: TextStyle(
+              color: Colors.white,
+            ),
+            selectedColor: widget.concursoBean.colorBean.getColor(context),
+            unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
+            borderRadius: BorderRadius.circular(10),
+            groupingType: GroupingType.wrap,
+            direction: Axis.horizontal,
+            mainGroupAlignment: MainGroupAlignment.start,
+            crossGroupAlignment: CrossGroupAlignment.start,
+            groupRunAlignment: GroupRunAlignment.start,
+            textAlign: TextAlign.center,
+            textPadding: EdgeInsets.zero,
+            alignment: Alignment.center,
+            elevation: 2,
           ),
-          selectedColor: widget.concursoBean.colorBean.getColor(context),
-          unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
-          borderRadius: BorderRadius.circular(10),
-          groupingType: GroupingType.wrap,
-          direction: Axis.horizontal,
-          mainGroupAlignment: MainGroupAlignment.start,
-          crossGroupAlignment: CrossGroupAlignment.start,
-          groupRunAlignment: GroupRunAlignment.start,
-          textAlign: TextAlign.center,
-          textPadding: EdgeInsets.zero,
-          alignment: Alignment.center,
-          elevation: 2,
         ),
       ),
     );
@@ -248,12 +252,13 @@ class _TabSorteioState extends State<TabSorteio>
               maintainAnimation: true,
               maintainState: true,
               visible: _numeroDeDezenasASortear > widget.concursoBean.minSize,
-              child: FlatButton.icon(
-                  onPressed: () => setState(() {
-                        _sortear(-1);
-                      }),
-                  icon: Icon(Icons.exposure_neg_1),
-                  label: Text("")),
+              child: IconButton(
+                onPressed: () => setState(() {
+                  _sortear(-1);
+                }),
+                icon: Icon(Icons.exposure_neg_1),
+                style: DefaultThemes.flatButtonStyle(context),
+              ),
             ),
             Text(
               _numeroDeDezenasASortear.toInt().toString(),
@@ -264,12 +269,13 @@ class _TabSorteioState extends State<TabSorteio>
               maintainAnimation: true,
               maintainState: true,
               visible: _numeroDeDezenasASortear < widget.concursoBean.maxSize,
-              child: FlatButton.icon(
-                  onPressed: () => setState(() {
-                        _sortear(1);
-                      }),
-                  icon: Icon(Icons.exposure_plus_1),
-                  label: Text("")),
+              child: IconButton(
+                onPressed: () => setState(() {
+                  _sortear(1);
+                }),
+                icon: Icon(Icons.exposure_plus_1),
+                style: DefaultThemes.flatButtonStyle(context),
+              ),
             ),
           ],
         ),
@@ -306,6 +312,8 @@ class _TabSorteioState extends State<TabSorteio>
                       ))
                   .toList();
             }
+            var textColor = DefaultThemes.textColor(context);
+            var textStyle = TextStyle(color: textColor);
             return Column(
               children: <Widget>[
                 Flexible(
@@ -338,23 +346,26 @@ class _TabSorteioState extends State<TabSorteio>
                     children: [
                       RichText(
                           text: TextSpan(children: <TextSpan>[
-                        TextSpan(text: 'Com base em '),
+                        TextSpan(text: 'Com base em ', style: textStyle),
                         TextSpan(
                             text:
                                 '${formatNumber(sorteioFrequencia.qtdConcursos)}',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        TextSpan(text: ' sorteios'),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, color: textColor)),
+                        TextSpan(text: ' sorteios', style: textStyle),
                       ])),
                       RichText(
                           text: TextSpan(children: <TextSpan>[
-                        TextSpan(text: 'De '),
+                        TextSpan(text: 'De ', style: textStyle),
                         TextSpan(
                             text: '${formatarData(_dateTimeRange.start)}',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        TextSpan(text: ' a '),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, color: textColor)),
+                        TextSpan(text: ' a ', style: textStyle),
                         TextSpan(
                             text: '${formatarData(_dateTimeRange.end)}',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, color: textColor)),
                       ]))
                     ],
                   ),
@@ -390,22 +401,34 @@ class _TabSorteioState extends State<TabSorteio>
   }
 
   _buildRefreshButton() {
+    final ButtonStyle style = TextButton.styleFrom(
+      backgroundColor: widget.concursoBean.colorBean.getColor(context),
+      padding: EdgeInsets.all(0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+    );
     return Visibility(
       visible: estrategiaGeracao == EstrategiaGeracao.ALEATORIO,
-      child: RaisedButton.icon(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
+      child: ElevatedButton(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.refresh,
+                  color: Colors.white,
+                ),
+                Text(
+                  "Gerar novamente",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ]),
         ),
-        icon: Icon(
-          Icons.refresh,
-          color: Colors.white,
-        ),
-        label: Text(
-          "Gerar novamente",
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
-        color: widget.concursoBean.colorBean.getColor(context),
         onPressed: () => sortearComAnuncio(0),
+        style: style,
       ),
     );
   }
