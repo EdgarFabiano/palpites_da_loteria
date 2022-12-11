@@ -66,12 +66,14 @@ class _TabResultadoState extends State<TabResultado>
           actions: <Widget>[
             TextButton(
               child: Text('Cancelar'),
+        style: DefaultThemes.flatButtonStyle(context),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text('Buscar'),
+        style: DefaultThemes.flatButtonStyle(context),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _concursoAtual = int.parse(_concursoTextController.text);

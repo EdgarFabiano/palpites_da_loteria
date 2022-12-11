@@ -130,111 +130,112 @@ class _TabSorteioState extends State<TabSorteio>
   _buildPeriodSelector() {
     return Visibility(
       visible: estrategiaGeracao != EstrategiaGeracao.ALEATORIO,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
-        child: Column(
-          children: [
-            Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(_dropdownValueFiltroPeriodo.labelValue),
-                    DropdownButton<FiltroPeriodo>(
-                      value: _dropdownValueFiltroPeriodo,
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      elevation: 16,
-                      underline: Container(
-                        height: 2,
-                        color: widget.concursoBean.colorBean.getColor(context),
-                      ),
-                      onChanged: (FiltroPeriodo? newValue) {
-                        setState(() {
-                          _dropdownValueFiltroPeriodo = newValue!;
-                          if (_dropdownValueFiltroPeriodo ==
-                              FiltroPeriodo.CUSTOMIZADO) {
-                            _updateDateTimeRange(
-                                _dateTimeRange.start, _dateTimeRange.end);
-                          } else {
-                            _updateDateTimeRange(
-                                _dropdownValueFiltroPeriodo.startDate,
-                                _dropdownValueFiltroPeriodo.endDate);
-                          }
-                          sortearComAnuncio(0);
-                        });
-                      },
-                      items: FiltroPeriodo.values
-                          .map<DropdownMenuItem<FiltroPeriodo>>(
-                              (FiltroPeriodo value) {
-                        return DropdownMenuItem<FiltroPeriodo>(
-                          value: value,
-                          child: Text(value.displayTitle),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text("Mostrar frequências"),
-                    Switch(
-                        value: _showFrequencia,
-                        onChanged: (value) => _onChangeShowFrequencia(value)),
-                  ],
-                ),
-              ],
-            ),
-            Visibility(
-              visible: _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
-              child: Row(
+      child: Column(
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
                 children: [
-                  Flexible(
-                    child: TextField(
-                      controller: _startDateController,
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.calendar_today),
-                        labelText: "Data início",
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(_dropdownValueFiltroPeriodo.labelValue),
+                      DropdownButton<FiltroPeriodo>(
+                        value: _dropdownValueFiltroPeriodo,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        elevation: 16,
+                        underline: Container(
+                          height: 2,
+                          color: widget.concursoBean.colorBean.getColor(context),
+                        ),
+                        onChanged: (FiltroPeriodo? newValue) {
+                          setState(() {
+                            _dropdownValueFiltroPeriodo = newValue!;
+                            if (_dropdownValueFiltroPeriodo ==
+                                FiltroPeriodo.CUSTOMIZADO) {
+                              _updateDateTimeRange(
+                                  _dateTimeRange.start, _dateTimeRange.end);
+                            } else {
+                              _updateDateTimeRange(
+                                  _dropdownValueFiltroPeriodo.startDate,
+                                  _dropdownValueFiltroPeriodo.endDate);
+                            }
+                            sortearComAnuncio(0);
+                          });
+                        },
+                        items: FiltroPeriodo.values
+                            .map<DropdownMenuItem<FiltroPeriodo>>(
+                                (FiltroPeriodo value) {
+                          return DropdownMenuItem<FiltroPeriodo>(
+                            value: value,
+                            child: Text(value.displayTitle),
+                          );
+                        }).toList(),
                       ),
-                      readOnly: true,
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: _dateTimeRange.start,
-                            firstDate: DateTime(1990),
-                            lastDate: _dateTimeRange.end);
-                        _updateDateTimeRange(pickedDate!, _dateTimeRange.end);
-                        sortearComAnuncio(0);
-                      },
-                    ),
-                    flex: 1,
+                    ],
                   ),
-                  Flexible(
-                    child: TextField(
-                      controller: _endDateController,
-                      decoration: InputDecoration(
-                          icon: Icon(Icons.calendar_today),
-                          labelText: "Data fim"),
-                      readOnly: true,
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: _dateTimeRange.end,
-                            firstDate: _dateTimeRange.start,
-                            //DateTime.now() - not to allow to choose before today.
-                            lastDate: DateTime.now());
-                        _updateDateTimeRange(_dateTimeRange.start, pickedDate!);
-                        sortearComAnuncio(0);
-                      },
-                    ),
-                    flex: 1,
-                  )
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text("Mostrar frequências"),
+                      Switch(
+                          value: _showFrequencia,
+                          onChanged: (value) => _onChangeShowFrequencia(value)),
+                    ],
+                  ),
                 ],
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+          Visibility(
+            visible: _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _startDateController,
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.calendar_today),
+                      labelText: "Data início",
+                    ),
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: _dateTimeRange.start,
+                          firstDate: DateTime(1990),
+                          lastDate: _dateTimeRange.end);
+                      _updateDateTimeRange(pickedDate!, _dateTimeRange.end);
+                      sortearComAnuncio(0);
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _endDateController,
+                    decoration: InputDecoration(
+                        icon: Icon(Icons.calendar_today),
+                        labelText: "Data fim"),
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: _dateTimeRange.end,
+                          firstDate: _dateTimeRange.start,
+                          //DateTime.now() - not to allow to choose before today.
+                          lastDate: DateTime.now());
+                      _updateDateTimeRange(_dateTimeRange.start, pickedDate!);
+                      sortearComAnuncio(0);
+                    },
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
@@ -345,6 +346,7 @@ class _TabSorteioState extends State<TabSorteio>
                   child: Column(
                     children: [
                       RichText(
+                        overflow: TextOverflow.fade,
                           text: TextSpan(children: <TextSpan>[
                         TextSpan(text: 'Com base em ', style: textStyle),
                         TextSpan(
@@ -355,6 +357,7 @@ class _TabSorteioState extends State<TabSorteio>
                         TextSpan(text: ' sorteios', style: textStyle),
                       ])),
                       RichText(
+                          overflow: TextOverflow.fade,
                           text: TextSpan(children: <TextSpan>[
                         TextSpan(text: 'De ', style: textStyle),
                         TextSpan(
