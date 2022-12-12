@@ -4,6 +4,7 @@ import '../defaults/constants.dart';
 import '../defaults/strings.dart';
 import '../model/loteria_banner_ad.dart';
 import '../service/admob_service.dart';
+import '../widgets/my_saved_games_crud.dart';
 
 class MySavedGames extends StatefulWidget {
   const MySavedGames({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class _MySavedGamesState extends State<MySavedGames> {
       body: Center(
         child: Column(
           children: [
-            Expanded(child: Container()),
+            Expanded(child: SqliteExample()),
             AdMobService.getBannerAdWidget(_bannerAd),
           ],
         ),
