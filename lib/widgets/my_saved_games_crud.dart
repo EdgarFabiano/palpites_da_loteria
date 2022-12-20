@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import '../model/saved_game.dart';
 import '../service/saved_game_service.dart';
 
-class SqliteExample extends StatefulWidget {
-  const SqliteExample({super.key});
+class MySavedGamesCRUD extends StatefulWidget {
+  const MySavedGamesCRUD({super.key});
 
   @override
-  _SqliteExampleState createState() => _SqliteExampleState();
+  _MySavedGamesCRUDState createState() => _MySavedGamesCRUDState();
 }
 
-class _SqliteExampleState extends State<SqliteExample> {
+class _MySavedGamesCRUDState extends State<MySavedGamesCRUD> {
   SavedGameService _savedGameService = SavedGameService();
   final AsyncMemoizer _memoizer = AsyncMemoizer();
   List<SavedGame> _savedGames = [];
@@ -20,7 +20,6 @@ class _SqliteExampleState extends State<SqliteExample> {
     // Avoid this function to be called multiple times,
     // cf. https://medium.com/saugo360/flutter-my-futurebuilder-keeps-firing-6e774830bc2
     await _memoizer.runOnce(() async {
-      await _savedGameService.initDb();
       _savedGames = await _savedGameService.getSavedGames();
     });
     return true;

@@ -35,7 +35,7 @@ class _MySavedGamesState extends State<MySavedGames> {
       body: Center(
         child: Column(
           children: [
-            Expanded(child: SqliteExample()),
+            Expanded(child: MySavedGamesCRUD()),
             AdMobService.getBannerAdWidget(_bannerAd),
           ],
         ),

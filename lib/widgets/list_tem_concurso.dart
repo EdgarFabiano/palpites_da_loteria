@@ -6,36 +6,40 @@ import 'package:provider/provider.dart';
 import 'concursos_settings_change_notifier.dart';
 
 class ListItemConcurso extends StatefulWidget {
-  final ConcursoBean _concursoBean;
-  final Concursos _concursos;
+  final Contest _contest;
 
-  ListItemConcurso(this._concursoBean, this._concursos, {Key? key}) : super(key: key);
+  ListItemConcurso(this._contest, {Key? key}) : super(key: key);
 
-  ConcursoBean get concursoBean => _concursoBean;
+  Contest get concursoBean => _contest;
 
   @override
   _ListItemConcursoState createState() => _ListItemConcursoState();
 }
 
 class _ListItemConcursoState extends State<ListItemConcurso> {
+  late ConcursosSettingsChangeNotifier _concursosProvider;
 
-  void changeEnabled(ConcursosSettingsChangeNotifier concursosProvider) {
-    return setState(() {
-              widget._concursoBean.enabled = !widget._concursoBean.enabled;
-              var index = widget._concursos.concursosBeanList.indexOf(widget.concursoBean);
-              widget._concursos.concursosBeanList.fillRange(index, index, widget.concursoBean);
-              concursosProvider.setConcursos(widget._concursos);
-            });
+  void changeEnabled() {
+    setState(() {
+      widget._contest.enabled = !widget._contest.enabled;
+    });
+    _concursosProvider.updateContest(widget._contest);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _concursosProvider =
+        Provider.of<ConcursosSettingsChangeNotifier>(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    var concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
     return ListTile(
-      key: Key(widget._concursoBean.name),
+      key: Key(widget._contest.name),
       leading: Icon(Icons.reorder),
       title: GestureDetector(
-        onTap: () => changeEnabled( concursosProvider),
+        onTap: changeEnabled,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -44,17 +48,16 @@ class _ListItemConcursoState extends State<ListItemConcurso> {
                 Image.asset(
                   Constants.loteriasIconAssetPath,
                   width: 25,
-                  color: widget._concursoBean.colorBean.getColor(context)
-                      .withAlpha(255),
+                  color: widget._contest.getColor(context).withAlpha(255),
                   colorBlendMode: BlendMode.modulate,
                 ),
                 Text("    "),
-                Text(widget._concursoBean.name)
+                Text(widget._contest.name)
               ],
             ),
             Switch(
-              value: widget._concursoBean.enabled,
-              onChanged: (value) => changeEnabled( concursosProvider),
+              value: widget._contest.enabled,
+              onChanged: (value) => changeEnabled(),
             )
           ],
         ),

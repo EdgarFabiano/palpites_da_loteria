@@ -13,9 +13,9 @@ import '../service/generator_strategies/abstract_sorteio_generator.dart';
 import 'dezenas_loading.dart';
 
 class TabSorteio extends StatefulWidget {
-  final ConcursoBean concursoBean;
+  final Contest _contest;
 
-  const TabSorteio(this.concursoBean, {Key? key}) : super(key: key);
+  const TabSorteio(this._contest, {Key? key}) : super(key: key);
 
   @override
   _TabSorteioState createState() => _TabSorteioState();
@@ -40,7 +40,7 @@ class _TabSorteioState extends State<TabSorteio>
   void _sortear(double increment) {
     _numeroDeDezenasASortear += increment;
     _futureSorteio = _sorteioGenerator.sortear(
-        widget.concursoBean, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
+        widget._contest, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
   }
 
   void sortearComAnuncio(double increment) {
@@ -59,7 +59,7 @@ class _TabSorteioState extends State<TabSorteio>
     super.initState();
     AdMobService.createSorteioInterstitialAd();
     _buttonGroupController.selectIndex(0);
-    _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
+    _numeroDeDezenasASortear = widget._contest.minSize.toDouble();
     _sortear(0);
     _updateDateTimeRange(_dropdownValueFiltroPeriodo.startDate,
         _dropdownValueFiltroPeriodo.endDate);
@@ -73,7 +73,7 @@ class _TabSorteioState extends State<TabSorteio>
       children: [
         _buildIncrementors(),
         Visibility(
-          visible: widget.concursoBean.maxSize != widget.concursoBean.minSize,
+          visible: widget._contest.maxSize != widget._contest.minSize,
           child: Divider(
             height: 10,
           ),
@@ -109,7 +109,7 @@ class _TabSorteioState extends State<TabSorteio>
             selectedTextStyle: TextStyle(
               color: Colors.white,
             ),
-            selectedColor: widget.concursoBean.colorBean.getColor(context),
+            selectedColor: widget._contest.getColor(context),
             unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
             borderRadius: BorderRadius.circular(10),
             groupingType: GroupingType.wrap,
@@ -149,7 +149,7 @@ class _TabSorteioState extends State<TabSorteio>
                         elevation: 16,
                         underline: Container(
                           height: 2,
-                          color: widget.concursoBean.colorBean.getColor(context),
+                          color: widget._contest.getColor(context),
                         ),
                         onChanged: (FiltroPeriodo? newValue) {
                           setState(() {
@@ -242,7 +242,7 @@ class _TabSorteioState extends State<TabSorteio>
 
   _buildIncrementors() {
     return Visibility(
-      visible: widget.concursoBean.maxSize != widget.concursoBean.minSize,
+      visible: widget._contest.maxSize != widget._contest.minSize,
       child: Padding(
         padding: EdgeInsets.only(top: 5, left: 12, right: 12),
         child: Row(
@@ -252,7 +252,7 @@ class _TabSorteioState extends State<TabSorteio>
               maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
-              visible: _numeroDeDezenasASortear > widget.concursoBean.minSize,
+              visible: _numeroDeDezenasASortear > widget._contest.minSize,
               child: IconButton(
                 onPressed: () => setState(() {
                   _sortear(-1);
@@ -269,7 +269,7 @@ class _TabSorteioState extends State<TabSorteio>
               maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
-              visible: _numeroDeDezenasASortear < widget.concursoBean.maxSize,
+              visible: _numeroDeDezenasASortear < widget._contest.maxSize,
               child: IconButton(
                 onPressed: () => setState(() {
                   _sortear(1);
@@ -297,7 +297,7 @@ class _TabSorteioState extends State<TabSorteio>
             List<Dezena> dezenas = sorteioFrequencia.frequencias
                 .map((value) => Dezena(
                       value.dezena.toString(),
-                      widget.concursoBean.colorBean.getColor(context),
+                      widget._contest.getColor(context),
                       _showFrequencia,
                       value.quantidade,
                     ))
@@ -307,7 +307,7 @@ class _TabSorteioState extends State<TabSorteio>
               dezenas2 = sorteioFrequencia.frequencias2!
                   .map((value) => Dezena(
                         value.dezena.toString(),
-                        widget.concursoBean.colorBean.getColor(context),
+                        widget._contest.getColor(context),
                         _showFrequencia,
                         value.quantidade,
                       ))
@@ -327,12 +327,12 @@ class _TabSorteioState extends State<TabSorteio>
                   flex: 1,
                 ),
                 Visibility(
-                    visible: widget.concursoBean.name == "D. SENA",
+                    visible: widget._contest.name == "D. SENA",
                     child: Divider(
                       height: 0,
                     )),
                 Visibility(
-                    visible: widget.concursoBean.name == "D. SENA",
+                    visible: widget._contest.name == "D. SENA",
                     child: Flexible(
                       child: GridView.extent(
                         maxCrossAxisExtent: (width * textScale) / 5,
@@ -386,16 +386,16 @@ class _TabSorteioState extends State<TabSorteio>
           return Column(
             children: <Widget>[
               DezenasLoading(
-                  _numeroDeDezenasASortear.toInt(), widget.concursoBean),
+                  _numeroDeDezenasASortear.toInt(), widget._contest),
               Visibility(
-                  visible: widget.concursoBean.name == "D. SENA",
+                  visible: widget._contest.name == "D. SENA",
                   child: Divider(
                     height: 0,
                   )),
               Visibility(
-                  visible: widget.concursoBean.name == "D. SENA",
+                  visible: widget._contest.name == "D. SENA",
                   child: DezenasLoading(
-                      _numeroDeDezenasASortear.toInt(), widget.concursoBean)),
+                      _numeroDeDezenasASortear.toInt(), widget._contest)),
             ],
           );
         },
@@ -405,7 +405,7 @@ class _TabSorteioState extends State<TabSorteio>
 
   _buildRefreshButton() {
     final ButtonStyle style = TextButton.styleFrom(
-      backgroundColor: widget.concursoBean.colorBean.getColor(context),
+      backgroundColor: widget._contest.getColor(context),
       padding: EdgeInsets.all(0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),

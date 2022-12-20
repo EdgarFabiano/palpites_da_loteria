@@ -11,10 +11,10 @@ import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
 import '../defaults/themes.dart';
 
 class TabResultado extends StatefulWidget {
-  final ConcursoBean concursoBean;
+  final Contest _contest;
   final Function refreshResultado;
 
-  const TabResultado(this.concursoBean, this.refreshResultado, {Key? key})
+  const TabResultado(this._contest, this.refreshResultado, {Key? key})
       : super(key: key);
 
   @override
@@ -95,7 +95,7 @@ class _TabResultadoState extends State<TabResultado>
   void _refreshResultado() {
     widget.refreshResultado(null);
     _futureResultado = _loteriaAPIService
-        .fetchResultado(widget.concursoBean, _concursoAtual)
+        .fetchResultado(widget._contest, _concursoAtual)
         .then((value) {
       widget.refreshResultado(value);
       return Future.value(value);
@@ -106,7 +106,7 @@ class _TabResultadoState extends State<TabResultado>
   void initState() {
     super.initState();
     _futureResultado = _loteriaAPIService
-        .fetchLatestResultado(widget.concursoBean)
+        .fetchLatestResultado(widget._contest)
         .then((value) {
       widget.refreshResultado(value);
       setState(() {
@@ -224,7 +224,7 @@ class _TabResultadoState extends State<TabResultado>
 
     if (resultado.dezenas != null && resultado.dezenas!.isNotEmpty) {
       builder.add(Card(
-        color: widget.concursoBean.colorBean.getColor(context),
+        color: widget._contest.getColor(context),
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
@@ -241,7 +241,7 @@ class _TabResultadoState extends State<TabResultado>
     if (resultado.timeCoracaoOuMesSorte != null &&
         resultado.timeCoracaoOuMesSorte != "") {
       builder.add(Card(
-        color: widget.concursoBean.colorBean.getColor(context),
+        color: widget._contest.getColor(context),
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
@@ -351,7 +351,7 @@ class _TabResultadoState extends State<TabResultado>
 
     if (resultado.dezenas_2 != null && resultado.dezenas_2!.isNotEmpty) {
       builder.add(Card(
-        color: widget.concursoBean.colorBean.getColor(context),
+        color: widget._contest.getColor(context),
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(

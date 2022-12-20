@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../model/concursos.dart';
+import '../model/contest.dart';
 
 class DezenasLoading extends StatefulWidget {
   final int amount;
-  final ConcursoBean concursoBean;
+  final Contest _contest;
 
-  const DezenasLoading(this.amount, this.concursoBean, {Key? key})
+  const DezenasLoading(this.amount, this._contest, {Key? key})
       : super(key: key);
 
   @override
@@ -22,7 +22,7 @@ class _DezenasLoadingState extends State<DezenasLoading> {
         widget.amount,
         Card(
           elevation: 2,
-          color: widget.concursoBean.colorBean.getColor(context),
+          color: widget._contest.getColor(context),
           shape: CircleBorder(),
           child: Center(
             child: CircularProgressIndicator(color: Colors.white),

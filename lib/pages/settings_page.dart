@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../defaults/strings.dart';
-import '../model/concursos.dart';
+import '../model/contest.dart';
 import '../widgets/concursos_settings_change_notifier.dart';
 import '../widgets/list_tem_concurso.dart';
 
@@ -15,8 +15,13 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   List<ListItemConcurso> _items = [];
 
+  bool _isDarkMode = false;
+
   void _switchTheme(BuildContext context) {
     EasyDynamicTheme.of(context).changeTheme();
+    setState(() {
+      _isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    });
   }
 
   void _onReorder(int start, int current) {
@@ -44,19 +49,25 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  }
+
   @override
   Widget build(BuildContext context) {
     var reorderableListView;
 
     var concursosProvider =
         Provider.of<ConcursosSettingsChangeNotifier>(context);
-    Concursos _concursos = concursosProvider.getConcursos();
+    List<Contest> _contests = concursosProvider.getContests();
 
-    _items = _concursos.concursosBeanList
-        .map((concurso) => ListItemConcurso(
-              concurso,
-              _concursos,
-              key: Key("listItem" + concurso.name),
+    _items = _contests
+        .map((c) => ListItemConcurso(
+              c,
+              key: Key("listItem" + c.name),
             ))
         .toList();
     reorderableListView = ReorderableListView(
@@ -87,7 +98,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: <Widget>[
                     Text("Modo noturno"),
                     Switch(
-                      value: Theme.of(context).brightness == Brightness.dark,
+                      value: _isDarkMode,
                       onChanged: (value) {
                         _switchTheme(context);
                       },

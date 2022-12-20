@@ -35,8 +35,8 @@ class LoteriaAPIService {
   }
 
   Future<ResultadoAPI> fetchResultado(
-      ConcursoBean concursoBean, int concurso) async {
-    var url = _server + "/Loteria/${concursoBean.getEnpoint()}/$concurso";
+      Contest contest, int concurso) async {
+    var url = _server + "/Loteria/${contest.getEnpoint()}/$concurso";
 
     if (concurso != 0) {
       Response response = await _dio.get(url, options: _cacheOptions);
@@ -47,8 +47,8 @@ class LoteriaAPIService {
     return Future.value(ResultadoAPI());
   }
 
-  Future<ResultadoAPI> fetchLatestResultado(ConcursoBean concursoBean) async {
-    var url = _server + "/Loteria/${concursoBean.getEnpoint()}/Latest";
+  Future<ResultadoAPI> fetchLatestResultado(Contest contest) async {
+    var url = _server + "/Loteria/${contest.getEnpoint()}/Latest";
     Response response = await _dio.get(url, options: _cacheOptions);
 
     if (response.statusCode == 200 && response.data is Map) {

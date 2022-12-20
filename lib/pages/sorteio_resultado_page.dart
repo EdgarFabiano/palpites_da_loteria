@@ -9,9 +9,9 @@ import '../defaults/constants.dart';
 import '../model/loteria_banner_ad.dart';
 
 class SorteioResultadoPage extends StatefulWidget {
-  final ConcursoBean _concurso;
+  final Contest _contest;
 
-  SorteioResultadoPage(this._concurso, {Key? key}) : super(key: key);
+  SorteioResultadoPage(this._contest, {Key? key}) : super(key: key);
 
   @override
   _SorteioResultadoPageState createState() => _SorteioResultadoPageState();
@@ -62,19 +62,19 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
 
   @override
   Widget build(BuildContext context) {
-    var tabSorteio = TabSorteio(widget._concurso);
-    var tabResultado = TabResultado(widget._concurso, refreshResultado);
+    var tabSorteio = TabSorteio(widget._contest);
+    var tabResultado = TabResultado(widget._contest, refreshResultado);
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-            backgroundColor: widget._concurso.colorBean.getColor(context),
+            backgroundColor: widget._contest.getColor(context),
             bottom: TabBar(
               controller: _tabController,
               tabs: _tabs,
             ),
-            title: Text(widget._concurso.name),
+            title: Text(widget._contest.name),
             actions: <Widget>[
               _activeTabIndex == 1 && _resultado != null
                   ? IconButton(

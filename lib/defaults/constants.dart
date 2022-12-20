@@ -13,4 +13,6 @@ class Constants {
   static const String refreshDarkAssetPath = 'assets/images/refresh-dark.png';
 
   static const double tileMaxSize = 260.0;
+
+  static const DBFileName = 'palpites_da_loteria.db';
 }

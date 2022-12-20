@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<CardConcursos>? cards;
   ConcursosSettingsChangeNotifier? concursosProvider;
-  Concursos? concursos;
   LoteriaBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.concursosBannerId);
 
@@ -38,6 +37,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Contest>? _contests;
     var mediaQueryData = MediaQuery.of(context);
     var isPortrait = mediaQueryData.orientation == Orientation.portrait;
 
@@ -55,10 +55,10 @@ class _HomePageState extends State<HomePage> {
     var spacing = mediaQueryData.size.height / 100;
 
     concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
-    concursos = concursosProvider?.getConcursos();
+    _contests = concursosProvider?.getContests();
 
-    if (concursosProvider != null && concursos != null) {
-      cards = concursos!
+    if (concursosProvider != null && _contests != null) {
+      cards = _contests
           .where((element) => element.enabled)
           .map((concurso) => CardConcursos(concurso))
           .toList();
