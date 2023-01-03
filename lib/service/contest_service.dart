@@ -25,7 +25,7 @@ class ContestService {
   Future<List<Contest>> getContests() async {
     Database db = await DBProvider().database;
     final List<Map<String, dynamic>> jsons =
-        await db.rawQuery('SELECT * FROM ${DBProvider.tableContest}');
+        await db.rawQuery('SELECT * FROM ${DBProvider.tableContest} ORDER BY sortOrder');
     return jsons.map((json) => Contest.fromJson(json)).toList();
   }
 
@@ -62,7 +62,7 @@ class ContestService {
       SET enabled = ?,
       sortOrder = ?
       WHERE id = ?''',
-      /*args=*/ [if (contest.enabled) 0 else 1, contest.sortOrder, contest.id],
+      /*args=*/ [if (contest.enabled) 1 else 0, contest.sortOrder, contest.id],
     );
   }
 
