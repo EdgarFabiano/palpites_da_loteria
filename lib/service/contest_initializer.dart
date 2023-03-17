@@ -4,7 +4,7 @@ class ContestInitializer {
   List<Contest> all() {
     Contest megaSena = Contest(
         id: 1,
-        name: "MG. SENA",
+        name: 'MG. SENA',
         enabled: true,
         spaceStart: 1,
         spaceEnd: 60,
@@ -15,7 +15,7 @@ class ContestInitializer {
 
     Contest lotoFacil = Contest(
         id: 2,
-        name: "LT. FÁCIL",
+        name: 'LT. FÁCIL',
         enabled: true,
         spaceStart: 1,
         spaceEnd: 25,
@@ -26,7 +26,7 @@ class ContestInitializer {
 
     Contest quina = Contest(
         id: 3,
-        name: "QN",
+        name: 'QN',
         enabled: true,
         spaceStart: 1,
         spaceEnd: 80,
@@ -37,7 +37,7 @@ class ContestInitializer {
 
     Contest lotoMania = Contest(
         id: 4,
-        name: "LT. MANIA",
+        name: 'LT. MANIA',
         enabled: true,
         spaceStart: 0,
         spaceEnd: 99,
@@ -48,7 +48,7 @@ class ContestInitializer {
 
     Contest timeMania = Contest(
         id: 5,
-        name: "TM. MANIA",
+        name: 'TM. MANIA',
         enabled: true,
         spaceStart: 1,
         spaceEnd: 80,
@@ -59,7 +59,7 @@ class ContestInitializer {
 
     Contest duplaSena = Contest(
         id: 6,
-        name: "D. SENA",
+        name: 'D. SENA',
         enabled: true,
         spaceStart: 1,
         spaceEnd: 50,
@@ -70,7 +70,7 @@ class ContestInitializer {
 
     Contest diaDeSorte = Contest(
         id: 7,
-        name: "D. DE SORTE",
+        name: 'D. DE SORTE',
         enabled: true,
         spaceStart: 1,
         spaceEnd: 31,

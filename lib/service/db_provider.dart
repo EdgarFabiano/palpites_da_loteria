@@ -45,11 +45,12 @@ class DBProvider {
         );
         await db.execute(
           '''         
-        CREATE TABLE  IF NOT EXISTS $tableSavedGame(
+        CREATE TABLE IF NOT EXISTS $tableSavedGame(
           id INTEGER PRIMARY KEY, 
-          isDone BIT NOT NULL,
-          content TEXT,
-          createdAt INT)
+          contestId INT NOT NULL,
+          createdAt INT,
+          numbers TEXT,
+          FOREIGN KEY(contestId) REFERENCES $tableContest(id))
         ''',
         );
         db.batch().commit();

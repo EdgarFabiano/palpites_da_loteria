@@ -29,6 +29,26 @@ class ContestService {
     return jsons.map((json) => Contest.fromJson(json)).toList();
   }
 
+  Future<List<Contest>> getActiveContests() async {
+    Database db = await DBProvider().database;
+    final List<Map<String, dynamic>> jsons =
+    await db.rawQuery('SELECT * FROM ${DBProvider.tableContest} WHERE enabled = 1 ORDER BY sortOrder');
+    return jsons.map((json) => Contest.fromJson(json)).toList();
+  }
+
+  Future<List<Contest>> getContestsWithSavedGames() async {
+    Database db = await DBProvider().database;
+    final List<Map<String, dynamic>> jsons =
+    await db.rawQuery(''
+        ' SELECT * '
+        ' FROM ${DBProvider.tableSavedGame} '
+        ' JOIN ${DBProvider.tableContest} ON ${DBProvider.tableContest}.id = ${DBProvider.tableSavedGame}.contestId '
+        ' WHERE ${DBProvider.tableContest}.enabled = 1  '
+        ' GROUP BY ${DBProvider.tableContest}.id '
+        ' ORDER BY ${DBProvider.tableContest}.sortOrder ASC ');
+    return jsons.map((json) => Contest.fromJson(json)).toList();
+  }
+
   Future<void> addContest(Contest contest) async {
     Database db = await DBProvider().database;
     await db.transaction(

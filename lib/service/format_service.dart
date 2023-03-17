@@ -9,6 +9,10 @@ String formatarData(DateTime date) {
   return formatDate(date, [dd, '/', mm, '/', yyyy]).toString();
 }
 
+String formatarDataHora(DateTime date) {
+  return formatDate(date, [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn, ':', ss]).toString();
+}
+
 String formatNumber(dynamic valor) {
   return NumberFormat.decimalPattern('pt_BR').format(valor);
 }

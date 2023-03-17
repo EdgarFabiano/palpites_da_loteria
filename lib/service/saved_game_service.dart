@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 
+import '../model/contest.dart';
 import '../model/saved_game.dart';
 import 'db_provider.dart';
 
@@ -12,27 +13,32 @@ class SavedGameService {
 
   SavedGameService._internal();
 
-  Future<List<SavedGame>> getSavedGames() async {
+  Future<List<SavedGame>> getSavedGames(Contest? contest) async {
     Database db = await DBProvider().database;
-    final List<Map<String, dynamic>> jsons =
-    await db.rawQuery('SELECT * FROM ${DBProvider.tableSavedGame}');
-    print('${jsons.length} rows retrieved from db!');
+    var sql = ' SELECT * FROM ${DBProvider.tableSavedGame} ' +
+        ((contest != null)
+            ? ' WHERE ${DBProvider.tableSavedGame}.contestId = ${contest.id} '
+            : '');
+    final List<Map<String, dynamic>> jsons = await db.rawQuery(sql);
     return jsons.map((json) => SavedGame.fromJsonMap(json)).toList();
   }
 
   Future<void> addSavedGame(SavedGame savedGame) async {
+    if (savedGame.createdAt == null) {
+      savedGame.createdAt = DateTime.now();
+    }
     Database db = await DBProvider().database;
     await db.transaction(
-          (Transaction txn) async {
+      (Transaction txn) async {
         final int id = await txn.rawInsert(
           '''
           INSERT INTO ${DBProvider.tableSavedGame}
-            (content, isDone, createdAt)
+            (contestId, createdAt, numbers)
           VALUES
             (
-              "${savedGame.content}",
-              ${savedGame.isDone ? 1 : 0}, 
-              ${savedGame.createdAt.millisecondsSinceEpoch}
+              ${savedGame.contestId}, 
+              ${savedGame.createdAt!.millisecondsSinceEpoch},
+              "${savedGame.numbers}"
             )''',
         );
         print('Inserted savedGame item with id=$id.');
@@ -40,14 +46,15 @@ class SavedGameService {
     );
   }
 
-  Future<void> toggleSavedGame(SavedGame savedGame) async {
+  Future<void> updateSavedGame(SavedGame savedGame) async {
     Database db = await DBProvider().database;
     final int count = await db.rawUpdate(
-      /*sql=*/ '''
+      /*sql=*/
+      '''
       UPDATE ${DBProvider.tableSavedGame}
-      SET isDone = ?
+      SET numbers = ?
       WHERE id = ?''',
-      /*args=*/ [if (savedGame.isDone) 0 else 1, savedGame.id],
+      /*args=*/ [savedGame.numbers, savedGame.id],
     );
     print('Updated $count records in db.');
   }
