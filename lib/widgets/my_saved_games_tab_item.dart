@@ -58,7 +58,6 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
         return Scaffold(
           floatingActionButton: _buildFloatingActionButton(),
           body: body,
-          // floatingActionButton: _buildFloatingActionButton(),
         );
       },
     );
