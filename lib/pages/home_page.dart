@@ -63,69 +63,73 @@ class _HomePageState extends State<HomePage> {
           .map((concurso) => CardConcursos(concurso))
           .toList();
 
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(Strings.appName),
-        ),
-        drawer: Drawer(
-          child: AppDrawer(),
-        ),
-        body: Center(
-          child: Column(
-            children: [
-              if (cards!.isNotEmpty)
-                Flexible(
-                  child: GridView(
-                    padding: EdgeInsets.all(spacing),
-                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                      crossAxisSpacing: spacing,
-                      mainAxisSpacing: spacing,
-                      maxCrossAxisExtent: tileSize,
+      return SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(Strings.appName),
+          ),
+          drawer: Drawer(
+            child: AppDrawer(),
+          ),
+          body: Center(
+            child: Column(
+              children: [
+                if (cards!.isNotEmpty)
+                  Flexible(
+                    child: GridView(
+                      padding: EdgeInsets.all(spacing),
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        crossAxisSpacing: spacing,
+                        mainAxisSpacing: spacing,
+                        maxCrossAxisExtent: tileSize,
+                      ),
+                      children: cards!,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: false,
                     ),
-                    children: cards!,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: false,
+                  ),
+                if (cards!.isEmpty)
+                Expanded(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.refresh,
+                                color: DefaultThemes.textColor(context),
+                              ),
+                              Text(
+                                "Recarregar",
+                                style: TextStyle(color: DefaultThemes.textColor(context)),
+                              ),
+                            ]),
+                      ),
+                      onPressed: () => setState(() {}),
+                    ),
                   ),
                 ),
-              if (cards!.isEmpty)
-              Expanded(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.refresh,
-                              color: DefaultThemes.textColor(context),
-                            ),
-                            Text(
-                              "Recarregar",
-                              style: TextStyle(color: DefaultThemes.textColor(context)),
-                            ),
-                          ]),
-                    ),
-                    onPressed: () => setState(() {}),
-                  ),
-                ),
-              ),
-              AdMobService.getBannerAdWidget(_bannerAd),
-            ],
+                AdMobService.getBannerAdWidget(_bannerAd),
+              ],
+            ),
           ),
         ),
       );
     } else {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(Strings.appName),
+      return SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(Strings.appName),
+          ),
+          drawer: Drawer(
+            child: AppDrawer(),
+          ),
+          body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
         ),
-        drawer: Drawer(
-          child: AppDrawer(),
-        ),
-        body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
       );
     }
   }

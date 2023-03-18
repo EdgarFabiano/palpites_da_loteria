@@ -52,27 +52,27 @@ class _MySavedGamesState extends State<MySavedGames>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(Strings.mySavedGames),
-        actions: <Widget>[_buildAddRandomButton()],
-      ),
-      body: Center(
-        child: FutureBuilder<bool>(
-          future: _asyncInit(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              if (_contests.isEmpty) {
-                return const Center(
-                  child: Text("Nenhum jogo salvo"),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(Strings.mySavedGames),
+          actions: <Widget>[_buildAddRandomButton()],
+        ),
+        body: Center(
+          child: FutureBuilder<bool>(
+            future: _asyncInit(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(),
                 );
               } else {
-                return SafeArea(
-                  child: Center(
+                if (_contests.isEmpty) {
+                  return const Center(
+                    child: Text("Nenhum jogo salvo"),
+                  );
+                } else {
+                  return Center(
                     child: Column(
                       children: [
                         Expanded(
@@ -81,25 +81,22 @@ class _MySavedGamesState extends State<MySavedGames>
                             itemCount: _contests.length,
                             tabBuilder: (context, index) =>
                                 Tab(text: _contests[index].name),
-                            pageBuilder: (context, index) =>
-                                MySavedGamesTabItem(
-                                    contest: _contests[index],
-                                    notifyParent: _updateUI),
+                            pageBuilder: (context, index) => MySavedGamesTabItem(
+                                contest: _contests[index],
+                                notifyParent: _updateUI),
                             onPositionChange: (index) {
-                              //print('current position: $index');
                               initPosition = index;
                             },
-                            //onScroll: (position) => print('$position')
                           ),
                         ),
                         AdMobService.getBannerAdWidget(_bannerAd),
                       ],
                     ),
-                  ),
-                );
+                  );
+                }
               }
-            }
-          },
+            },
+          ),
         ),
       ),
     );

@@ -67,38 +67,40 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
 
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-            backgroundColor: widget._contest.getColor(context),
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: _tabs,
-            ),
-            title: Text(widget._contest.name),
-            actions: <Widget>[
-              _activeTabIndex == 1 && _resultado != null
-                  ? IconButton(
-                      icon: const Icon(Icons.share),
-                      tooltip: 'Compartilhar resultado',
-                      onPressed: () {
-                        Share.share(_resultado!.shareString());
-                      },
-                    )
-                  : SizedBox.shrink(),
-            ]),
-        body: Column(
-          children: [
-            Flexible(
-              child: TabBarView(
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+              backgroundColor: widget._contest.getColor(context),
+              bottom: TabBar(
                 controller: _tabController,
-                children: [
-                  tabSorteio,
-                  tabResultado,
-                ],
+                tabs: _tabs,
               ),
-            ),
-            AdMobService.getBannerAdWidget(_bannerAd),
-          ],
+              title: Text(widget._contest.name),
+              actions: <Widget>[
+                _activeTabIndex == 1 && _resultado != null
+                    ? IconButton(
+                        icon: const Icon(Icons.share),
+                        tooltip: 'Compartilhar resultado',
+                        onPressed: () {
+                          Share.share(_resultado!.shareString());
+                        },
+                      )
+                    : SizedBox.shrink(),
+              ]),
+          body: Column(
+            children: [
+              Flexible(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    tabSorteio,
+                    tabResultado,
+                  ],
+                ),
+              ),
+              AdMobService.getBannerAdWidget(_bannerAd),
+            ],
+          ),
         ),
       ),
     );
