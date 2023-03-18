@@ -78,51 +78,49 @@ class _SettingsPageState extends State<SettingsPage> {
       },
     );
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(Strings.settings),
-        ),
-        body: ListView.builder(
-          physics: ClampingScrollPhysics(),
-          itemCount: 1,
-          itemBuilder: (context, index) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Theme.of(context).brightness == Brightness.dark
-                      ? Icons.brightness_3
-                      : Icons.brightness_high),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Modo noturno"),
-                      Switch(
-                        value: _isDarkMode,
-                        onChanged: (value) {
-                          _switchTheme(context);
-                        },
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    _switchTheme(context);
-                  },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(Strings.settings),
+      ),
+      body: ListView.builder(
+        physics: ClampingScrollPhysics(),
+        itemCount: 1,
+        itemBuilder: (context, index) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Theme.of(context).brightness == Brightness.dark
+                    ? Icons.brightness_3
+                    : Icons.brightness_high),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Modo noturno"),
+                    Switch(
+                      value: _isDarkMode,
+                      onChanged: (value) {
+                        _switchTheme(context);
+                      },
+                    ),
+                  ],
                 ),
-                Divider(),
-                ListTile(
-                  title: Text("Tela inicial"),
-                ),
-                Divider(),
-                SizedBox(
-                  height: 500,
-                  child: reorderableListView,
-                ),
-              ],
-            );
-          },
-        ),
+                onTap: () {
+                  _switchTheme(context);
+                },
+              ),
+              Divider(),
+              ListTile(
+                title: Text("Tela inicial"),
+              ),
+              Divider(),
+              SizedBox(
+                height: 500,
+                child: reorderableListView,
+              ),
+            ],
+          );
+        },
       ),
     );
   }

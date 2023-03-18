@@ -63,73 +63,69 @@ class _HomePageState extends State<HomePage> {
           .map((concurso) => CardConcursos(concurso))
           .toList();
 
-      return SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(Strings.appName),
-          ),
-          drawer: Drawer(
-            child: AppDrawer(),
-          ),
-          body: Center(
-            child: Column(
-              children: [
-                if (cards!.isNotEmpty)
-                  Flexible(
-                    child: GridView(
-                      padding: EdgeInsets.all(spacing),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        crossAxisSpacing: spacing,
-                        mainAxisSpacing: spacing,
-                        maxCrossAxisExtent: tileSize,
-                      ),
-                      children: cards!,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: false,
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(Strings.appName),
+        ),
+        drawer: Drawer(
+          child: AppDrawer(),
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              if (cards!.isNotEmpty)
+                Flexible(
+                  child: GridView(
+                    padding: EdgeInsets.all(spacing),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      crossAxisSpacing: spacing,
+                      mainAxisSpacing: spacing,
+                      maxCrossAxisExtent: tileSize,
                     ),
-                  ),
-                if (cards!.isEmpty)
-                Expanded(
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: TextButton(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.refresh,
-                                color: DefaultThemes.textColor(context),
-                              ),
-                              Text(
-                                "Recarregar",
-                                style: TextStyle(color: DefaultThemes.textColor(context)),
-                              ),
-                            ]),
-                      ),
-                      onPressed: () => setState(() {}),
-                    ),
+                    children: cards!,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: false,
                   ),
                 ),
-                AdMobService.getBannerAdWidget(_bannerAd),
-              ],
-            ),
+              if (cards!.isEmpty)
+              Expanded(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.refresh,
+                              color: DefaultThemes.textColor(context),
+                            ),
+                            Text(
+                              "Recarregar",
+                              style: TextStyle(color: DefaultThemes.textColor(context)),
+                            ),
+                          ]),
+                    ),
+                    onPressed: () => setState(() {}),
+                  ),
+                ),
+              ),
+              AdMobService.getBannerAdWidget(_bannerAd),
+            ],
           ),
         ),
       );
     } else {
-      return SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(Strings.appName),
-          ),
-          drawer: Drawer(
-            child: AppDrawer(),
-          ),
-          body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(Strings.appName),
         ),
+        drawer: Drawer(
+          child: AppDrawer(),
+        ),
+        body: HomeLoadingPage(spacing: spacing, tileSize: tileSize),
       );
     }
   }

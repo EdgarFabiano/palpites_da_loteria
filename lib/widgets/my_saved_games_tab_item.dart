@@ -55,12 +55,10 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
                 _itemToListTile(this._savedGames[index]),
           );
         }
-        return SafeArea(
-          child: Scaffold(
-            floatingActionButton: _buildFloatingActionButton(),
-            body: body,
-            // floatingActionButton: _buildFloatingActionButton(),
-          ),
+        return Scaffold(
+          floatingActionButton: _buildFloatingActionButton(),
+          body: body,
+          // floatingActionButton: _buildFloatingActionButton(),
         );
       },
     );
