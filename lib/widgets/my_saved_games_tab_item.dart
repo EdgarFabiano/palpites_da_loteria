@@ -77,7 +77,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
                 (e) => Card(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(e, style: TextStyle(color: Colors.white)),
+                    child: Text(formatarDezena(e), style: TextStyle(color: Colors.white)),
                   ),
                   color: widget.contest.getColor(context),
                 ),

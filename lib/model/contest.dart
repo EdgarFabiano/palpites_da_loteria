@@ -1,20 +1,3 @@
-/*
-* From JSON
-{
-  "concursosBean": [
-     {
-      "name": "MEGA-SENA",
-      "colorBean": "Ox112233",
-      "enabled": true,
-      "spaceStart":1,
-      "spaceEnd": 60,
-      "minSize": 6,
-      "maxSize": 15
-    }
-  ]
-}
-* */
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -27,18 +10,20 @@ class Contest {
   int minSize;
   int maxSize;
   int color;
+  int colorDark;
   int sortOrder;
 
   Contest(
       {required this.id,
-        required this.name,
-        required this.enabled,
-        required this.spaceStart,
-        required this.spaceEnd,
-        required this.minSize,
-        required this.maxSize,
-        required this.color,
-        required this.sortOrder});
+      required this.name,
+      required this.enabled,
+      required this.spaceStart,
+      required this.spaceEnd,
+      required this.minSize,
+      required this.maxSize,
+      required this.color,
+      required this.colorDark,
+      required this.sortOrder});
 
   static Contest fromJson(Map<String, dynamic> json) {
     return Contest(
@@ -50,6 +35,7 @@ class Contest {
         minSize: json['minSize'],
         maxSize: json['maxSize'],
         color: json['color'],
+        colorDark: json['colorDark'],
         sortOrder: json['sortOrder']);
   }
 
@@ -63,6 +49,7 @@ class Contest {
     data['minSize'] = this.minSize;
     data['maxSize'] = this.maxSize;
     data['color'] = this.color;
+    data['colorDark'] = this.colorDark;
     data['sortOrder'] = this.sortOrder;
     return data;
   }
@@ -108,8 +95,7 @@ class Contest {
   }
 
   Color getColor(BuildContext context) {
-    var alpha = Theme.of(context).brightness == Brightness.light ? 0xFF : 0x64;
-    return Color(this.color).withAlpha(alpha);
+    var colorValue = Theme.of(context).brightness == Brightness.light ? this.color : this.colorDark;
+    return Color(colorValue).withAlpha(255);
   }
 }
-

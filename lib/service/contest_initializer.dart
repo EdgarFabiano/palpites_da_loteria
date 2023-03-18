@@ -11,6 +11,7 @@ class ContestInitializer {
         minSize: 6,
         maxSize: 15,
         color: 0x209869,
+        colorDark: 0x255047,
         sortOrder: 0);
 
     Contest lotoFacil = Contest(
@@ -22,6 +23,7 @@ class ContestInitializer {
         minSize: 15,
         maxSize: 20,
         color: 0x954389,
+        colorDark: 0x4e3153,
         sortOrder: 1);
 
     Contest quina = Contest(
@@ -33,6 +35,7 @@ class ContestInitializer {
         minSize: 5,
         maxSize: 15,
         color: 0x2d3985,
+        colorDark: 0x292d51,
         sortOrder: 2);
 
     Contest lotoMania = Contest(
@@ -44,6 +47,7 @@ class ContestInitializer {
         minSize: 50,
         maxSize: 50,
         color: 0xf7844a,
+        colorDark: 0x73483d,
         sortOrder: 3);
 
     Contest timeMania = Contest(
@@ -55,6 +59,7 @@ class ContestInitializer {
         minSize: 10,
         maxSize: 10,
         color: 0x5ee84f,
+        colorDark: 0x3b6d3d,
         sortOrder: 4);
 
     Contest duplaSena = Contest(
@@ -66,6 +71,7 @@ class ContestInitializer {
         minSize: 6,
         maxSize: 15,
         color: 0xa62a31,
+        colorDark: 0x562832,
         sortOrder: 5);
 
     Contest diaDeSorte = Contest(
@@ -77,6 +83,7 @@ class ContestInitializer {
         minSize: 7,
         maxSize: 15,
         color: 0xcb853b,
+        colorDark: 0x624837,
         sortOrder: 6);
 
     return [

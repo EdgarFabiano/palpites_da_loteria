@@ -36,6 +36,7 @@ class DBProvider {
           name TEXT NOT NULL,
           enabled BIT NOT NULL,
           color INTEGER NOT NULL, 
+          colorDark INTEGER NOT NULL, 
           spaceStart INTEGER NOT NULL, 
           spaceEnd INTEGER NOT NULL, 
           minSize INTEGER NOT NULL, 

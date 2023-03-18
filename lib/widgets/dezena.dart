@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../service/format_service.dart';
+
 class Dezena extends StatefulWidget {
   final String _dezena;
   final Color _color;
@@ -16,12 +18,8 @@ class Dezena extends StatefulWidget {
 
 class _DezenaState extends State<Dezena> {
   Widget _getDezenaDisplayWidget() {
-    String text = widget._dezena.toString();
-    if (int.parse(widget._dezena) < 10) {
-      text = "0" + widget._dezena.toString();
-    }
     return Text(
-      text,
+      formatarDezena(widget._dezena),
       style: TextStyle(
         fontSize: 26,
         fontWeight: FontWeight.bold,

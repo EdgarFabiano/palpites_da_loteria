@@ -48,7 +48,7 @@ class _ListItemConcursoState extends State<ListItemConcurso> {
                 Image.asset(
                   Constants.loteriasIconAssetPath,
                   width: 25,
-                  color: widget._contest.getColor(context).withAlpha(255),
+                  color: widget._contest.getColor(context),
                   colorBlendMode: BlendMode.modulate,
                 ),
                 Text("    "),

@@ -56,7 +56,7 @@ class ContestService {
         final int id = await txn.rawInsert(
           '''
           INSERT INTO ${DBProvider.tableContest} 
-            (id, name, enabled, spaceStart, spaceEnd, minSize, maxSize, color, sortOrder)
+            (id, name, enabled, spaceStart, spaceEnd, minSize, maxSize, color, colorDark, sortOrder)
           VALUES 
             (
               ${contest.id},
@@ -67,6 +67,7 @@ class ContestService {
               ${contest.minSize},
               ${contest.maxSize},
               ${contest.color},
+              ${contest.colorDark},
               ${contest.sortOrder}
             )''',
         );
