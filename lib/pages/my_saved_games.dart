@@ -52,55 +52,62 @@ class _MySavedGamesState extends State<MySavedGames>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(Strings.mySavedGames),
-        actions: <Widget>[_buildAddRandomButton()],
-      ),
-      body: Center(
-        child: FutureBuilder<bool>(
-          future: _asyncInit(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
+    return Center(
+      child: FutureBuilder<bool>(
+        future: _asyncInit(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(Strings.mySavedGames),
+                actions: <Widget>[_buildAddRandomButton()],
+              ),
+              body: Center(
                 child: CircularProgressIndicator(),
+              ),
+            );
+          } else {
+            if (_contests.isEmpty) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text(Strings.mySavedGames),
+                  actions: <Widget>[_buildAddRandomButton()],
+                ),
+                body: const Center(
+                  child: Text("Nenhum jogo salvo"),
+                ),
               );
             } else {
-              if (_contests.isEmpty) {
-                return const Center(
-                  child: Text("Nenhum jogo salvo"),
-                );
-              } else {
-                return SafeArea(
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: CustomTabView(
-                            initPosition: initPosition,
-                            itemCount: _contests.length,
-                            tabBuilder: (context, index) =>
-                                Tab(text: _contests[index].name),
-                            pageBuilder: (context, index) =>
-                                MySavedGamesTabItem(
-                                    contest: _contests[index],
-                                    notifyParent: _updateUI),
-                            onPositionChange: (index) {
-                              //print('current position: $index');
-                              initPosition = index;
-                            },
-                            //onScroll: (position) => print('$position')
-                          ),
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text(Strings.mySavedGames),
+                  actions: <Widget>[_buildAddRandomButton()],
+                ),
+                body: Center(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: CustomTabView(
+                          initPosition: initPosition,
+                          itemCount: _contests.length,
+                          colorBuilder: (context, index) => _contests[index].getColor(context),
+                          tabBuilder: (context, index) => Tab(text: _contests[index].name),
+                          pageBuilder: (context, index) => MySavedGamesTabItem(
+                              contest: _contests[index],
+                              notifyParent: _updateUI),
+                          onPositionChange: (index) {
+                            initPosition = index;
+                          },
                         ),
-                        AdMobService.getBannerAdWidget(_bannerAd),
-                      ],
-                    ),
+                      ),
+                      AdMobService.getBannerAdWidget(_bannerAd),
+                    ],
                   ),
-                );
-              }
+                ),
+              );
             }
-          },
-        ),
+          }
+        },
       ),
     );
   }

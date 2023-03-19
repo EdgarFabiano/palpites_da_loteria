@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+typedef IndexedColorBuilder = Color Function(BuildContext context, int index);
+
 class CustomTabView extends StatefulWidget {
   final int itemCount;
   final IndexedWidgetBuilder tabBuilder;
   final IndexedWidgetBuilder pageBuilder;
+  final IndexedColorBuilder colorBuilder;
   final Widget? stub;
   final ValueChanged<int>? onPositionChange;
   final ValueChanged<double>? onScroll;
@@ -13,6 +16,7 @@ class CustomTabView extends StatefulWidget {
     required this.itemCount,
     required this.tabBuilder,
     required this.pageBuilder,
+    required this.colorBuilder,
     this.stub,
     this.onPositionChange,
     this.onScroll,
@@ -103,15 +107,11 @@ class _CustomTabsState extends State<CustomTabView> with TickerProviderStateMixi
           child: TabBar(
             isScrollable: true,
             controller: controller,
-            labelColor: Theme.of(context).primaryColor,
+            labelColor: Colors.white,
             unselectedLabelColor: Theme.of(context).hintColor,
             indicator: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Theme.of(context).primaryColor,
-                  width: 2,
-                ),
-              ),
+              color: widget.colorBuilder(context, _currentPosition!),
+              borderRadius: BorderRadius.all(Radius.circular(10))
             ),
             tabs: List.generate(
               widget.itemCount,
@@ -135,6 +135,7 @@ class _CustomTabsState extends State<CustomTabView> with TickerProviderStateMixi
   onPositionChange() {
     if (!controller.indexIsChanging) {
       _currentPosition = controller.index;
+      setState(() {});
       if (widget.onPositionChange is ValueChanged<int>) {
         widget.onPositionChange!(_currentPosition!);
       }
