@@ -7,6 +7,8 @@ import 'package:share_plus/share_plus.dart';
 
 import '../defaults/constants.dart';
 import '../model/loteria_banner_ad.dart';
+import '../model/saved_game.dart';
+import '../service/saved_game_service.dart';
 
 class SorteioResultadoPage extends StatefulWidget {
   final Contest _contest;
@@ -28,6 +30,9 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   ResultadoAPI? _resultado;
   LoteriaBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.sorteioBannerId);
+  SavedGameService _savedGameService = SavedGameService();
+  int? _areadySavedGameId;
+  String _generatedGame = '';
 
   void _setActiveTabIndex() {
     setState(() {
@@ -62,11 +67,8 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
 
   @override
   Widget build(BuildContext context) {
-    var tabSorteio = TabSorteio(widget._contest);
-    var tabResultado = TabResultado(widget._contest, refreshResultado);
-
     return DefaultTabController(
-      length: 2,
+      length: _tabs.length,
       child: Scaffold(
         appBar: AppBar(
           foregroundColor: Colors.white,
@@ -77,16 +79,24 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
           ),
           title: Text(widget._contest.name),
           actions: <Widget>[
-            _activeTabIndex == 1 && _resultado != null
-                ? IconButton(
-                    icon: const Icon(Icons.share),
-                    tooltip: 'Compartilhar resultado',
-                    color: Colors.white,
-                    onPressed: () {
-                      Share.share(_resultado!.shareString());
-                    },
-                  )
-                : SizedBox.shrink(),
+            if (_activeTabIndex == 0)
+              IconButton(
+                icon: _areadySavedGameId != null
+                    ? Icon(Icons.favorite)
+                    : Icon(Icons.favorite_border),
+                tooltip: 'Salvar jogo',
+                color: Colors.white,
+                onPressed: saveGameOnTap,
+              )
+            else if (_resultado != null)
+              IconButton(
+                icon: const Icon(Icons.share),
+                tooltip: 'Compartilhar resultado',
+                color: Colors.white,
+                onPressed: () {
+                  Share.share(_resultado!.shareString());
+                },
+              ),
           ],
         ),
         body: Column(
@@ -95,8 +105,10 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  tabSorteio,
-                  tabResultado,
+                  TabSorteio(widget._contest,
+                      notifyParent: _updateUI,
+                      generatedGameResolver: _resolveGeneratedGame),
+                  TabResultado(widget._contest, refreshResultado),
                 ],
               ),
             ),
@@ -105,5 +117,30 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
         ),
       ),
     );
+  }
+
+  void saveGameOnTap() async {
+    if (_areadySavedGameId != null) {
+      _savedGameService.deleteSavedGameById(_areadySavedGameId!);
+      _areadySavedGameId = null;
+    } else {
+      _areadySavedGameId = await _savedGameService.addSavedGame(
+          SavedGame(
+            contestId: widget._contest.id,
+            numbers: _generatedGame,
+            createdAt: DateTime.now(),
+          ),
+        );
+    }
+    _updateUI(_areadySavedGameId);
+  }
+
+  _resolveGeneratedGame(String generatedGame) {
+    _generatedGame = generatedGame;
+  }
+
+  Future<void> _updateUI(int? areadySavedGameId) async {
+    _areadySavedGameId = areadySavedGameId;
+    setState(() {});
   }
 }

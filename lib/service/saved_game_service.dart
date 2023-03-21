@@ -18,32 +18,48 @@ class SavedGameService {
     var sql = ' SELECT * FROM ${DBProvider.tableSavedGame} ' +
         ((contest != null)
             ? ' WHERE ${DBProvider.tableSavedGame}.contestId = ${contest.id} '
-            : '');
+            : '') +
+        ' ORDER BY ${DBProvider.tableSavedGame}.createdAt DESC ';
     final List<Map<String, dynamic>> jsons = await db.rawQuery(sql);
     return jsons.map((json) => SavedGame.fromJsonMap(json)).toList();
   }
 
-  Future<void> addSavedGame(SavedGame savedGame) async {
+  Future<int?> addSavedGame(SavedGame savedGame) async {
+    int? savedGameId;
     if (savedGame.createdAt == null) {
       savedGame.createdAt = DateTime.now();
     }
     Database db = await DBProvider().database;
     await db.transaction(
       (Transaction txn) async {
-        final int id = await txn.rawInsert(
+        savedGameId = await txn.rawInsert(
           '''
           INSERT INTO ${DBProvider.tableSavedGame}
             (contestId, createdAt, numbers)
           VALUES
             (
               ${savedGame.contestId}, 
-              ${savedGame.createdAt!.millisecondsSinceEpoch},
+              ${savedGame.createdAt.millisecondsSinceEpoch},
               "${savedGame.numbers}"
             )''',
         );
-        print('Inserted savedGame item with id=$id.');
       },
     );
+    return savedGameId;
+  }
+
+  Future<int?> existsSavedGame(Contest contest, List<int> dezenas) async {
+    Database db = await DBProvider().database;
+    var numbers = dezenas.join('|');
+    var sql = ' SELECT id FROM ${DBProvider.tableSavedGame} ' +
+        ' WHERE ${DBProvider.tableSavedGame}.contestId = ${contest.id} '
+            ' AND ${DBProvider.tableSavedGame}.numbers = "$numbers"';
+    final List<Map<String, dynamic>> jsons = await db.rawQuery(sql);
+    if (jsons.isNotEmpty) {
+      return jsons.map((json) => json['id'] as int).toList().first;
+    } else {
+      return null;
+    }
   }
 
   Future<void> updateSavedGame(SavedGame savedGame) async {
@@ -65,6 +81,17 @@ class SavedGameService {
       '''
         DELETE FROM ${DBProvider.tableSavedGame}
         WHERE id = ${savedGame.id}
+      ''',
+    );
+    print('Deleted $count records in db.');
+  }
+
+  Future<void> deleteSavedGameById(int id) async {
+    Database db = await DBProvider().database;
+    final count = await db.rawDelete(
+      '''
+        DELETE FROM ${DBProvider.tableSavedGame}
+        WHERE id = $id
       ''',
     );
     print('Deleted $count records in db.');

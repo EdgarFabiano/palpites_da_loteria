@@ -5,6 +5,7 @@ import 'package:palpites_da_loteria/model/enum/filtro_periodo.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/format_service.dart';
+import 'package:palpites_da_loteria/service/saved_game_service.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 import '../model/enum/estrategia_geracao.dart';
@@ -12,10 +13,16 @@ import '../model/sorteio_frequencia.dart';
 import '../service/generator_strategies/abstract_sorteio_generator.dart';
 import 'dezenas_loading.dart';
 
+typedef AlreadySavedResolver = Function(int? alreadySavedGameId);
+typedef GeneratedGameResolver = Function(String generatedGame);
+
 class TabSorteio extends StatefulWidget {
   final Contest _contest;
+  final AlreadySavedResolver notifyParent;
+  final GeneratedGameResolver generatedGameResolver;
 
-  const TabSorteio(this._contest, {Key? key}) : super(key: key);
+  const TabSorteio(this._contest, {Key? key, required this.notifyParent, required this.generatedGameResolver})
+      : super(key: key);
 
   @override
   _TabSorteioState createState() => _TabSorteioState();
@@ -36,11 +43,16 @@ class _TabSorteioState extends State<TabSorteio>
   DateTimeRange _dateTimeRange =
       DateTimeRange(start: DateTime.now(), end: DateTime.now());
   bool _showFrequencia = true;
+  SavedGameService _savedGameService = SavedGameService();
 
   void _sortear(double increment) {
     _numeroDeDezenasASortear += increment;
     _futureSorteio = _sorteioGenerator.sortear(
         widget._contest, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
+    _futureSorteio!.then((value) => widget.generatedGameResolver(value.frequencias.map((e) => e.dezena).join('|')));
+    _futureSorteio!.then((value) => _savedGameService.existsSavedGame(
+        widget._contest, value.frequencias.map((e) => e.dezena).toList())
+        .then((value) => widget.notifyParent(value)));
   }
 
   void sortearComAnuncio(double increment) {
@@ -346,30 +358,33 @@ class _TabSorteioState extends State<TabSorteio>
                   child: Column(
                     children: [
                       RichText(
-                        overflow: TextOverflow.fade,
+                          overflow: TextOverflow.fade,
                           text: TextSpan(children: <TextSpan>[
-                        TextSpan(text: 'Com base em ', style: textStyle),
-                        TextSpan(
-                            text:
-                                '${formatNumber(sorteioFrequencia.qtdConcursos)}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, color: textColor)),
-                        TextSpan(text: ' sorteios', style: textStyle),
-                      ])),
+                            TextSpan(text: 'Com base em ', style: textStyle),
+                            TextSpan(
+                                text:
+                                    '${formatNumber(sorteioFrequencia.qtdConcursos)}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor)),
+                            TextSpan(text: ' sorteios', style: textStyle),
+                          ])),
                       RichText(
                           overflow: TextOverflow.fade,
                           text: TextSpan(children: <TextSpan>[
-                        TextSpan(text: 'De ', style: textStyle),
-                        TextSpan(
-                            text: '${formatarData(_dateTimeRange.start)}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, color: textColor)),
-                        TextSpan(text: ' a ', style: textStyle),
-                        TextSpan(
-                            text: '${formatarData(_dateTimeRange.end)}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, color: textColor)),
-                      ]))
+                            TextSpan(text: 'De ', style: textStyle),
+                            TextSpan(
+                                text: '${formatarData(_dateTimeRange.start)}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor)),
+                            TextSpan(text: ' a ', style: textStyle),
+                            TextSpan(
+                                text: '${formatarData(_dateTimeRange.end)}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor)),
+                          ]))
                     ],
                   ),
                 ),
@@ -385,8 +400,7 @@ class _TabSorteioState extends State<TabSorteio>
           }
           return Column(
             children: <Widget>[
-              DezenasLoading(
-                  _numeroDeDezenasASortear.toInt(), widget._contest),
+              DezenasLoading(_numeroDeDezenasASortear.toInt(), widget._contest),
               Visibility(
                   visible: widget._contest.name == "D. SENA",
                   child: Divider(

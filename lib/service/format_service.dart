@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 String formatarDezena(String dezena) {
   String text = dezena;
-  if (int.parse(dezena) < 10) {
+  if (int.tryParse(dezena) != null && int.parse(dezena) < 10) {
     text = "0" + dezena;
   }
   return text;
