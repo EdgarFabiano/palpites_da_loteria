@@ -14,7 +14,8 @@ import '../service/saved_game_service.dart';
 import '../widgets/custom_tab_view.dart';
 
 class MySavedGames extends StatefulWidget {
-  const MySavedGames({Key? key}) : super(key: key);
+  final Contest? initPositionContest;
+  const MySavedGames({Key? key, this.initPositionContest}) : super(key: key);
 
   @override
   State<MySavedGames> createState() => _MySavedGamesState();
@@ -31,10 +32,18 @@ class _MySavedGamesState extends State<MySavedGames>
   List<Contest> _contests = [];
   TabController? _tabController;
   List<Tab> _tabs = [];
-  int initPosition = 0;
+  int _initPosition = 0;
+  Contest? _currentContest;
 
   Future<bool> _asyncInit() async {
     _contests = await _contestService.getContestsWithSavedGames();
+    if (_currentContest != null) {
+      _initPosition = _contests.indexOf(_currentContest!);
+      if(_initPosition < 0) {
+        _initPosition = 0;
+        _currentContest = null;
+      }
+    }
     _tabs = _contests.map((e) => Tab(child: Text(e.name))).toList();
     if (_tabController == null) {
       _tabController = TabController(vsync: this, length: _tabs.length);
@@ -44,6 +53,7 @@ class _MySavedGamesState extends State<MySavedGames>
 
   @override
   void initState() {
+    _currentContest = widget.initPositionContest;
     super.initState();
     if (Constants.showAds) {
       _bannerAd.load();
@@ -88,7 +98,7 @@ class _MySavedGamesState extends State<MySavedGames>
                     children: [
                       Expanded(
                         child: CustomTabView(
-                          initPosition: initPosition,
+                          initPosition: _initPosition,
                           itemCount: _contests.length,
                           colorBuilder: (context, index) => _contests[index].getColor(context),
                           tabBuilder: (context, index) => Tab(text: _contests[index].name),
@@ -96,7 +106,8 @@ class _MySavedGamesState extends State<MySavedGames>
                               contest: _contests[index],
                               notifyParent: _updateUI),
                           onPositionChange: (index) {
-                            initPosition = index;
+                            _initPosition = index;
+                            _currentContest = _contests[index];
                           },
                         ),
                       ),
@@ -119,12 +130,13 @@ class _MySavedGamesState extends State<MySavedGames>
     super.dispose();
   }
 
-  Future<void> _updateUI() async {
+  Future<void> _updateUI(bool wasDeleted) async {
+    if(wasDeleted) _currentContest = null;
     setState(() {});
   }
 
-  IconButton _buildAddRandomButton() {
-    return IconButton(
+  Widget _buildAddRandomButton() {
+    var iconButton = IconButton(
       onPressed: () async {
         await _savedGameService.addSavedGame(
           SavedGame(
@@ -133,9 +145,10 @@ class _MySavedGamesState extends State<MySavedGames>
             createdAt: DateTime.now(),
           ),
         );
-        _updateUI();
+        _updateUI(false);
       },
       icon: Icon(Icons.add),
     );
+    return Container();
   }
 }

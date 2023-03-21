@@ -9,9 +9,11 @@ import '../model/saved_game.dart';
 import '../service/format_service.dart';
 import '../service/saved_game_service.dart';
 
+typedef ContestDeletedResolver = Function(bool wasDeleted);
+
 class MySavedGamesTabItem extends StatefulWidget {
   final Contest contest;
-  final Function notifyParent;
+  final ContestDeletedResolver notifyParent;
 
   const MySavedGamesTabItem(
       {super.key, required this.contest, required this.notifyParent});
@@ -56,7 +58,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
           );
         }
         return Scaffold(
-          floatingActionButton: _buildFloatingActionButton(),
+          // floatingActionButton: _buildFloatingActionButton(),
           body: body,
         );
       },
@@ -66,7 +68,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
   Future<void> _updateUI() async {
     _savedGames = await _savedGameService.getSavedGames(widget.contest);
     setState(() {});
-    widget.notifyParent();
+    widget.notifyParent(_savedGames.isEmpty);
   }
 
   ListTile _itemToListTile(SavedGame savedGame) => ListTile(

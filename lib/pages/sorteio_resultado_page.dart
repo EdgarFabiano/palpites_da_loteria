@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
@@ -9,11 +10,12 @@ import '../defaults/constants.dart';
 import '../model/loteria_banner_ad.dart';
 import '../model/saved_game.dart';
 import '../service/saved_game_service.dart';
+import 'my_saved_games.dart';
 
 class SorteioResultadoPage extends StatefulWidget {
-  final Contest _contest;
+  final Contest contest;
 
-  SorteioResultadoPage(this._contest, {Key? key}) : super(key: key);
+  SorteioResultadoPage(this.contest, {Key? key}) : super(key: key);
 
   @override
   _SorteioResultadoPageState createState() => _SorteioResultadoPageState();
@@ -72,12 +74,12 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
       child: Scaffold(
         appBar: AppBar(
           foregroundColor: Colors.white,
-          backgroundColor: widget._contest.getColor(context),
+          backgroundColor: widget.contest.getColor(context),
           bottom: TabBar(
             controller: _tabController,
             tabs: _tabs,
           ),
-          title: Text(widget._contest.name),
+          title: Text(widget.contest.name),
           actions: <Widget>[
             if (_activeTabIndex == 0)
               IconButton(
@@ -105,10 +107,10 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  TabSorteio(widget._contest,
+                  TabSorteio(widget.contest,
                       notifyParent: _updateUI,
                       generatedGameResolver: _resolveGeneratedGame),
-                  TabResultado(widget._contest, refreshResultado),
+                  TabResultado(widget.contest, refreshResultado),
                 ],
               ),
             ),
@@ -120,19 +122,24 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   }
 
   void saveGameOnTap() async {
+    SnackBar snackBar;
     if (_areadySavedGameId != null) {
       _savedGameService.deleteSavedGameById(_areadySavedGameId!);
       _areadySavedGameId = null;
+      snackBar = _getDeletedGameSnackBar();
     } else {
       _areadySavedGameId = await _savedGameService.addSavedGame(
-          SavedGame(
-            contestId: widget._contest.id,
-            numbers: _generatedGame,
-            createdAt: DateTime.now(),
-          ),
-        );
+        SavedGame(
+          contestId: widget.contest.id,
+          numbers: _generatedGame,
+          createdAt: DateTime.now(),
+        ),
+      );
+      snackBar = _getSavedGameSnackBar();
     }
     _updateUI(_areadySavedGameId);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   _resolveGeneratedGame(String generatedGame) {
@@ -142,5 +149,35 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   Future<void> _updateUI(int? areadySavedGameId) async {
     _areadySavedGameId = areadySavedGameId;
     setState(() {});
+  }
+
+  SnackBar _getSavedGameSnackBar() {
+    return SnackBar(
+      content: const Text('Jogo salvo com sucesso'),
+      action: SnackBarAction(
+        label: 'Ver',
+        onPressed: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => MySavedGames(
+                initPositionContest: widget.contest,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  SnackBar _getDeletedGameSnackBar() {
+    return SnackBar(
+      content: const Text('Jogo excluído'),
+      action: SnackBarAction(
+        label: 'Dezfazer',
+        onPressed: saveGameOnTap,
+      ),
+    );
   }
 }

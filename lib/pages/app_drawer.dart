@@ -67,7 +67,7 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         ListTile(
           leading: Icon(Icons.favorite),
-          title: Text("Meus jogos"),
+          title: Text("Meus jogos salvos"),
           onTap: () {
             Navigator.of(context).pop();
             Navigator.push(context,
