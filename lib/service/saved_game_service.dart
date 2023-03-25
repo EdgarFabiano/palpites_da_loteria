@@ -29,6 +29,7 @@ class SavedGameService {
     if (savedGame.createdAt == null) {
       savedGame.createdAt = DateTime.now();
     }
+    savedGame.numbers = getSortedNumbers(savedGame.numbers);
     Database db = await DBProvider().database;
     await db.transaction(
       (Transaction txn) async {
@@ -50,7 +51,7 @@ class SavedGameService {
 
   Future<int?> existsSavedGame(Contest contest, List<int> dezenas) async {
     Database db = await DBProvider().database;
-    var numbers = dezenas.join('|');
+    var numbers = getSortedNumbers(dezenas.join('|'));
     var sql = ' SELECT id FROM ${DBProvider.tableSavedGame} ' +
         ' WHERE ${DBProvider.tableSavedGame}.contestId = ${contest.id} '
             ' AND ${DBProvider.tableSavedGame}.numbers = "$numbers"';
@@ -63,6 +64,7 @@ class SavedGameService {
   }
 
   Future<void> updateSavedGame(SavedGame savedGame) async {
+    savedGame.numbers = getSortedNumbers(savedGame.numbers);
     Database db = await DBProvider().database;
     final int count = await db.rawUpdate(
       /*sql=*/
@@ -95,5 +97,11 @@ class SavedGameService {
       ''',
     );
     print('Deleted $count records in db.');
+  }
+
+  String getSortedNumbers(String numbers) {
+    var list = numbers.split("|").map((e) => int.parse(e)).toList();
+    list.sort((a, b) => a.compareTo(b));
+    return list.join("|");
   }
 }

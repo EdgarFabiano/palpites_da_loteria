@@ -86,7 +86,9 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
                 icon: _areadySavedGameId != null
                     ? Icon(Icons.favorite)
                     : Icon(Icons.favorite_border),
-                tooltip: 'Salvar jogo',
+                tooltip: _areadySavedGameId == null
+                    ? 'Salvar jogo'
+                    : 'Excluir jogo salvo',
                 color: Colors.white,
                 onPressed: saveGameOnTap,
               )
