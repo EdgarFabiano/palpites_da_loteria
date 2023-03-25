@@ -141,8 +141,7 @@ class _MySavedGamesState extends State<MySavedGames>
         await _savedGameService.addSavedGame(
           SavedGame(
             contestId: Random.secure().nextInt(7) + 1,
-            numbers: '1|2|3|4|5',
-            createdAt: DateTime.now(),
+            numbers: '1|2|3|4|5'
           ),
         );
         _updateUI(false);

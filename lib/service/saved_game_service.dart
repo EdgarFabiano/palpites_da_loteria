@@ -40,7 +40,7 @@ class SavedGameService {
           VALUES
             (
               ${savedGame.contestId}, 
-              ${savedGame.createdAt.millisecondsSinceEpoch},
+              ${savedGame.createdAt!.millisecondsSinceEpoch},
               "${savedGame.numbers}"
             )''',
         );

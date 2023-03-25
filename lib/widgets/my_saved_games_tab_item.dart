@@ -86,7 +86,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
               )
               .toList(),
         ),
-        subtitle: Text('Criado em: ${formatarDataHora(savedGame.createdAt)}'),
+        subtitle: Text('Criado em: ${formatarDataHora(savedGame.createdAt!)}'),
         isThreeLine: true,
         trailing: IconButton(
           icon: Icon(Icons.delete),
@@ -104,8 +104,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
         await _savedGameService.addSavedGame(
           SavedGame(
             contestId: widget.contest.id,
-            numbers: '1|2|3|4|5|6|7|8',
-            createdAt: DateTime.now(),
+            numbers: '1|2|3|4|5|6|7|8'
           ),
         );
         _updateUI();

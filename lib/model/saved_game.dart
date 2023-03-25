@@ -4,13 +4,13 @@ import 'package:palpites_da_loteria/model/contest.dart';
 class SavedGame {
   final int? id;
   final int contestId;
-  late final DateTime createdAt;
+  DateTime? createdAt;
   String numbers;
 
   SavedGame({
     this.id,
     required this.contestId,
-    required this.createdAt,
+    this.createdAt,
     required this.numbers,
   }) {
     if (this.createdAt == null) {
@@ -28,7 +28,7 @@ class SavedGame {
   Map<String, dynamic> toJsonMap() => {
         'id': id,
         'contestId': contestId,
-        'createdAt': createdAt.millisecondsSinceEpoch,
+        'createdAt': createdAt?.millisecondsSinceEpoch,
         'numbers': numbers,
       };
 }
