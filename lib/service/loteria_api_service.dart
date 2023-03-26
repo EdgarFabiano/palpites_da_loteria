@@ -2,13 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 
-DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
-Options _cacheOptions =
-    buildCacheOptions(Duration(minutes: 5), forceRefresh: true);
+final _cacheOptions =
+    CacheOptions(store: MemCacheStore(), maxStale: Duration(minutes: 5));
 Dio _dio = Dio();
 
 ResultadoAPI parseResultado(Map<String, dynamic> responseBody) {
@@ -20,7 +19,7 @@ class LoteriaAPIService {
       'https://edgar.outsystemscloud.com/LoteriaService/rest/Resultado';
   final String _username = 'loteria_service';
   final String _password = 'E862415l!';
-  String? _basicAuth;
+  late final String _basicAuth;
 
   static final LoteriaAPIService _singleton = LoteriaAPIService._internal();
 
@@ -29,17 +28,16 @@ class LoteriaAPIService {
   }
 
   LoteriaAPIService._internal() {
-    _dio.interceptors.add(_dioCacheManager.interceptor);
     _basicAuth = 'Basic ' + base64.encode(utf8.encode('$_username:$_password'));
-    _cacheOptions.headers = {'Authorization': _basicAuth!};
+    _cacheOptions.toOptions().headers = {'Authorization': _basicAuth};
   }
 
-  Future<ResultadoAPI> fetchResultado(
-      Contest contest, int concurso) async {
+  Future<ResultadoAPI> fetchResultado(Contest contest, int concurso) async {
     var url = _server + "/Loteria/${contest.getEnpoint()}/$concurso";
 
     if (concurso != 0) {
-      Response response = await _dio.get(url, options: _cacheOptions);
+      Response response =
+          await _dio.get(url, options: _cacheOptions.toOptions());
       if (response.statusCode == 200 && response.data is Map) {
         return compute(parseResultado, response.data as Map<String, dynamic>);
       }
@@ -49,7 +47,7 @@ class LoteriaAPIService {
 
   Future<ResultadoAPI> fetchLatestResultado(Contest contest) async {
     var url = _server + "/Loteria/${contest.getEnpoint()}/Latest";
-    Response response = await _dio.get(url, options: _cacheOptions);
+    Response response = await _dio.get(url, options: _cacheOptions.toOptions());
 
     if (response.statusCode == 200 && response.data is Map) {
       return compute(parseResultado, response.data as Map<String, dynamic>);
