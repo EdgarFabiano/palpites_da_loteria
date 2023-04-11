@@ -72,26 +72,32 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
   }
 
   ListTile _itemToListTile(SavedGame savedGame) => ListTile(
-        title: Wrap(
-          children: savedGame.numbers
-              .split("|")
-              .map(
-                (e) => Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(formatarDezena(e), style: TextStyle(color: Colors.white)),
-                  ),
-                  color: widget.contest.getColor(context),
-                ),
-              )
-              .toList(),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if(savedGame.title != null)
+            Text(savedGame.title!),
+            Wrap(
+              children: savedGame.numbers
+                  .split("|")
+                  .map(
+                    (e) => Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(formatarDezena(e), style: TextStyle(color: Colors.white)),
+                      ),
+                      color: widget.contest.getColor(context),
+                    ),
+                  ).toList(),
+            ),
+          ],
         ),
         subtitle: Text('Criado em: ${formatarDataHora(savedGame.createdAt!)}'),
         isThreeLine: true,
         trailing: IconButton(
           icon: Icon(Icons.delete),
           onPressed: () async {
-            await _savedGameService.deleteSavedGame(savedGame);
+            await _savedGameService.deleteSavedGameById(savedGame.id!);
             _updateUI();
           },
         ),

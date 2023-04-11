@@ -31,20 +31,10 @@ class SavedGameService {
     }
     savedGame.numbers = getSortedNumbers(savedGame.numbers);
     Database db = await DBProvider().database;
-    await db.transaction(
-      (Transaction txn) async {
-        savedGameId = await txn.rawInsert(
-          '''
-          INSERT INTO ${DBProvider.tableSavedGame}
-            (contestId, createdAt, numbers)
-          VALUES
-            (
-              ${savedGame.contestId}, 
-              ${savedGame.createdAt!.millisecondsSinceEpoch},
-              "${savedGame.numbers}"
-            )''',
-        );
-      },
+    savedGameId = await db.insert(
+      DBProvider.tableSavedGame,
+      savedGame.toJsonMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return savedGameId;
   }
@@ -66,37 +56,21 @@ class SavedGameService {
   Future<void> updateSavedGame(SavedGame savedGame) async {
     savedGame.numbers = getSortedNumbers(savedGame.numbers);
     Database db = await DBProvider().database;
-    final int count = await db.rawUpdate(
-      /*sql=*/
-      '''
-      UPDATE ${DBProvider.tableSavedGame}
-      SET numbers = ?
-      WHERE id = ?''',
-      /*args=*/ [savedGame.numbers, savedGame.id],
+    await db.update(
+      DBProvider.tableSavedGame,
+      savedGame.toJsonMap(),
+      where: 'id = ?',
+      whereArgs: [savedGame.id],
     );
-    print('Updated $count records in db.');
-  }
-
-  Future<void> deleteSavedGame(SavedGame savedGame) async {
-    Database db = await DBProvider().database;
-    final count = await db.rawDelete(
-      '''
-        DELETE FROM ${DBProvider.tableSavedGame}
-        WHERE id = ${savedGame.id}
-      ''',
-    );
-    print('Deleted $count records in db.');
   }
 
   Future<void> deleteSavedGameById(int id) async {
     Database db = await DBProvider().database;
-    final count = await db.rawDelete(
-      '''
-        DELETE FROM ${DBProvider.tableSavedGame}
-        WHERE id = $id
-      ''',
+    await db.delete(
+      DBProvider.tableSavedGame,
+      where: 'id = ?',
+      whereArgs: [id],
     );
-    print('Deleted $count records in db.');
   }
 
   String getSortedNumbers(String numbers) {

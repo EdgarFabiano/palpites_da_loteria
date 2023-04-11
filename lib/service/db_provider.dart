@@ -51,6 +51,8 @@ class DBProvider {
           contestId INT NOT NULL,
           createdAt INT,
           numbers TEXT,
+          title TEXT,
+          notes TEXT,
           FOREIGN KEY(contestId) REFERENCES $tableContest(id))
         ''',
         );

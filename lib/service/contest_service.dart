@@ -51,39 +51,20 @@ class ContestService {
 
   Future<void> addContest(Contest contest) async {
     Database db = await DBProvider().database;
-    await db.transaction(
-      (Transaction txn) async {
-        final int id = await txn.rawInsert(
-          '''
-          INSERT INTO ${DBProvider.tableContest} 
-            (id, name, enabled, spaceStart, spaceEnd, minSize, maxSize, color, colorDark, sortOrder)
-          VALUES 
-            (
-              ${contest.id},
-              "${contest.name}",
-              ${contest.enabled ? 1 : 0}, 
-              ${contest.spaceStart},
-              ${contest.spaceEnd},
-              ${contest.minSize},
-              ${contest.maxSize},
-              ${contest.color},
-              ${contest.colorDark},
-              ${contest.sortOrder}
-            )''',
-        );
-      },
+    await db.insert(
+      DBProvider.tableContest,
+      contest.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
   Future<void> updateOrderAndEnabledContest(Contest contest) async {
     Database db = await DBProvider().database;
-    final int count = await db.rawUpdate(
-      /*sql=*/ '''
-      UPDATE ${DBProvider.tableContest}
-      SET enabled = ?,
-      sortOrder = ?
-      WHERE id = ?''',
-      /*args=*/ [if (contest.enabled) 1 else 0, contest.sortOrder, contest.id],
+    await db.update(
+      DBProvider.tableContest,
+      contest.toJson(),
+      where: 'id = ?',
+      whereArgs: [contest.id],
     );
   }
 
