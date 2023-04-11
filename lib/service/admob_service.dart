@@ -10,6 +10,8 @@ class AdMobService {
       'ca-app-pub-5932227223136302/6422249913';
   static final String sorteioBannerId =
       'ca-app-pub-5932227223136302/9648561943';
+  static final String meusJogosBannerId =
+      'ca-app-pub-5932227223136302/8859309599';
   static final String sorteioInterstitialId =
       'ca-app-pub-5932227223136302/8769211650';
   static final String resultadoInterstitialId =

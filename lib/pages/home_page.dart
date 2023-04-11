@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/pages/home_loading_page.dart';
-import 'package:palpites_da_loteria/service/admob_service.dart';
-import 'package:palpites_da_loteria/widgets/card_concursos.dart';
-import 'package:palpites_da_loteria/widgets/concursos_settings_change_notifier.dart';
 import 'package:provider/provider.dart';
 
+import '../defaults/defaults_export.dart';
 import '../model/loteria_banner_ad.dart';
+import '../model/model_export.dart';
+import '../service/admob_service.dart';
+import '../widgets/card_concursos.dart';
+import '../widgets/concursos_settings_change_notifier.dart';
 import 'app_drawer.dart';
+import 'home_loading_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<CardConcursos>? cards;
   ConcursosSettingsChangeNotifier? concursosProvider;
-  Concursos? concursos;
   LoteriaBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.concursosBannerId);
 
@@ -38,6 +37,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Contest>? _contests;
     var mediaQueryData = MediaQuery.of(context);
     var isPortrait = mediaQueryData.orientation == Orientation.portrait;
 
@@ -55,10 +55,10 @@ class _HomePageState extends State<HomePage> {
     var spacing = mediaQueryData.size.height / 100;
 
     concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
-    concursos = concursosProvider?.getConcursos();
+    _contests = concursosProvider?.getContests();
 
-    if (concursosProvider != null && concursos != null) {
-      cards = concursos!
+    if (concursosProvider != null && _contests != null) {
+      cards = _contests
           .where((element) => element.enabled)
           .map((concurso) => CardConcursos(concurso))
           .toList();
@@ -73,17 +73,43 @@ class _HomePageState extends State<HomePage> {
         body: Center(
           child: Column(
             children: [
-              Flexible(
-                child: GridView(
-                  padding: EdgeInsets.all(spacing),
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    crossAxisSpacing: spacing,
-                    mainAxisSpacing: spacing,
-                    maxCrossAxisExtent: tileSize,
+              if (cards!.isNotEmpty)
+                Flexible(
+                  child: GridView(
+                    padding: EdgeInsets.all(spacing),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      crossAxisSpacing: spacing,
+                      mainAxisSpacing: spacing,
+                      maxCrossAxisExtent: tileSize,
+                    ),
+                    children: cards!,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: false,
                   ),
-                  children: cards!,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: false,
+                ),
+              if (cards!.isEmpty)
+              Expanded(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.refresh,
+                              color: DefaultThemes.textColor(context),
+                            ),
+                            Text(
+                              "Recarregar",
+                              style: TextStyle(color: DefaultThemes.textColor(context)),
+                            ),
+                          ]),
+                    ),
+                    onPressed: () => setState(() {}),
+                  ),
                 ),
               ),
               AdMobService.getBannerAdWidget(_bannerAd),

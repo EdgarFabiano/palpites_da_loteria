@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 
 class DefaultThemes {
-
   static final Color primaryLight = Colors.indigo;
   static final Color primaryDark = Colors.black87;
 
@@ -38,4 +36,17 @@ class DefaultThemes {
     );
   }
 
+  static Color textColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.light
+        ? Colors.black
+        : Colors.white;
+  }
+
+  static ButtonStyle flatButtonStyle(BuildContext context) {
+    return TextButton.styleFrom(
+      backgroundColor: Colors.transparent,
+      padding: EdgeInsets.all(0),
+      foregroundColor: textColor(context),
+    );
+  }
 }

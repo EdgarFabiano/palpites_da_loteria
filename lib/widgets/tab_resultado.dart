@@ -8,14 +8,13 @@ import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
 
-import '../model/resultado_api.dart';
+import '../defaults/themes.dart';
 
 class TabResultado extends StatefulWidget {
-  final ConcursoBean concursoBean;
-  final Function refreshResultadoCompartilhavel;
+  final Contest _contest;
+  final Function refreshResultado;
 
-  const TabResultado(this.concursoBean, this.refreshResultadoCompartilhavel,
-      {Key? key})
+  const TabResultado(this._contest, this.refreshResultado, {Key? key})
       : super(key: key);
 
   @override
@@ -25,6 +24,7 @@ class TabResultado extends StatefulWidget {
 class _TabResultadoState extends State<TabResultado>
     with AutomaticKeepAliveClientMixin {
   Future<ResultadoAPI>? _futureResultado;
+  ResultadoAPI? _resultadoAPI;
   final _concursoTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   int _ultimoConcurso = 0;
@@ -66,21 +66,21 @@ class _TabResultadoState extends State<TabResultado>
           actions: <Widget>[
             TextButton(
               child: Text('Cancelar'),
+        style: DefaultThemes.flatButtonStyle(context),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text('Buscar'),
+        style: DefaultThemes.flatButtonStyle(context),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _concursoAtual = int.parse(_concursoTextController.text);
                   if (_concursoAtual > _ultimoConcurso)
                     _concursoAtual = _ultimoConcurso;
                   setState(() {
-                    _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean, _concursoAtual);
-                    widget.refreshResultadoCompartilhavel(_concursoAtual);
+                    _refreshResultado();
                   });
                   Navigator.of(context).pop();
                 }
@@ -92,12 +92,23 @@ class _TabResultadoState extends State<TabResultado>
     );
   }
 
+  void _refreshResultado() {
+    widget.refreshResultado(null);
+    _futureResultado = _loteriaAPIService
+        .fetchResultado(widget._contest, _concursoAtual)
+        .then((value) {
+      widget.refreshResultado(value);
+      return Future.value(value);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _futureResultado = _loteriaAPIService
-        .fetchLatestResultado(widget.concursoBean)
+        .fetchLatestResultado(widget._contest)
         .then((value) {
+      widget.refreshResultado(value);
       setState(() {
         _ultimoConcurso = value.concurso!;
         _concursoAtual = value.concurso!;
@@ -138,7 +149,8 @@ class _TabResultadoState extends State<TabResultado>
             builder: (context, snapshot) {
               if (snapshot.hasData &&
                   snapshot.connectionState == ConnectionState.done) {
-                ResultadoAPI resultado = snapshot.data!;
+                _resultadoAPI = snapshot.data!;
+                // widget.refreshResultado(_resultadoAPI);
                 return Column(
                   children: [
                     !isDisconnected ? Divider(height: 0) : SizedBox.shrink(),
@@ -146,7 +158,7 @@ class _TabResultadoState extends State<TabResultado>
                       child: ListView(
                         padding: EdgeInsets.only(
                             left: 15, right: 15, top: 5, bottom: 35),
-                        children: _getResultadoWidgets(resultado, context),
+                        children: _getResultadoWidgets(_resultadoAPI!, context),
                       ),
                     )
                   ],
@@ -195,8 +207,8 @@ class _TabResultadoState extends State<TabResultado>
     ));
 
     if (resultado.concurso != null && resultado.data != null) {
-      builder.add(Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      builder.add(Wrap(
+        alignment: WrapAlignment.spaceBetween,
         children: [
           Padding(
             padding: EdgeInsets.all(10),
@@ -212,7 +224,7 @@ class _TabResultadoState extends State<TabResultado>
 
     if (resultado.dezenas != null && resultado.dezenas!.isNotEmpty) {
       builder.add(Card(
-        color: widget.concursoBean.colorBean.getColor(context),
+        color: widget._contest.getColor(context),
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
@@ -229,7 +241,7 @@ class _TabResultadoState extends State<TabResultado>
     if (resultado.timeCoracaoOuMesSorte != null &&
         resultado.timeCoracaoOuMesSorte != "") {
       builder.add(Card(
-        color: widget.concursoBean.colorBean.getColor(context),
+        color: widget._contest.getColor(context),
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
@@ -339,7 +351,7 @@ class _TabResultadoState extends State<TabResultado>
 
     if (resultado.dezenas_2 != null && resultado.dezenas_2!.isNotEmpty) {
       builder.add(Card(
-        color: widget.concursoBean.colorBean.getColor(context),
+        color: widget._contest.getColor(context),
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
@@ -514,35 +526,36 @@ class _TabResultadoState extends State<TabResultado>
           maintainAnimation: true,
           maintainState: true,
           visible: _concursoAtual > 1,
-          child: FlatButton(
-              onPressed: () => setState(() {
-                    --_concursoAtual;
-                    _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean, _concursoAtual);
-                    widget.refreshResultadoCompartilhavel(_concursoAtual);
-                  }),
-              child: Text("Anterior")),
+          child: TextButton(
+            onPressed: () => setState(() {
+              --_concursoAtual;
+              _refreshResultado();
+            }),
+            child: Text("Anterior"),
+            style: DefaultThemes.flatButtonStyle(context),
+          ),
         ),
-        FlatButton(
+        TextButton(
           onPressed: _showDialogConcurso,
           child: Text(
             _concursoAtual.toString(),
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
+          style: DefaultThemes.flatButtonStyle(context),
         ),
         Visibility(
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
           visible: _concursoAtual < _ultimoConcurso,
-          child: FlatButton(
-              onPressed: () => setState(() {
-                    ++_concursoAtual;
-                    _futureResultado = _loteriaAPIService.fetchResultado(
-                        widget.concursoBean, _concursoAtual);
-                    widget.refreshResultadoCompartilhavel(_concursoAtual);
-                  }),
-              child: Text("Próximo")),
+          child: TextButton(
+            onPressed: () => setState(() {
+              ++_concursoAtual;
+              _refreshResultado();
+            }),
+            child: Text("Próximo"),
+            style: DefaultThemes.flatButtonStyle(context),
+          ),
         ),
       ],
     );

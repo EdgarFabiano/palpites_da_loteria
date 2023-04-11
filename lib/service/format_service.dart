@@ -1,12 +1,24 @@
 import 'package:date_format/date_format.dart';
 import 'package:intl/intl.dart';
 
+String formatarDezena(String dezena) {
+  String text = dezena;
+  if (int.tryParse(dezena) != null && int.parse(dezena) < 10) {
+    text = "0" + dezena;
+  }
+  return text;
+}
+
 String dateFormat(String date) {
   return formatarData(DateTime.parse(date));
 }
 
 String formatarData(DateTime date) {
   return formatDate(date, [dd, '/', mm, '/', yyyy]).toString();
+}
+
+String formatarDataHora(DateTime date) {
+  return formatDate(date, [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn, ':', ss]).toString();
 }
 
 String formatNumber(dynamic valor) {

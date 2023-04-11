@@ -14,7 +14,7 @@ description: Projeto para gerar jogos e verificar resultados dos concursos da lo
 version: 3.0.5+23
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.18.0 <3.0.0"
 
 module:
   androidX: true # Add this line.
@@ -23,27 +23,27 @@ module:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.4
-  date_format: ^2.0.6
-  device_info: ^2.0.3
-  dio: ^4.0.6
-  dio_http_cache: 0.3.0
+  cupertino_icons: ^1.0.5
+  date_format: ^2.0.7
+  device_info_plus: ^8.1.0
+  dio: ^5.0.3
+  dio_cache_interceptor: ^3.4.0
   easy_dynamic_theme: ^2.2.0
-  facebook_app_events: ^0.17.0
-  firebase_analytics: ^9.1.4
-  firebase_core: ^1.20.0
-  firebase_crashlytics: ^2.8.6
-  fluttertoast: ^8.0.9
-  google_mobile_ads: ^2.0.0
-  group_button: ^5.0.1
+  firebase_analytics: ^10.1.6
+  firebase_core: ^2.8.0
+  firebase_crashlytics: ^3.0.17
+  fluttertoast: ^8.2.1
+  google_mobile_ads: ^2.4.0
+  group_button: ^5.2.2
   http: ^0.13.5
-  in_app_review: 2.0.4
-  internet_connection_checker: ^0.0.1+3
-  intl: 0.17.0
-  provider: ^6.0.3
-  reorderables: ^0.5.0
-  share_plus: ^4.0.10
-  shared_preferences: ^2.0.5
+  in_app_review: ^2.0.6
+  internet_connection_checker: ^1.0.0+1
+  intl: ^0.18.0
+  provider: ^6.0.5
+  reorderables: ^0.6.0
+  share_plus: ^6.3.1
+  shared_preferences: ^2.0.20
+  sqflite: ^2.2.6
 
 dev_dependencies:
   flutter_test:
@@ -63,7 +63,6 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/json/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

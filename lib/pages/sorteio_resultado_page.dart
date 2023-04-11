@@ -1,19 +1,21 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/model/resultado_api.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
-import 'package:palpites_da_loteria/service/loteria_api_service.dart';
 import 'package:palpites_da_loteria/widgets/tab_resultado.dart';
 import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../defaults/constants.dart';
 import '../model/loteria_banner_ad.dart';
+import '../model/saved_game.dart';
+import '../service/saved_game_service.dart';
+import 'my_saved_games.dart';
 
 class SorteioResultadoPage extends StatefulWidget {
-  final ConcursoBean _concurso;
+  final Contest contest;
 
-  SorteioResultadoPage(this._concurso, {Key? key}) : super(key: key);
+  SorteioResultadoPage(this.contest, {Key? key}) : super(key: key);
 
   @override
   _SorteioResultadoPageState createState() => _SorteioResultadoPageState();
@@ -30,7 +32,9 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   ResultadoAPI? _resultado;
   LoteriaBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.sorteioBannerId);
-  LoteriaAPIService _loteriaAPIService = LoteriaAPIService();
+  SavedGameService _savedGameService = SavedGameService();
+  int? _areadySavedGameId;
+  String _generatedGame = '';
 
   void _setActiveTabIndex() {
     setState(() {
@@ -38,24 +42,15 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     });
   }
 
-  void refreshResultado(int consurso) {
-    _loteriaAPIService.fetchResultado(widget._concurso, consurso).then((value) {
-      setState(() {
-        _resultado = value;
-      });
+  void refreshResultado(ResultadoAPI? resultadoAPI) {
+    setState(() {
+      _resultado = resultadoAPI;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _loteriaAPIService.fetchLatestResultado(widget._concurso).then((value) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        setState(() {
-          _resultado = value;
-        });
-      });
-    });
     _tabController = TabController(vsync: this, length: _tabs.length);
     _tabController!.addListener(_setActiveTabIndex);
     if (Constants.showAds) {
@@ -74,44 +69,115 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
 
   @override
   Widget build(BuildContext context) {
-    var tabSorteio = TabSorteio(widget._concurso);
-    var tabResultado = TabResultado(widget._concurso, refreshResultado);
-
     return DefaultTabController(
-      length: 2,
+      length: _tabs.length,
       child: Scaffold(
         appBar: AppBar(
-            backgroundColor: widget._concurso.colorBean.getColor(context),
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: _tabs,
-            ),
-            title: Text(widget._concurso.name),
-            actions: <Widget>[
-              _activeTabIndex == 1 && _resultado != null
-                  ? IconButton(
-                      icon: const Icon(Icons.share),
-                      tooltip: 'Compartilhar resultado',
-                      onPressed: () {
-                        Share.share(_resultado!.shareString());
-                      },
-                    )
-                  : SizedBox.shrink(),
-            ]),
+          foregroundColor: Colors.white,
+          backgroundColor: widget.contest.getColor(context),
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: _tabs,
+          ),
+          title: Text(widget.contest.name),
+          actions: <Widget>[
+            if (_activeTabIndex == 0)
+              IconButton(
+                icon: _areadySavedGameId != null
+                    ? Icon(Icons.favorite)
+                    : Icon(Icons.favorite_border),
+                tooltip: _areadySavedGameId == null
+                    ? 'Salvar jogo'
+                    : 'Excluir jogo salvo',
+                color: Colors.white,
+                onPressed: saveGameOnTap,
+              )
+            else if (_resultado != null)
+              IconButton(
+                icon: const Icon(Icons.share),
+                tooltip: 'Compartilhar resultado',
+                color: Colors.white,
+                onPressed: () {
+                  Share.share(_resultado!.shareString());
+                },
+              ),
+          ],
+        ),
         body: Column(
           children: [
             Flexible(
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  tabSorteio,
-                  tabResultado,
+                  TabSorteio(widget.contest,
+                      notifyParent: _updateUI,
+                      generatedGameResolver: _resolveGeneratedGame),
+                  TabResultado(widget.contest, refreshResultado),
                 ],
               ),
             ),
             AdMobService.getBannerAdWidget(_bannerAd),
           ],
         ),
+      ),
+    );
+  }
+
+  void saveGameOnTap() async {
+    SnackBar snackBar;
+    if (_areadySavedGameId != null) {
+      _savedGameService.deleteSavedGameById(_areadySavedGameId!);
+      _areadySavedGameId = null;
+      snackBar = _getDeletedGameSnackBar();
+    } else {
+      _areadySavedGameId = await _savedGameService.addSavedGame(
+        SavedGame(
+          contestId: widget.contest.id,
+          numbers: _generatedGame
+        ),
+      );
+      snackBar = _getSavedGameSnackBar();
+    }
+    _updateUI(_areadySavedGameId);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  _resolveGeneratedGame(String generatedGame) {
+    _generatedGame = generatedGame;
+  }
+
+  Future<void> _updateUI(int? areadySavedGameId) async {
+    _areadySavedGameId = areadySavedGameId;
+    setState(() {});
+  }
+
+  SnackBar _getSavedGameSnackBar() {
+    return SnackBar(
+      content: const Text('Jogo salvo com sucesso'),
+      action: SnackBarAction(
+        label: 'Ver',
+        onPressed: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => MySavedGames(
+                initPositionContest: widget.contest,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  SnackBar _getDeletedGameSnackBar() {
+    return SnackBar(
+      content: const Text('Jogo excluído'),
+      action: SnackBarAction(
+        label: 'Dezfazer',
+        onPressed: saveGameOnTap,
       ),
     );
   }

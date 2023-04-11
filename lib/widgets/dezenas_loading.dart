@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../model/concursos.dart';
+import '../model/contest.dart';
 
 class DezenasLoading extends StatefulWidget {
   final int amount;
-  final ConcursoBean concursoBean;
+  final Contest _contest;
 
-  const DezenasLoading(this.amount, this.concursoBean, {Key? key}) : super(key: key);
+  const DezenasLoading(this.amount, this._contest, {Key? key})
+      : super(key: key);
 
   @override
   State<DezenasLoading> createState() => _DezenasLoadingState();
@@ -15,18 +16,21 @@ class DezenasLoading extends StatefulWidget {
 class _DezenasLoadingState extends State<DezenasLoading> {
   @override
   Widget build(BuildContext context) {
+    double textScale = MediaQuery.of(context).textScaleFactor;
     var width = MediaQuery.of(context).size.width;
-    List<Widget> dezenas = List.filled(widget.amount, Card(
-      elevation: 2,
-      color: widget.concursoBean.colorBean.getColor(context),
-      shape: CircleBorder(),
-      child: Center(
-        child: CircularProgressIndicator(color: Colors.white),
-      ),
-    ));
+    List<Widget> dezenas = List.filled(
+        widget.amount,
+        Card(
+          elevation: 2,
+          color: widget._contest.getColor(context),
+          shape: CircleBorder(),
+          child: Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          ),
+        ));
     return Flexible(
       child: GridView.extent(
-        maxCrossAxisExtent: width / 8 + 20,
+        maxCrossAxisExtent: (width * textScale) / 5,
         shrinkWrap: true,
         padding: EdgeInsets.all(10),
         children: dezenas,

@@ -25,8 +25,8 @@ class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
     _basicAuth = 'Basic ' + base64.encode(utf8.encode('$_username:$_password'));
   }
 
-  Future<SorteioFrequencia> fetchResultado(ConcursoBean concursoBean, int gameSize, DateTimeRange? dateTimeRange) async {
-    var url = '$_server/${concursoBean.getEnpoint()}?IsAscending=$isAscending' +
+  Future<SorteioFrequencia> fetchResultado(Contest contest, int gameSize, DateTimeRange? dateTimeRange) async {
+    var url = '$_server/${contest.getEnpoint()}?IsAscending=$isAscending' +
         (dateTimeRange != null ? '&StartDate=${dateTimeRange.start.year}-${dateTimeRange.start.month}-${dateTimeRange.start.day}'
             '&EndDate=${dateTimeRange.end.year}-${dateTimeRange.end.month}-${dateTimeRange.end.day}' : '')  +
         '&GameSize=$gameSize';
@@ -38,8 +38,8 @@ class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
   }
 
   @override
-  Future<SorteioFrequencia> sortear(ConcursoBean concurso, int gameSize, [DateTimeRange? dateTimeRange]) {
-    return fetchResultado(concurso, gameSize, dateTimeRange);
+  Future<SorteioFrequencia> sortear(Contest contest, int gameSize, [DateTimeRange? dateTimeRange]) {
+    return fetchResultado(contest, gameSize, dateTimeRange);
   }
 
 }

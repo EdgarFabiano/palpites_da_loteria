@@ -1,12 +1,14 @@
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/pages/settings_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../defaults/defaults_export.dart';
+import 'my_saved_games.dart';
+import 'settings_page.dart';
 
 final InAppReview _inAppReview = InAppReview.instance;
 
@@ -24,8 +26,10 @@ Future<void> _requestReview() async {
       }
       _inAppReview.openStoreListing();
       return false;
-    }).catchError((err) =>
-        Fluttertoast.showToast(msg: "Operação indisponível no momento"));
+    }).catchError((err) {
+      Fluttertoast.showToast(msg: "Operação indisponível no momento");
+      return Future.value(true);
+    });
   }
 }
 
@@ -44,12 +48,14 @@ class _AppDrawerState extends State<AppDrawer> {
           child: Center(
             child: Column(
               children: <Widget>[
-                Image.asset(
-                  Constants.logoTransparentAssetPath,
-                  width: 120,
+                Flexible(
+                  child: Image.asset(
+                    Constants.logoTransparentAssetPath,
+                  ),
                 ),
                 Text(
-                  "Palpites da loteria",
+                  Constants.appName,
+                  overflow: TextOverflow.fade,
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -58,6 +64,15 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
           ),
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+        ),
+        ListTile(
+          leading: Icon(Icons.favorite),
+          title: Text("Meus jogos salvos"),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.push(context,
+                CupertinoPageRoute(builder: (context) => MySavedGames()));
+          },
         ),
         ListTile(
           leading: Icon(Icons.settings),

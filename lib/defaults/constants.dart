@@ -1,6 +1,7 @@
 class Constants {
   static bool showAds = true;
 
+  static const String appName = "Palpites da loteria";
   static const String concursosSharedPreferencesKey = 'concursos';
   static const String concursosBaselineJson = 'assets/json/baseline.json';
 
@@ -12,4 +13,6 @@ class Constants {
   static const String refreshDarkAssetPath = 'assets/images/refresh-dark.png';
 
   static const double tileMaxSize = 260.0;
+
+  static const DBFileName = 'palpites_da_loteria.db';
 }

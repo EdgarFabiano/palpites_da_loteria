@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
+import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/enum/filtro_periodo.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/format_service.dart';
+import 'package:palpites_da_loteria/service/saved_game_service.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 import '../model/enum/estrategia_geracao.dart';
@@ -11,10 +13,16 @@ import '../model/sorteio_frequencia.dart';
 import '../service/generator_strategies/abstract_sorteio_generator.dart';
 import 'dezenas_loading.dart';
 
-class TabSorteio extends StatefulWidget {
-  final ConcursoBean concursoBean;
+typedef AlreadySavedResolver = Function(int? alreadySavedGameId);
+typedef GeneratedGameResolver = Function(String generatedGame);
 
-  const TabSorteio(this.concursoBean, {Key? key}) : super(key: key);
+class TabSorteio extends StatefulWidget {
+  final Contest _contest;
+  final AlreadySavedResolver notifyParent;
+  final GeneratedGameResolver generatedGameResolver;
+
+  const TabSorteio(this._contest, {Key? key, required this.notifyParent, required this.generatedGameResolver})
+      : super(key: key);
 
   @override
   _TabSorteioState createState() => _TabSorteioState();
@@ -35,11 +43,16 @@ class _TabSorteioState extends State<TabSorteio>
   DateTimeRange _dateTimeRange =
       DateTimeRange(start: DateTime.now(), end: DateTime.now());
   bool _showFrequencia = true;
+  SavedGameService _savedGameService = SavedGameService();
 
   void _sortear(double increment) {
     _numeroDeDezenasASortear += increment;
     _futureSorteio = _sorteioGenerator.sortear(
-        widget.concursoBean, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
+        widget._contest, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
+    _futureSorteio!.then((value) => widget.generatedGameResolver(value.frequencias.map((e) => e.dezena).join('|')));
+    _futureSorteio!.then((value) => _savedGameService.existsSavedGame(
+        widget._contest, value.frequencias.map((e) => e.dezena).toList())
+        .then((value) => widget.notifyParent(value)));
   }
 
   void sortearComAnuncio(double increment) {
@@ -58,8 +71,8 @@ class _TabSorteioState extends State<TabSorteio>
     super.initState();
     AdMobService.createSorteioInterstitialAd();
     _buttonGroupController.selectIndex(0);
-    WidgetsBinding.instance.addPostFrameCallback(((timeStamp) => _sortear(0)));
-    _numeroDeDezenasASortear = widget.concursoBean.minSize.toDouble();
+    _numeroDeDezenasASortear = widget._contest.minSize.toDouble();
+    _sortear(0);
     _updateDateTimeRange(_dropdownValueFiltroPeriodo.startDate,
         _dropdownValueFiltroPeriodo.endDate);
   }
@@ -67,335 +80,373 @@ class _TabSorteioState extends State<TabSorteio>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var refreshButton = RaisedButton.icon(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        icon: Icon(
-          Icons.refresh,
-          color: Colors.white,
-        ),
-        label: Text(
-          "Gerar novamente",
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
-        color: widget.concursoBean.colorBean.getColor(context),
-        onPressed: () => sortearComAnuncio(0));
-
-    var minSize = widget.concursoBean.minSize.toDouble();
-    var maxSize = widget.concursoBean.maxSize.toDouble();
-    var width = MediaQuery.of(context).size.width;
 
     return Column(
       children: [
+        _buildIncrementors(),
         Visibility(
-          visible: maxSize != minSize,
-          child: Padding(
-            padding: EdgeInsets.only(top: 5, left: 12, right: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Visibility(
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  visible:
-                      _numeroDeDezenasASortear > widget.concursoBean.minSize,
-                  child: FlatButton.icon(
-                      onPressed: () => setState(() {
-                            _sortear(-1);
-                          }),
-                      icon: Icon(Icons.exposure_neg_1),
-                      label: Text("")),
-                ),
-                Text(
-                  _numeroDeDezenasASortear.toInt().toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Visibility(
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  visible:
-                      _numeroDeDezenasASortear < widget.concursoBean.maxSize,
-                  child: FlatButton.icon(
-                      onPressed: () => setState(() {
-                            _sortear(1);
-                          }),
-                      icon: Icon(Icons.exposure_plus_1),
-                      label: Text("")),
-                ),
-              ],
-            ),
+          visible: widget._contest.maxSize != widget._contest.minSize,
+          child: Divider(
+            height: 10,
           ),
         ),
-        Visibility(
-            visible: maxSize != minSize,
-            child: Divider(
-              height: 10,
-            )),
-        Padding(
-          padding: EdgeInsets.only(top: 5),
-          child: GroupButton(
-            isRadio: false,
-            controller: _buttonGroupController,
-            onSelected: (value, index, isSelected) {
-              _buttonGroupController.unselectAll();
-              _buttonGroupController.selectIndex(index);
-              estrategiaGeracao = EstrategiaGeracao.values[index];
-              _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
-              sortearComAnuncio(0);
-            },
-            buttons:
-                EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
-            options: GroupButtonOptions(
-              selectedShadow: const [],
-              selectedTextStyle: TextStyle(
-                color: Colors.white,
-              ),
-              selectedColor: widget.concursoBean.colorBean.getColor(context),
-              unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
-              borderRadius: BorderRadius.circular(10),
-              groupingType: GroupingType.wrap,
-              direction: Axis.horizontal,
-              mainGroupAlignment: MainGroupAlignment.start,
-              crossGroupAlignment: CrossGroupAlignment.start,
-              groupRunAlignment: GroupRunAlignment.start,
-              textAlign: TextAlign.center,
-              textPadding: EdgeInsets.zero,
-              alignment: Alignment.center,
-              elevation: 2,
+        _buildStrategySelector(),
+        _buildPeriodSelector(),
+        Divider(
+          height: 10,
+        ),
+        _buildBalls(),
+      ],
+    );
+  }
+
+  _buildStrategySelector() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GroupButton(
+          isRadio: false,
+          controller: _buttonGroupController,
+          onSelected: (value, index, isSelected) {
+            _buttonGroupController.unselectAll();
+            _buttonGroupController.selectIndex(index);
+            estrategiaGeracao = EstrategiaGeracao.values[index];
+            _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
+            sortearComAnuncio(0);
+          },
+          buttons: EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
+          options: GroupButtonOptions(
+            selectedShadow: const [],
+            selectedTextStyle: TextStyle(
+              color: Colors.white,
             ),
+            selectedColor: widget._contest.getColor(context),
+            unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
+            borderRadius: BorderRadius.circular(10),
+            groupingType: GroupingType.wrap,
+            direction: Axis.horizontal,
+            mainGroupAlignment: MainGroupAlignment.start,
+            crossGroupAlignment: CrossGroupAlignment.start,
+            groupRunAlignment: GroupRunAlignment.start,
+            textAlign: TextAlign.center,
+            textPadding: EdgeInsets.zero,
+            alignment: Alignment.center,
+            elevation: 2,
           ),
         ),
-        Visibility(
-          visible: estrategiaGeracao != EstrategiaGeracao.ALEATORIO,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(_dropdownValueFiltroPeriodo.labelValue),
-                        DropdownButton<FiltroPeriodo>(
-                          value: _dropdownValueFiltroPeriodo,
-                          icon: const Icon(Icons.keyboard_arrow_down),
-                          elevation: 16,
-                          underline: Container(
-                            height: 2,
-                            color:
-                                widget.concursoBean.colorBean.getColor(context),
-                          ),
-                          onChanged: (FiltroPeriodo? newValue) {
-                            setState(() {
-                              _dropdownValueFiltroPeriodo = newValue!;
-                              if (_dropdownValueFiltroPeriodo ==
-                                  FiltroPeriodo.CUSTOMIZADO) {
-                                _updateDateTimeRange(
-                                    _dateTimeRange.start, _dateTimeRange.end);
-                              } else {
-                                _updateDateTimeRange(
-                                    _dropdownValueFiltroPeriodo.startDate,
-                                    _dropdownValueFiltroPeriodo.endDate);
-                              }
-                              sortearComAnuncio(0);
-                            });
-                          },
-                          items: FiltroPeriodo.values
-                              .map<DropdownMenuItem<FiltroPeriodo>>(
-                                  (FiltroPeriodo value) {
-                            return DropdownMenuItem<FiltroPeriodo>(
-                              value: value,
-                              child: Text(value.displayTitle),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text("Mostrar frequências"),
-                        Switch(
-                            value: _showFrequencia,
-                            onChanged: (value) =>
-                                _onChangeShowFrequencia(value)),
-                      ],
-                    ),
-                  ],
-                ),
-                Visibility(
-                  visible:
-                      _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
-                  child: Row(
+      ),
+    );
+  }
+
+  _buildPeriodSelector() {
+    return Visibility(
+      visible: estrategiaGeracao != EstrategiaGeracao.ALEATORIO,
+      child: Column(
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Flexible(
-                        child: TextField(
-                          controller: _startDateController,
-                          decoration: InputDecoration(
-                            icon: Icon(Icons.calendar_today),
-                            labelText: "Data início",
-                          ),
-                          readOnly: true,
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: _dateTimeRange.start,
-                                firstDate: DateTime(1990),
-                                lastDate: _dateTimeRange.end);
-                            _updateDateTimeRange(
-                                pickedDate!, _dateTimeRange.end);
-                            sortearComAnuncio(0);
-                          },
+                      Text(_dropdownValueFiltroPeriodo.labelValue),
+                      DropdownButton<FiltroPeriodo>(
+                        value: _dropdownValueFiltroPeriodo,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        elevation: 16,
+                        underline: Container(
+                          height: 2,
+                          color: widget._contest.getColor(context),
                         ),
-                        flex: 1,
+                        onChanged: (FiltroPeriodo? newValue) {
+                          setState(() {
+                            _dropdownValueFiltroPeriodo = newValue!;
+                            if (_dropdownValueFiltroPeriodo ==
+                                FiltroPeriodo.CUSTOMIZADO) {
+                              _updateDateTimeRange(
+                                  _dateTimeRange.start, _dateTimeRange.end);
+                            } else {
+                              _updateDateTimeRange(
+                                  _dropdownValueFiltroPeriodo.startDate,
+                                  _dropdownValueFiltroPeriodo.endDate);
+                            }
+                            sortearComAnuncio(0);
+                          });
+                        },
+                        items: FiltroPeriodo.values
+                            .map<DropdownMenuItem<FiltroPeriodo>>(
+                                (FiltroPeriodo value) {
+                          return DropdownMenuItem<FiltroPeriodo>(
+                            value: value,
+                            child: Text(value.displayTitle),
+                          );
+                        }).toList(),
                       ),
-                      Flexible(
-                        child: TextField(
-                          controller: _endDateController,
-                          decoration: InputDecoration(
-                              icon: Icon(Icons.calendar_today),
-                              labelText: "Data fim"),
-                          readOnly: true,
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: _dateTimeRange.end,
-                                firstDate: _dateTimeRange.start,
-                                //DateTime.now() - not to allow to choose before today.
-                                lastDate: DateTime.now());
-                            _updateDateTimeRange(
-                                _dateTimeRange.start, pickedDate!);
-                            sortearComAnuncio(0);
-                          },
-                        ),
-                        flex: 1,
-                      )
                     ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text("Mostrar frequências"),
+                      Switch(
+                          value: _showFrequencia,
+                          onChanged: (value) => _onChangeShowFrequencia(value)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Visibility(
+            visible: _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _startDateController,
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.calendar_today),
+                      labelText: "Data início",
+                    ),
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: _dateTimeRange.start,
+                          firstDate: DateTime(1990),
+                          lastDate: _dateTimeRange.end);
+                      _updateDateTimeRange(pickedDate!, _dateTimeRange.end);
+                      sortearComAnuncio(0);
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _endDateController,
+                    decoration: InputDecoration(
+                        icon: Icon(Icons.calendar_today),
+                        labelText: "Data fim"),
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: _dateTimeRange.end,
+                          firstDate: _dateTimeRange.start,
+                          //DateTime.now() - not to allow to choose before today.
+                          lastDate: DateTime.now());
+                      _updateDateTimeRange(_dateTimeRange.start, pickedDate!);
+                      sortearComAnuncio(0);
+                    },
                   ),
                 )
               ],
             ),
-          ),
+          )
+        ],
+      ),
+    );
+  }
+
+  _buildIncrementors() {
+    return Visibility(
+      visible: widget._contest.maxSize != widget._contest.minSize,
+      child: Padding(
+        padding: EdgeInsets.only(top: 5, left: 12, right: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Visibility(
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: _numeroDeDezenasASortear > widget._contest.minSize,
+              child: IconButton(
+                onPressed: () => setState(() {
+                  _sortear(-1);
+                }),
+                icon: Icon(Icons.exposure_neg_1),
+                style: DefaultThemes.flatButtonStyle(context),
+              ),
+            ),
+            Text(
+              _numeroDeDezenasASortear.toInt().toString(),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Visibility(
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: _numeroDeDezenasASortear < widget._contest.maxSize,
+              child: IconButton(
+                onPressed: () => setState(() {
+                  _sortear(1);
+                }),
+                icon: Icon(Icons.exposure_plus_1),
+                style: DefaultThemes.flatButtonStyle(context),
+              ),
+            ),
+          ],
         ),
-        Divider(
-          height: 10,
-        ),
-        Expanded(
-          child: FutureBuilder<SorteioFrequencia>(
-            future: _futureSorteio,
-            builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.done) {
-                SorteioFrequencia sorteioFrequencia = snapshot.data!;
-                List<Dezena> dezenas = sorteioFrequencia.frequencias
-                    .map((value) => Dezena(
-                          value.dezena.toString(),
-                          widget.concursoBean.colorBean.getColor(context),
-                          _showFrequencia,
-                          value.quantidade,
-                        ))
-                    .toList();
-                List<Dezena> dezenas2 = [];
-                if (sorteioFrequencia.frequencias2 != null) {
-                  dezenas2 = sorteioFrequencia.frequencias2!
-                      .map((value) => Dezena(
-                            value.dezena.toString(),
-                            widget.concursoBean.colorBean.getColor(context),
-                            _showFrequencia,
-                            value.quantidade,
-                          ))
-                      .toList();
-                }
-                return Column(
-                  children: <Widget>[
-                    Flexible(
+      ),
+    );
+  }
+
+  _buildBalls() {
+    var width = MediaQuery.of(context).size.width;
+    double textScale = MediaQuery.of(context).textScaleFactor;
+    return Expanded(
+      child: FutureBuilder<SorteioFrequencia>(
+        future: _futureSorteio,
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.done) {
+            SorteioFrequencia sorteioFrequencia = snapshot.data!;
+            List<Dezena> dezenas = sorteioFrequencia.frequencias
+                .map((value) => Dezena(
+                      value.dezena.toString(),
+                      widget._contest.getColor(context),
+                      _showFrequencia,
+                      value.quantidade,
+                    ))
+                .toList();
+            List<Dezena> dezenas2 = [];
+            if (sorteioFrequencia.frequencias2 != null) {
+              dezenas2 = sorteioFrequencia.frequencias2!
+                  .map((value) => Dezena(
+                        value.dezena.toString(),
+                        widget._contest.getColor(context),
+                        _showFrequencia,
+                        value.quantidade,
+                      ))
+                  .toList();
+            }
+            var textColor = DefaultThemes.textColor(context);
+            var textStyle = TextStyle(color: textColor);
+            return Column(
+              children: <Widget>[
+                Flexible(
+                  child: GridView.extent(
+                    maxCrossAxisExtent: (width * textScale) / 5,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(10),
+                    children: dezenas,
+                  ),
+                  flex: 1,
+                ),
+                Visibility(
+                    visible: widget._contest.name == "D. SENA",
+                    child: Divider(
+                      height: 0,
+                    )),
+                Visibility(
+                    visible: widget._contest.name == "D. SENA",
+                    child: Flexible(
                       child: GridView.extent(
-                        maxCrossAxisExtent: width / 8 + 20,
+                        maxCrossAxisExtent: (width * textScale) / 5,
                         shrinkWrap: true,
                         padding: EdgeInsets.all(10),
-                        children: dezenas,
+                        children: dezenas2,
                       ),
-                      flex: 1,
-                    ),
-                    Visibility(
-                        visible: widget.concursoBean.name == "D. SENA",
-                        child: Divider(
-                          height: 0,
-                        )),
-                    Visibility(
-                        visible: widget.concursoBean.name == "D. SENA",
-                        child: Flexible(
-                          child: GridView.extent(
-                            maxCrossAxisExtent: width / 8 + 20,
-                            shrinkWrap: true,
-                            padding: EdgeInsets.all(10),
-                            children: dezenas2,
-                          ),
-                        )),
-                    Visibility(
-                      visible: sorteioFrequencia.qtdConcursos > 0,
-                      child: Column(
-                        children: [
-                          RichText(
-                              text: TextSpan(children: <TextSpan>[
-                            TextSpan(text: 'Com base em '),
+                    )),
+                Visibility(
+                  visible: sorteioFrequencia.qtdConcursos > 0,
+                  child: Column(
+                    children: [
+                      RichText(
+                          overflow: TextOverflow.fade,
+                          text: TextSpan(children: <TextSpan>[
+                            TextSpan(text: 'Com base em ', style: textStyle),
                             TextSpan(
                                 text:
                                     '${formatNumber(sorteioFrequencia.qtdConcursos)}',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: ' sorteios'),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor)),
+                            TextSpan(text: ' sorteios', style: textStyle),
                           ])),
-                          RichText(
-                              text: TextSpan(children: <TextSpan>[
-                            TextSpan(text: 'De '),
+                      RichText(
+                          overflow: TextOverflow.fade,
+                          text: TextSpan(children: <TextSpan>[
+                            TextSpan(text: 'De ', style: textStyle),
                             TextSpan(
                                 text: '${formatarData(_dateTimeRange.start)}',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: ' a '),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor)),
+                            TextSpan(text: ' a ', style: textStyle),
                             TextSpan(
                                 text: '${formatarData(_dateTimeRange.end)}',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor)),
                           ]))
-                        ],
-                      ),
-                    ),
-                    Visibility(
-                        visible:
-                            estrategiaGeracao == EstrategiaGeracao.ALEATORIO,
-                        child: refreshButton),
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return Column(
-                  children: [
-                    Expanded(child: Center(child: Icon(Icons.signal_wifi_off))),
-                  ],
-                );
-              }
-              return Column(
-                children: <Widget>[
-                  DezenasLoading(
-                      _numeroDeDezenasASortear.toInt(), widget.concursoBean),
-                  Visibility(
-                      visible: widget.concursoBean.name == "D. SENA",
-                      child: Divider(
-                        height: 0,
-                      )),
-                  Visibility(
-                      visible: widget.concursoBean.name == "D. SENA",
-                      child: DezenasLoading(_numeroDeDezenasASortear.toInt(),
-                          widget.concursoBean)),
-                ],
-              );
-            },
-          ),
+                    ],
+                  ),
+                ),
+                _buildRefreshButton(),
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Column(
+              children: [
+                Expanded(child: Center(child: Icon(Icons.signal_wifi_off))),
+              ],
+            );
+          }
+          return Column(
+            children: <Widget>[
+              DezenasLoading(_numeroDeDezenasASortear.toInt(), widget._contest),
+              Visibility(
+                  visible: widget._contest.name == "D. SENA",
+                  child: Divider(
+                    height: 0,
+                  )),
+              Visibility(
+                  visible: widget._contest.name == "D. SENA",
+                  child: DezenasLoading(
+                      _numeroDeDezenasASortear.toInt(), widget._contest)),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  _buildRefreshButton() {
+    final ButtonStyle style = TextButton.styleFrom(
+      backgroundColor: widget._contest.getColor(context),
+      padding: EdgeInsets.all(0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+    );
+    return Visibility(
+      visible: estrategiaGeracao == EstrategiaGeracao.ALEATORIO,
+      child: ElevatedButton(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.refresh,
+                  color: Colors.white,
+                ),
+                Text(
+                  "Gerar novamente",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ]),
         ),
-      ],
+        onPressed: () => sortearComAnuncio(0),
+        style: style,
+      ),
     );
   }
 
