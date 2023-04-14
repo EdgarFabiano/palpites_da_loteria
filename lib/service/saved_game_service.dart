@@ -1,3 +1,7 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:palpites_da_loteria/defaults/constants.dart';
+import 'package:palpites_da_loteria/service/contest_service.dart';
+import 'package:palpites_da_loteria/service/format_service.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../model/contest.dart';
@@ -13,7 +17,14 @@ class SavedGameService {
 
   SavedGameService._internal();
 
-  Future<List<SavedGame>> getSavedGames(Contest? contest) async {
+  Future<SavedGame> getSavedGameById(int id) async {
+    Database db = await DBProvider().database;
+    final List<Map<String, dynamic>> jsons =
+    await db.rawQuery('SELECT * FROM ${DBProvider.tableSavedGame} WHERE id=?', ['$id']);
+    return jsons.map((json) => SavedGame.fromJsonMap(json)).toList().first;
+  }
+
+  Future<List<SavedGame>> getSavedGamesByContest(Contest? contest) async {
     Database db = await DBProvider().database;
     var sql = ' SELECT * FROM ${DBProvider.tableSavedGame} ' +
         ((contest != null)
@@ -35,6 +46,16 @@ class SavedGameService {
       DBProvider.tableSavedGame,
       savedGame.toJsonMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    var contest = await ContestService().getContestById(savedGame.contestId);
+    await FirebaseAnalytics.instance.logEvent(
+      name: Constants.ev_addSavedGame,
+      parameters: {
+        Constants.pm_Contest: contest.name,
+        Constants.pm_game: truncate(savedGame.numbers, 100),
+        Constants.pm_title: truncate(savedGame.title ?? 'N/A', 100),
+      },
     );
     return savedGameId;
   }
@@ -66,6 +87,18 @@ class SavedGameService {
 
   Future<void> deleteSavedGameById(int id) async {
     Database db = await DBProvider().database;
+
+    var savedGame = await getSavedGameById(id);
+    var contest = await ContestService().getContestById(savedGame.contestId);
+    await FirebaseAnalytics.instance.logEvent(
+      name: Constants.ev_removeSavedGame,
+      parameters: {
+        Constants.pm_Contest: contest.name,
+        Constants.pm_game: truncate(savedGame.numbers, 100),
+        Constants.pm_title: truncate(savedGame.title ?? 'N/A', 100),
+      },
+    );
+
     await db.delete(
       DBProvider.tableSavedGame,
       where: 'id = ?',

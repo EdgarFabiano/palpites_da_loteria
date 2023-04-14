@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
@@ -97,8 +98,12 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
                 icon: const Icon(Icons.share),
                 tooltip: 'Compartilhar resultado',
                 color: Colors.white,
-                onPressed: () {
+                onPressed: () async {
                   Share.share(_resultado!.shareString());
+                  await FirebaseAnalytics.instance.logShare(
+                      contentType: _resultado!.nome!,
+                      itemId: _resultado!.concurso!.toString(),
+                      method: 'app');
                 },
               ),
           ],
@@ -131,10 +136,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
       snackBar = _getDeletedGameSnackBar();
     } else {
       _areadySavedGameId = await _savedGameService.addSavedGame(
-        SavedGame(
-          contestId: widget.contest.id,
-          numbers: _generatedGame
-        ),
+        SavedGame(contestId: widget.contest.id, numbers: _generatedGame),
       );
       snackBar = _getSavedGameSnackBar();
     }
