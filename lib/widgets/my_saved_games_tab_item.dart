@@ -28,7 +28,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
   List<SavedGame> _savedGames = [];
 
   Future<bool> _asyncInit() async {
-    _savedGames = await _savedGameService.getSavedGames(widget.contest);
+    _savedGames = await _savedGameService.getSavedGamesByContest(widget.contest);
     return true;
   }
 
@@ -66,7 +66,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
   }
 
   Future<void> _updateUI() async {
-    _savedGames = await _savedGameService.getSavedGames(widget.contest);
+    _savedGames = await _savedGameService.getSavedGamesByContest(widget.contest);
     setState(() {});
     widget.notifyParent(_savedGames.isEmpty);
   }

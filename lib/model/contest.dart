@@ -56,7 +56,7 @@ class Contest {
 
   @override
   String toString() {
-    return 'Contest{id: $id, name: $name, enabled: $enabled, color: $color}';
+    return 'Contest{id: $id, name: $name, enabled: $enabled, sortOrder: $sortOrder}';
   }
 
   String getEnpoint() {

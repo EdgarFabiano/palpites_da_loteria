@@ -1,6 +1,8 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 
+import '../defaults/constants.dart';
 import '../service/contest_service.dart';
 
 class ConcursosSettingsChangeNotifier with ChangeNotifier {
@@ -20,9 +22,11 @@ class ConcursosSettingsChangeNotifier with ChangeNotifier {
     notifyListeners();
   }
 
-  void onReorder(int start, int current) {
+  Future<void> onReorder(int start, int current) async {
+    var from = start, to = current;
     // dragging from top to bottom
     List<Contest> contests = _contests;
+    var contest = contests[from].name, enabled = contests[from].enabled;
 
     if (start < current) {
       int end = current - 1;
@@ -49,5 +53,15 @@ class ConcursosSettingsChangeNotifier with ChangeNotifier {
     _contests = contests;
     _contestService?.updateAllOrderAndEnabledContest(_contests);
     notifyListeners();
+
+    await FirebaseAnalytics.instance.logEvent(
+      name: Constants.ev_SortContestHomeScreen,
+      parameters: {
+        Constants.pm_Contest: contest,
+        Constants.pm_from: from,
+        Constants.pm_to: to,
+        Constants.pm_Enabled: enabled.toString(),
+      },
+    );
   }
 }

@@ -3,8 +3,12 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
+
+import '../defaults/constants.dart';
+import 'format_service.dart';
 
 ResultadoAPI parseResultado(Map<String, dynamic> responseBody) {
   return ResultadoAPI.fromJson(responseBody);
@@ -37,6 +41,14 @@ class LoteriaAPIService {
 
   Future<ResultadoAPI> fetchResultado(Contest contest, int concurso) async {
     var url = _server + "/Loteria/${contest.getEnpoint()}/$concurso";
+    await FirebaseAnalytics.instance.logEvent(
+      name: Constants.ev_contestResult,
+      parameters: {
+        Constants.pm_ContestName: contest.name,
+        Constants.pm_ContestNumber: concurso.toString(),
+        Constants.pm_date: formatarDataHora(DateTime.now()),
+      },
+    );
 
     if (concurso != 0) {
       Response response =
@@ -50,6 +62,15 @@ class LoteriaAPIService {
 
   Future<ResultadoAPI> fetchLatestResultado(Contest contest) async {
     var url = _server + "/Loteria/${contest.getEnpoint()}/Latest";
+    await FirebaseAnalytics.instance.logEvent(
+      name: Constants.ev_contestResult,
+      parameters: {
+        Constants.pm_ContestName: contest.name,
+        Constants.pm_ContestNumber: 'latest',
+        Constants.pm_date: formatarDataHora(DateTime.now()),
+      },
+    );
+
     Response response = await _dio.get(url, options: _options);
 
     if (response.statusCode == 200 && response.data is Map) {

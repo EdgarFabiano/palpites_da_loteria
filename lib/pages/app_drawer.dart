@@ -1,4 +1,5 @@
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +14,9 @@ import 'settings_page.dart';
 final InAppReview _inAppReview = InAppReview.instance;
 
 Future<void> _requestReview() async {
+  await FirebaseAnalytics.instance.logEvent(
+    name: Constants.ev_inAppReviewIntent,
+  );
   DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   final androidInfo = await deviceInfoPlugin.androidInfo;
 

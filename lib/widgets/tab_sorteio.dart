@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
@@ -45,7 +46,7 @@ class _TabSorteioState extends State<TabSorteio>
   bool _showFrequencia = true;
   SavedGameService _savedGameService = SavedGameService();
 
-  void _sortear(double increment) {
+  void _sortear(double increment) async {
     _numeroDeDezenasASortear += increment;
     _futureSorteio = _sorteioGenerator.sortear(
         widget._contest, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
@@ -53,6 +54,22 @@ class _TabSorteioState extends State<TabSorteio>
     _futureSorteio!.then((value) => _savedGameService.existsSavedGame(
         widget._contest, value.frequencias.map((e) => e.dezena).toList())
         .then((value) => widget.notifyParent(value)));
+    _futureSorteio!.then((value) async {
+      await FirebaseAnalytics.instance.logEvent(
+        name: Constants.ev_gameGenerated,
+        parameters: {
+          Constants.pm_Contest: widget._contest.name,
+          Constants.pm_type: estrategiaGeracao.name,
+          Constants.pm_from: formatarData(_dateTimeRange.start),
+          Constants.pm_to: formatarData(_dateTimeRange.end),
+          Constants.pm_showFrequencies: _showFrequencia.toString(),
+          Constants.pm_game: truncate(value.frequencias.map((e) => e.dezena).join('|'), 100),
+          Constants.pm_size: value.frequencias.length,
+        },
+      );
+    });
+
+
   }
 
   void sortearComAnuncio(double increment) {
