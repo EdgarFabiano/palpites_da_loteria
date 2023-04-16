@@ -20,20 +20,18 @@ class DefaultThemes {
     }
   }
 
-  static ThemeData appTheme(BuildContext context) {
+  static ThemeData appTheme() {
     return ThemeData(
-      brightness: Brightness.light,
-      primaryColor: primaryLight,
-//      secondaryHeaderColor: Colors.yellow,
-//      accentColor: Colors.red,
-    );
+        brightness: Brightness.light,
+        primarySwatch: Colors.indigo,
+        useMaterial3: true);
   }
 
-  static ThemeData darkTheme(BuildContext context) {
+  static ThemeData darkTheme() {
     return ThemeData(
-      brightness: Brightness.dark,
-      primaryColor: primaryDark,
-    );
+        brightness: Brightness.dark,
+        primarySwatch: Colors.teal,
+        useMaterial3: true);
   }
 
   static Color textColor(BuildContext context) {

@@ -14,7 +14,8 @@ class PalpitesLoteriaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     ConcursosSettingsChangeNotifier concursosSettingsChangeNotifier =
         ConcursosSettingsChangeNotifier();
-    _contestService.initContests()
+    _contestService
+        .initContests()
         .then((value) => concursosSettingsChangeNotifier.contests = value);
 
     return EasyDynamicThemeWidget(
@@ -35,10 +36,8 @@ class ConcursosMaterialApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: Strings.appName,
-      theme:
-          ThemeData(brightness: Brightness.light, primarySwatch: Colors.indigo, useMaterial3: true),
-      darkTheme:
-          ThemeData(brightness: Brightness.dark, primarySwatch: Colors.indigo, useMaterial3: true),
+      theme: DefaultThemes.appTheme(),
+      darkTheme: DefaultThemes.darkTheme(),
       themeMode: EasyDynamicTheme.of(context).themeMode,
       home: HomePage(),
       debugShowCheckedModeBanner: false,
