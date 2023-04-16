@@ -107,6 +107,10 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
                 },
               ),
           ],
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back_sharp, color: Colors.white),
+          ),
         ),
         body: Column(
           children: [
