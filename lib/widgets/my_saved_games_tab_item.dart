@@ -1,10 +1,6 @@
-import 'dart:math';
-
-import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/contest.dart';
-import 'package:palpites_da_loteria/service/contest_service.dart';
 
 import '../model/saved_game.dart';
 import '../pages/saved_game_edit_page.dart';
@@ -61,7 +57,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
           );
         }
         return Scaffold(
-          // floatingActionButton: _buildFloatingActionButton(),
+          floatingActionButton: _buildFloatingActionButton(),
           body: body,
         );
       },
@@ -109,22 +105,22 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
           },
         ),
         iconColor: widget.contest.getColor(context),
-        onTap: () => Navigator.push(
-          context,
+        onTap: () => Navigator.of(context).push(
           CupertinoPageRoute(
-            builder: (context) => SavedGameEditPage(widget.contest, savedGame),
-          ),
+              builder: (BuildContext context) =>
+                  SavedGameEditPage(widget.contest, savedGame, _updateUI),
+              fullscreenDialog: true),
         ),
       );
 
   FloatingActionButton _buildFloatingActionButton() {
     return FloatingActionButton(
-      onPressed: () async {
-        await _savedGameService.addSavedGame(
-          SavedGame(contestId: widget.contest.id, numbers: '1|2|3|4|5|6|7|8'),
-        );
-        _updateUI();
-      },
+      onPressed: () => Navigator.of(context).push(
+        CupertinoPageRoute(
+            builder: (BuildContext context) => SavedGameEditPage(
+                widget.contest, SavedGame.empty(widget.contest.id), _updateUI),
+            fullscreenDialog: true),
+      ),
       child: const Icon(Icons.add, color: Colors.white),
       backgroundColor: widget.contest.getColor(context),
     );
