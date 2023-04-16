@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:async/async.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/contest.dart';
 import 'package:palpites_da_loteria/service/contest_service.dart';
 
 import '../model/saved_game.dart';
+import '../pages/saved_game_edit_page.dart';
 import '../service/format_service.dart';
 import '../service/saved_game_service.dart';
 
@@ -28,7 +30,8 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
   List<SavedGame> _savedGames = [];
 
   Future<bool> _asyncInit() async {
-    _savedGames = await _savedGameService.getSavedGamesByContest(widget.contest);
+    _savedGames =
+        await _savedGameService.getSavedGamesByContest(widget.contest);
     return true;
   }
 
@@ -66,7 +69,8 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
   }
 
   Future<void> _updateUI() async {
-    _savedGames = await _savedGameService.getSavedGamesByContest(widget.contest);
+    _savedGames =
+        await _savedGameService.getSavedGamesByContest(widget.contest);
     setState(() {});
     widget.notifyParent(_savedGames.isEmpty);
   }
@@ -75,8 +79,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(savedGame.title != null)
-            Text(savedGame.title!),
+            if (savedGame.title != null) Text(savedGame.title!),
             Wrap(
               children: savedGame.numbers
                   .split("|")
@@ -84,11 +87,15 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
                     (e) => Card(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(formatarDezena(e), style: TextStyle(color: Colors.white)),
+                        child: Text(
+                          formatarDezena(e),
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       color: widget.contest.getColor(context),
                     ),
-                  ).toList(),
+                  )
+                  .toList(),
             ),
           ],
         ),
@@ -102,16 +109,19 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
           },
         ),
         iconColor: widget.contest.getColor(context),
+        onTap: () => Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => SavedGameEditPage(widget.contest, savedGame),
+          ),
+        ),
       );
 
   FloatingActionButton _buildFloatingActionButton() {
     return FloatingActionButton(
       onPressed: () async {
         await _savedGameService.addSavedGame(
-          SavedGame(
-            contestId: widget.contest.id,
-            numbers: '1|2|3|4|5|6|7|8'
-          ),
+          SavedGame(contestId: widget.contest.id, numbers: '1|2|3|4|5|6|7|8'),
         );
         _updateUI();
       },
