@@ -35,11 +35,18 @@ class SavedGameService {
     return jsons.map((json) => SavedGame.fromJsonMap(json)).toList();
   }
 
-  Future<int?> addSavedGame(SavedGame savedGame) async {
-    int? savedGameId;
-    if (savedGame.createdAt == null) {
-      savedGame.createdAt = DateTime.now();
+  Future<int?> createOrUpdateSavedGame(SavedGame savedGame) async {
+    if (savedGame.id == null) {
+      return _createSavedGame(savedGame);
+    } else {
+      _updateSavedGame(savedGame);
+      return Future.value(savedGame.id);
     }
+  }
+
+  Future<int?> _createSavedGame(SavedGame savedGame) async {
+    int? savedGameId;
+    savedGame.createdAt = DateTime.now();
     savedGame.numbers = getSortedNumbers(savedGame.numbers);
     Database db = await DBProvider().database;
     savedGameId = await db.insert(
@@ -60,6 +67,17 @@ class SavedGameService {
     return savedGameId;
   }
 
+  Future<void> _updateSavedGame(SavedGame savedGame) async {
+    savedGame.numbers = getSortedNumbers(savedGame.numbers);
+    Database db = await DBProvider().database;
+    await db.update(
+      DBProvider.tableSavedGame,
+      savedGame.toJsonMap(),
+      where: 'id = ?',
+      whereArgs: [savedGame.id],
+    );
+  }
+
   Future<int?> existsSavedGame(Contest contest, List<int> dezenas) async {
     Database db = await DBProvider().database;
     var numbers = getSortedNumbers(dezenas.join('|'));
@@ -72,17 +90,6 @@ class SavedGameService {
     } else {
       return null;
     }
-  }
-
-  Future<void> updateSavedGame(SavedGame savedGame) async {
-    savedGame.numbers = getSortedNumbers(savedGame.numbers);
-    Database db = await DBProvider().database;
-    await db.update(
-      DBProvider.tableSavedGame,
-      savedGame.toJsonMap(),
-      where: 'id = ?',
-      whereArgs: [savedGame.id],
-    );
   }
 
   Future<void> deleteSavedGameById(int id) async {

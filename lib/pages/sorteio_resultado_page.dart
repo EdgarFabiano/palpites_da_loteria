@@ -139,7 +139,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
       _areadySavedGameId = null;
       snackBar = _getDeletedGameSnackBar();
     } else {
-      _areadySavedGameId = await _savedGameService.addSavedGame(
+      _areadySavedGameId = await _savedGameService.createOrUpdateSavedGame(
         SavedGame(contestId: widget.contest.id, numbers: _generatedGame),
       );
       snackBar = _getSavedGameSnackBar();

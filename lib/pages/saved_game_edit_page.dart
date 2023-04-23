@@ -22,7 +22,7 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _notesController = TextEditingController();
-  var _isDezenasExpanded = false;
+  var _isDezenasExpanded = true;
   var _game = [];
 
   @override
@@ -103,7 +103,6 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
           ExpansionPanel(
             canTapOnHeader: true,
             headerBuilder: (BuildContext context, bool isExpanded) {
-              var title;
               if (!isExpanded) {
                 return ListTile(
                   title: Wrap(
@@ -124,7 +123,19 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
                   ),
                 );
               } else {
-                return SizedBox.shrink();
+                var title ='';
+                if (widget.contest.minSize != widget.contest.maxSize) {
+
+                title = 'Selecione de ${widget.contest.minSize} a ${widget.contest.maxSize} dezenas';
+                } else {
+                  title = 'Selecione ${widget.contest.maxSize} dezenas';
+                }
+                return ListTile(
+                  title: Text(
+                    title,
+                    overflow: TextOverflow.fade,
+                  ),
+                );
               }
             },
             body: buildContainerDezenasEditor(),
@@ -141,37 +152,40 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
       options.add(i);
     }
     return Container(
-      child: Wrap(
-        children: options.map(
-          (e) {
-            if (_isInGame(e)) {
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Wrap(
+          children: options.map(
+            (e) {
+              if (_isInGame(e)) {
+                return GestureDetector(
+                  onTap: () => _removeFromGame(e),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        formatarDezena(e.toString()),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    color: widget.contest.getColor(context),
+                  ),
+                );
+              }
               return GestureDetector(
-                onTap: _canRemove() ? () => _removeFromGame(e) : null,
+                onTap: () => _addToGame(e),
                 child: Card(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       formatarDezena(e.toString()),
-                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  color: widget.contest.getColor(context),
                 ),
               );
-            }
-            return GestureDetector(
-              onTap: _canAdd() ? () => _addToGame(e) : null,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    formatarDezena(e.toString()),
-                  ),
-                ),
-              ),
-            );
-          },
-        ).toList(),
+            },
+          ).toList(),
+        ),
       ),
     );
   }
@@ -180,31 +194,30 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
     return _game.length < widget.contest.maxSize;
   }
 
-  bool _canRemove() {
-    return _game.length > widget.contest.minSize;
-  }
-
   _addToGame(e) {
     if (_canAdd()) {
-      setState(() {
-        _game.add(e);
-        _updateSavedGameNumbers();
-      });
+      _game.add(e);
+    } else {
+      _game.removeLast();
+      _game.add(e);
     }
+    _updateSavedGameNumbers();
+    setState(() {});
   }
 
   void _updateSavedGameNumbers() {
-    widget.savedGame.numbers =
-        _savedGameService.getSortedNumbers(_game.join('|'));
+    if (_game.isNotEmpty) {
+      widget.savedGame.numbers =
+          _savedGameService.getSortedNumbers(_game.join('|'));
+    } else {
+      widget.savedGame.numbers = '';
+    }
   }
 
   _removeFromGame(int value) {
-    if (_canRemove()) {
-      setState(() {
-        _game.remove(value);
-        _updateSavedGameNumbers();
-      });
-    }
+    _game.remove(value);
+    _updateSavedGameNumbers();
+    setState(() {});
   }
 
   bool _isInGame(int value) {
@@ -242,10 +255,29 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
       widget.savedGame.id == null ? "Novo jogo" : "Editar jogo";
 
   Future<void> _saveGame() async {
-    widget.savedGame.title = _titleController.value.text;
-    widget.savedGame.notes = _notesController.value.text;
-    await _savedGameService.updateSavedGame(widget.savedGame);
-    widget.onSaved();
-    Navigator.of(context).pop();
+    var validationMessage = validateGame();
+    if (validationMessage == '') {
+      widget.savedGame.title = _titleController.value.text;
+      widget.savedGame.notes = _notesController.value.text;
+      await _savedGameService.createOrUpdateSavedGame(widget.savedGame);
+      widget.onSaved();
+      Navigator.of(context).pop();
+    } else {
+      var snackBar = SnackBar(
+        content: Text(validationMessage),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  String validateGame() {
+    var validationMessage = '';
+    if (_game.length < widget.contest.minSize) {
+      validationMessage =
+          'Escolha pelo menos ${widget.contest.minSize} dezenas';
+    } else if (_game.length > widget.contest.maxSize) {
+      validationMessage = 'Escolha no máximo ${widget.contest.maxSize} dezenas';
+    }
+    return validationMessage;
   }
 }
