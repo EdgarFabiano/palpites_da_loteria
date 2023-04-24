@@ -99,10 +99,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
         isThreeLine: true,
         trailing: IconButton(
           icon: Icon(Icons.delete),
-          onPressed: () async {
-            await _savedGameService.deleteSavedGameById(savedGame.id!);
-            _updateUI();
-          },
+          onPressed: () => _showDialogConfirm(savedGame),
         ),
         iconColor: widget.contest.getColor(context),
         onTap: () => Navigator.of(context).push(
@@ -123,6 +120,36 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
       ),
       child: const Icon(Icons.add, color: Colors.white),
       backgroundColor: widget.contest.getColor(context),
+    );
+  }
+
+  void _showDialogConfirm(SavedGame savedGame) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) => AlertDialog(
+            title: Text("Deseja realmente excluir o jogo?"),
+            // content: Text(savedGame.numbers),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("Cancelar"),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  await _savedGameService.deleteSavedGameById(savedGame.id!);
+                  _updateUI();
+                  Navigator.of(context).pop();
+                },
+                child: Text("Excluir"),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
