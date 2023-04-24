@@ -17,16 +17,6 @@ class Dezena extends StatefulWidget {
 }
 
 class _DezenaState extends State<Dezena> {
-  Widget _getDezenaDisplayWidget() {
-    return Text(
-      formatarDezena(widget._dezena),
-      style: TextStyle(
-        fontSize: 26,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +29,14 @@ class _DezenaState extends State<Dezena> {
         children: [
           Flexible(
             child: Center(
-              child: _getDezenaDisplayWidget(),
+              child: Text(
+                formatarDezena(widget._dezena),
+                style: TextStyle(
+                  fontSize: widget._showFrequencia ? null : 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
           Visibility(
@@ -53,7 +50,7 @@ class _DezenaState extends State<Dezena> {
                   widget._frequencia.toString(),
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.white,
+                    color: Colors.white54,
                   ),
                 )),
           ),
