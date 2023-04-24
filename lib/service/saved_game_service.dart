@@ -76,6 +76,16 @@ class SavedGameService {
       where: 'id = ?',
       whereArgs: [savedGame.id],
     );
+
+    var contest = await ContestService().getContestById(savedGame.contestId);
+    await FirebaseAnalytics.instance.logEvent(
+      name: Constants.ev_updateSavedGame,
+      parameters: {
+        Constants.pm_Contest: contest.name,
+        Constants.pm_game: truncate(savedGame.numbers, 100),
+        Constants.pm_title: truncate(savedGame.title ?? 'N/A', 100),
+      },
+    );
   }
 
   Future<int?> existsSavedGame(Contest contest, List<int> dezenas) async {
