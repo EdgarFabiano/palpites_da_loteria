@@ -170,6 +170,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
             CupertinoPageRoute(
               builder: (context) => MySavedGames(
                 initPositionContest: widget.contest,
+                initPositionGameId: _areadySavedGameId,
               ),
             ),
           );

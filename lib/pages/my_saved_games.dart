@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/pages/saved_game_edit_page.dart';
@@ -17,8 +15,11 @@ import '../widgets/custom_tab_view.dart';
 
 class MySavedGames extends StatefulWidget {
   final Contest? initPositionContest;
+  final int? initPositionGameId;
 
-  const MySavedGames({Key? key, this.initPositionContest}) : super(key: key);
+  const MySavedGames(
+      {Key? key, this.initPositionContest, this.initPositionGameId})
+      : super(key: key);
 
   @override
   State<MySavedGames> createState() => _MySavedGamesState();
@@ -42,6 +43,8 @@ class _MySavedGamesState extends State<MySavedGames>
   List<DropdownMenuItem<int>> _dropdownItems = [];
   int _selectedValue = 0;
 
+  int? _initPositionGameId;
+
   _initDropDownItems() async {
     _contestService.getActiveContests().then((value) {
       _dropdownItems = value
@@ -60,6 +63,21 @@ class _MySavedGamesState extends State<MySavedGames>
         _initPosition = 0;
         _currentContest = null;
       }
+      if(_initPositionGameId != null) {
+        var savedGame = await _savedGameService.getSavedGameById(_initPositionGameId!);
+        _initPositionGameId = null;
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+              builder: (BuildContext context) {
+                return SavedGameEditPage(
+                  _currentContest!,
+                  savedGame,
+                      () => _updateUI(false),
+                );
+              },
+              fullscreenDialog: true),
+        );
+      }
     }
     _tabs =
         _contestsWithSavedGames.map((e) => Tab(child: Text(e.name))).toList();
@@ -72,6 +90,7 @@ class _MySavedGamesState extends State<MySavedGames>
   @override
   void initState() {
     super.initState();
+    _initPositionGameId = widget.initPositionGameId;
     _currentContest = widget.initPositionContest;
     if (Constants.showAds) {
       _bannerAd.load();

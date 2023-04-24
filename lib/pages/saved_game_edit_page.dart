@@ -22,7 +22,7 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _notesController = TextEditingController();
-  var _isDezenasExpanded = true;
+  var _isDezenasExpanded = false;
   var _game = [];
 
   @override
@@ -33,6 +33,7 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
     if (widget.savedGame.numbers.isNotEmpty)
       _game =
           widget.savedGame.numbers.split("|").map((e) => int.parse(e)).toList();
+    _isDezenasExpanded = widget.savedGame.id == null;
   }
 
   @override
