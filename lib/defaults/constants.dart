@@ -27,6 +27,7 @@ class Constants {
   static const String pm_to = 'to';
 
   static const String ev_addSavedGame = 'add_saved_game';
+  static const String ev_updateSavedGame = 'update_saved_game';
   static const String ev_removeSavedGame = 'remove_saved_game';
   static const String pm_game = 'game';
   static const String pm_title = 'title';
