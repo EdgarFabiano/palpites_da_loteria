@@ -22,6 +22,10 @@ class SavedGame {
     }
   }
 
+  static SavedGame empty(int contestId) {
+    return SavedGame(contestId: contestId, numbers: '');
+  }
+
   SavedGame.fromJsonMap(Map<String, dynamic> map)
       : id = map['id'] as int,
         contestId = map['contestId'] as int,

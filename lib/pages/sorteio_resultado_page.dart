@@ -107,6 +107,10 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
                 },
               ),
           ],
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back_sharp, color: Colors.white),
+          ),
         ),
         body: Column(
           children: [
@@ -135,7 +139,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
       _areadySavedGameId = null;
       snackBar = _getDeletedGameSnackBar();
     } else {
-      _areadySavedGameId = await _savedGameService.addSavedGame(
+      _areadySavedGameId = await _savedGameService.createOrUpdateSavedGame(
         SavedGame(contestId: widget.contest.id, numbers: _generatedGame),
       );
       snackBar = _getSavedGameSnackBar();
@@ -166,6 +170,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
             CupertinoPageRoute(
               builder: (context) => MySavedGames(
                 initPositionContest: widget.contest,
+                initPositionGameId: _areadySavedGameId,
               ),
             ),
           );

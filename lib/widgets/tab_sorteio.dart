@@ -43,7 +43,7 @@ class _TabSorteioState extends State<TabSorteio>
   TextEditingController _endDateController = TextEditingController();
   DateTimeRange _dateTimeRange =
       DateTimeRange(start: DateTime.now(), end: DateTime.now());
-  bool _showFrequencia = true;
+  bool _showFrequencia = false;
   SavedGameService _savedGameService = SavedGameService();
 
   void _sortear(double increment) async {
@@ -130,6 +130,7 @@ class _TabSorteioState extends State<TabSorteio>
             _buttonGroupController.selectIndex(index);
             estrategiaGeracao = EstrategiaGeracao.values[index];
             _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
+            _showFrequencia = estrategiaGeracao != EstrategiaGeracao.ALEATORIO;
             sortearComAnuncio(0);
           },
           buttons: EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),

@@ -95,17 +95,18 @@ class Contest {
   }
 
   Color getColor(BuildContext context) {
-    var colorValue = Theme.of(context).brightness == Brightness.light ? this.color : this.colorDark;
+    var colorValue = Theme.of(context).brightness == Brightness.light
+        ? this.color
+        : this.colorDark;
     return Color(colorValue).withAlpha(255);
   }
-  
+
   @override
-  bool operator == (Object other) =>
+  bool operator ==(Object other) =>
       other is Contest &&
-          other.runtimeType == this.runtimeType &&
-          other.id == this.id;
+      other.runtimeType == this.runtimeType &&
+      other.id == this.id;
 
   @override
   int get hashCode => this.id;
-  
 }

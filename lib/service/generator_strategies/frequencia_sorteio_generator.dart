@@ -19,7 +19,7 @@ class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
   final String _server = 'https://edgar.outsystemscloud.com/LoteriaService/rest/Frequencia';
   final String _username = 'loteria_service';
   final String _password = 'E862415l!';
-  String? _basicAuth;
+  late String _basicAuth;
 
   FrequenciaSorteioGenerator(this.isAscending) {
     _basicAuth = 'Basic ' + base64.encode(utf8.encode('$_username:$_password'));
@@ -30,7 +30,7 @@ class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
         (dateTimeRange != null ? '&StartDate=${dateTimeRange.start.year}-${dateTimeRange.start.month}-${dateTimeRange.start.day}'
             '&EndDate=${dateTimeRange.end.year}-${dateTimeRange.end.month}-${dateTimeRange.end.day}' : '')  +
         '&GameSize=$gameSize';
-    http.Response response = await http.get(Uri.parse(url), headers: {'Authorization': _basicAuth!});
+    http.Response response = await http.get(Uri.parse(url), headers: {'Authorization': _basicAuth});
     if (response.statusCode == 200 && response.body.isNotEmpty) {
       return compute(parseResultado, json.decode(response.body) as Map<String, dynamic>);
     }
