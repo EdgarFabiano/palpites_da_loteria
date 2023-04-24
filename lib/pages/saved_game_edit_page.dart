@@ -242,6 +242,7 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
 
   TextField buildTextFieldTitle() {
     return TextField(
+      maxLength: 50,
       controller: _titleController,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
