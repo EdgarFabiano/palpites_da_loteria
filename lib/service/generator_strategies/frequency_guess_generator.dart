@@ -14,9 +14,9 @@ FrequencyDraw parseResult(Map<String, dynamic> responseBody) {
 }
 
 class FrequencyGuessGenerator implements AbstractGuessGenerator {
-
   bool isAscending;
-  final String _server = 'https://edgar.outsystemscloud.com/LoteriaService/rest/Frequencia';
+  final String _server =
+      'https://edgar.outsystemscloud.com/LoteriaService/rest/Frequencia';
   final String _username = 'loteria_service';
   final String _password = 'E862415l!';
   late String _basicAuth;
@@ -25,21 +25,26 @@ class FrequencyGuessGenerator implements AbstractGuessGenerator {
     _basicAuth = 'Basic ' + base64.encode(utf8.encode('$_username:$_password'));
   }
 
-  Future<FrequencyDraw> fetchResult(Contest contest, int gameSize, DateTimeRange? dateTimeRange) async {
+  Future<FrequencyDraw> fetchResult(
+      Contest contest, int gameSize, DateTimeRange? dateTimeRange) async {
     var url = '$_server/${contest.getEnpoint()}?IsAscending=$isAscending' +
-        (dateTimeRange != null ? '&StartDate=${dateTimeRange.start.year}-${dateTimeRange.start.month}-${dateTimeRange.start.day}'
-            '&EndDate=${dateTimeRange.end.year}-${dateTimeRange.end.month}-${dateTimeRange.end.day}' : '')  +
+        (dateTimeRange != null
+            ? '&StartDate=${dateTimeRange.start.year}-${dateTimeRange.start.month}-${dateTimeRange.start.day}'
+                '&EndDate=${dateTimeRange.end.year}-${dateTimeRange.end.month}-${dateTimeRange.end.day}'
+            : '') +
         '&GameSize=$gameSize';
-    http.Response response = await http.get(Uri.parse(url), headers: {'Authorization': _basicAuth});
+    http.Response response =
+        await http.get(Uri.parse(url), headers: {'Authorization': _basicAuth});
     if (response.statusCode == 200 && response.body.isNotEmpty) {
-      return compute(parseResult, json.decode(response.body) as Map<String, dynamic>);
+      return compute(
+          parseResult, json.decode(response.body) as Map<String, dynamic>);
     }
     return Future.value(FrequencyDraw.empty());
   }
 
   @override
-  Future<FrequencyDraw> generateGuess(Contest contest, int gameSize, [DateTimeRange? dateTimeRange]) {
+  Future<FrequencyDraw> generateGuess(Contest contest, int gameSize,
+      [DateTimeRange? dateTimeRange]) {
     return fetchResult(contest, gameSize, dateTimeRange);
   }
-
 }

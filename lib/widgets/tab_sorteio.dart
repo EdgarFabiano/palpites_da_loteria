@@ -2,14 +2,14 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/model/enum/filtro_periodo.dart';
+import 'package:palpites_da_loteria/model/enum/period_filter.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/format_service.dart';
 import 'package:palpites_da_loteria/service/saved_game_service.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
 
-import '../model/enum/estrategia_geracao.dart';
+import '../model/enum/generation_strategy.dart';
 import '../model/frequency_draw.dart';
 import '../service/generator_strategies/abstract_guess_generator.dart';
 import 'dezenas_loading.dart';
@@ -31,14 +31,14 @@ class TabSorteio extends StatefulWidget {
 
 class _TabSorteioState extends State<TabSorteio>
     with AutomaticKeepAliveClientMixin {
-  EstrategiaGeracao estrategiaGeracao = EstrategiaGeracao.ALEATORIO;
+  GenerationStrategy estrategiaGeracao = GenerationStrategy.RANDOM;
   AbstractGuessGenerator _sorteioGenerator =
-      EstrategiaGeracao.ALEATORIO.sorteioGenerator;
+      GenerationStrategy.RANDOM.guessGenerator;
   double _numeroDeDezenasASortear = 0;
   int _chance = 3;
   Future<FrequencyDraw>? _futureSorteio;
   GroupButtonController _buttonGroupController = GroupButtonController();
-  FiltroPeriodo _dropdownValueFiltroPeriodo = FiltroPeriodo.TRES_MESES;
+  PeriodFilter _dropdownValueFiltroPeriodo = PeriodFilter.THREE_MONTHS;
   TextEditingController _startDateController = TextEditingController();
   TextEditingController _endDateController = TextEditingController();
   DateTimeRange _dateTimeRange =
@@ -128,12 +128,12 @@ class _TabSorteioState extends State<TabSorteio>
           onSelected: (value, index, isSelected) {
             _buttonGroupController.unselectAll();
             _buttonGroupController.selectIndex(index);
-            estrategiaGeracao = EstrategiaGeracao.values[index];
-            _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
-            _showFrequencia = estrategiaGeracao != EstrategiaGeracao.ALEATORIO;
+            estrategiaGeracao = GenerationStrategy.values[index];
+            _sorteioGenerator = estrategiaGeracao.guessGenerator;
+            _showFrequencia = estrategiaGeracao != GenerationStrategy.RANDOM;
             sortearComAnuncio(0);
           },
-          buttons: EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
+          buttons: GenerationStrategy.values.map((e) => e.displayTitle).toList(),
           options: GroupButtonOptions(
             selectedShadow: const [],
             selectedTextStyle: TextStyle(
@@ -159,7 +159,7 @@ class _TabSorteioState extends State<TabSorteio>
 
   _buildPeriodSelector() {
     return Visibility(
-      visible: estrategiaGeracao != EstrategiaGeracao.ALEATORIO,
+      visible: estrategiaGeracao != GenerationStrategy.RANDOM,
       child: Column(
         children: [
           SingleChildScrollView(
@@ -173,7 +173,7 @@ class _TabSorteioState extends State<TabSorteio>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(_dropdownValueFiltroPeriodo.labelValue),
-                      DropdownButton<FiltroPeriodo>(
+                      DropdownButton<PeriodFilter>(
                         value: _dropdownValueFiltroPeriodo,
                         icon: const Icon(Icons.keyboard_arrow_down),
                         elevation: 16,
@@ -181,11 +181,11 @@ class _TabSorteioState extends State<TabSorteio>
                           height: 2,
                           color: widget._contest.getColor(context),
                         ),
-                        onChanged: (FiltroPeriodo? newValue) {
+                        onChanged: (PeriodFilter? newValue) {
                           setState(() {
                             _dropdownValueFiltroPeriodo = newValue!;
                             if (_dropdownValueFiltroPeriodo ==
-                                FiltroPeriodo.CUSTOMIZADO) {
+                                PeriodFilter.CUSTOM) {
                               _updateDateTimeRange(
                                   _dateTimeRange.start, _dateTimeRange.end);
                             } else {
@@ -196,10 +196,10 @@ class _TabSorteioState extends State<TabSorteio>
                             sortearComAnuncio(0);
                           });
                         },
-                        items: FiltroPeriodo.values
-                            .map<DropdownMenuItem<FiltroPeriodo>>(
-                                (FiltroPeriodo value) {
-                          return DropdownMenuItem<FiltroPeriodo>(
+                        items: PeriodFilter.values
+                            .map<DropdownMenuItem<PeriodFilter>>(
+                                (PeriodFilter value) {
+                          return DropdownMenuItem<PeriodFilter>(
                             value: value,
                             child: Text(value.displayTitle),
                           );
@@ -221,7 +221,7 @@ class _TabSorteioState extends State<TabSorteio>
             ),
           ),
           Visibility(
-            visible: _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
+            visible: _dropdownValueFiltroPeriodo == PeriodFilter.CUSTOM,
             child: Row(
               children: [
                 Expanded(
@@ -444,7 +444,7 @@ class _TabSorteioState extends State<TabSorteio>
       ),
     );
     return Visibility(
-      visible: estrategiaGeracao == EstrategiaGeracao.ALEATORIO,
+      visible: estrategiaGeracao == GenerationStrategy.RANDOM,
       child: ElevatedButton(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

@@ -3,30 +3,31 @@ import 'package:palpites_da_loteria/service/generator_strategies/abstract_guess_
 import 'package:palpites_da_loteria/service/generator_strategies/frequency_guess_generator.dart';
 import 'package:palpites_da_loteria/service/generator_strategies/random_guess_generator.dart';
 
-enum EstrategiaGeracao { ALEATORIO, MAIS_SAIDAS, MAIS_ATRASADAS }
+enum GenerationStrategy { RANDOM, MORE_FREQUENT, LESS_FREQUENT }
 
-extension EstrategiaGeracaoExtension on EstrategiaGeracao {
+extension GenerationStrategyExtension on GenerationStrategy {
   String get name => describeEnum(this);
+
   String get displayTitle {
     switch (this) {
-      case EstrategiaGeracao.ALEATORIO:
+      case GenerationStrategy.RANDOM:
         return 'Aleatório';
-      case EstrategiaGeracao.MAIS_SAIDAS:
+      case GenerationStrategy.MORE_FREQUENT:
         return 'Mais frequentes';
-      case EstrategiaGeracao.MAIS_ATRASADAS:
+      case GenerationStrategy.LESS_FREQUENT:
         return 'Menos frequentes';
       default:
         return '';
     }
   }
 
-  AbstractGuessGenerator get sorteioGenerator {
+  AbstractGuessGenerator get guessGenerator {
     switch (this) {
-      case EstrategiaGeracao.ALEATORIO:
+      case GenerationStrategy.RANDOM:
         return RandomGuessGenerator();
-      case EstrategiaGeracao.MAIS_SAIDAS:
+      case GenerationStrategy.MORE_FREQUENT:
         return FrequencyGuessGenerator(false);
-      case EstrategiaGeracao.MAIS_ATRASADAS:
+      case GenerationStrategy.LESS_FREQUENT:
         return FrequencyGuessGenerator(true);
       default:
         return RandomGuessGenerator();
