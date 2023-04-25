@@ -9,8 +9,8 @@ import 'package:palpites_da_loteria/model/model_export.dart';
 import '../../model/sorteio_frequencia.dart';
 import 'abstract_sorteio_generator.dart';
 
-SorteioFrequencia parseResultado(Map<String, dynamic> responseBody) {
-  return SorteioFrequencia.fromJson(responseBody);
+FrequencyDraw parseResultado(Map<String, dynamic> responseBody) {
+  return FrequencyDraw.fromJson(responseBody);
 }
 
 class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
@@ -25,7 +25,7 @@ class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
     _basicAuth = 'Basic ' + base64.encode(utf8.encode('$_username:$_password'));
   }
 
-  Future<SorteioFrequencia> fetchResultado(Contest contest, int gameSize, DateTimeRange? dateTimeRange) async {
+  Future<FrequencyDraw> fetchResultado(Contest contest, int gameSize, DateTimeRange? dateTimeRange) async {
     var url = '$_server/${contest.getEnpoint()}?IsAscending=$isAscending' +
         (dateTimeRange != null ? '&StartDate=${dateTimeRange.start.year}-${dateTimeRange.start.month}-${dateTimeRange.start.day}'
             '&EndDate=${dateTimeRange.end.year}-${dateTimeRange.end.month}-${dateTimeRange.end.day}' : '')  +
@@ -34,11 +34,11 @@ class FrequenciaSorteioGenerator implements AbstractSorteioGenerator {
     if (response.statusCode == 200 && response.body.isNotEmpty) {
       return compute(parseResultado, json.decode(response.body) as Map<String, dynamic>);
     }
-    return Future.value(SorteioFrequencia.empty());
+    return Future.value(FrequencyDraw.empty());
   }
 
   @override
-  Future<SorteioFrequencia> sortear(Contest contest, int gameSize, [DateTimeRange? dateTimeRange]) {
+  Future<FrequencyDraw> sortear(Contest contest, int gameSize, [DateTimeRange? dateTimeRange]) {
     return fetchResultado(contest, gameSize, dateTimeRange);
   }
 

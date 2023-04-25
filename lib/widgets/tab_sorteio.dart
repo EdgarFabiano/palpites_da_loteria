@@ -36,7 +36,7 @@ class _TabSorteioState extends State<TabSorteio>
       EstrategiaGeracao.ALEATORIO.sorteioGenerator;
   double _numeroDeDezenasASortear = 0;
   int _chance = 3;
-  Future<SorteioFrequencia>? _futureSorteio;
+  Future<FrequencyDraw>? _futureSorteio;
   GroupButtonController _buttonGroupController = GroupButtonController();
   FiltroPeriodo _dropdownValueFiltroPeriodo = FiltroPeriodo.TRES_MESES;
   TextEditingController _startDateController = TextEditingController();
@@ -50,9 +50,9 @@ class _TabSorteioState extends State<TabSorteio>
     _numeroDeDezenasASortear += increment;
     _futureSorteio = _sorteioGenerator.sortear(
         widget._contest, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
-    _futureSorteio!.then((value) => widget.generatedGameResolver(value.frequencias.map((e) => e.dezena).join('|')));
+    _futureSorteio!.then((value) => widget.generatedGameResolver(value.frequencies.map((e) => e.number).join('|')));
     _futureSorteio!.then((value) => _savedGameService.existsSavedGame(
-        widget._contest, value.frequencias.map((e) => e.dezena).toList())
+        widget._contest, value.frequencies.map((e) => e.number).toList())
         .then((value) => widget.notifyParent(value)));
     _futureSorteio!.then((value) async {
       await FirebaseAnalytics.instance.logEvent(
@@ -63,8 +63,8 @@ class _TabSorteioState extends State<TabSorteio>
           Constants.pm_from: formatarData(_dateTimeRange.start),
           Constants.pm_to: formatarData(_dateTimeRange.end),
           Constants.pm_showFrequencies: _showFrequencia.toString(),
-          Constants.pm_game: truncate(value.frequencias.map((e) => e.dezena).join('|'), 100),
-          Constants.pm_size: value.frequencias.length,
+          Constants.pm_game: truncate(value.frequencies.map((e) => e.number).join('|'), 100),
+          Constants.pm_size: value.frequencies.length,
         },
       );
     });
@@ -318,28 +318,28 @@ class _TabSorteioState extends State<TabSorteio>
     var width = MediaQuery.of(context).size.width;
     double textScale = MediaQuery.of(context).textScaleFactor;
     return Expanded(
-      child: FutureBuilder<SorteioFrequencia>(
+      child: FutureBuilder<FrequencyDraw>(
         future: _futureSorteio,
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
-            SorteioFrequencia sorteioFrequencia = snapshot.data!;
-            List<Dezena> dezenas = sorteioFrequencia.frequencias
+            FrequencyDraw sorteioFrequencia = snapshot.data!;
+            List<Dezena> dezenas = sorteioFrequencia.frequencies
                 .map((value) => Dezena(
-                      value.dezena.toString(),
+                      value.number.toString(),
                       widget._contest.getColor(context),
                       _showFrequencia,
-                      value.quantidade,
+                      value.quantity,
                     ))
                 .toList();
             List<Dezena> dezenas2 = [];
-            if (sorteioFrequencia.frequencias2 != null) {
-              dezenas2 = sorteioFrequencia.frequencias2!
+            if (sorteioFrequencia.frequencies_2 != null) {
+              dezenas2 = sorteioFrequencia.frequencies_2!
                   .map((value) => Dezena(
-                        value.dezena.toString(),
+                        value.number.toString(),
                         widget._contest.getColor(context),
                         _showFrequencia,
-                        value.quantidade,
+                        value.quantity,
                       ))
                   .toList();
             }
@@ -372,7 +372,7 @@ class _TabSorteioState extends State<TabSorteio>
                       ),
                     )),
                 Visibility(
-                  visible: sorteioFrequencia.qtdConcursos > 0,
+                  visible: sorteioFrequencia.contestQuantity > 0,
                   child: Column(
                     children: [
                       RichText(
@@ -381,7 +381,7 @@ class _TabSorteioState extends State<TabSorteio>
                             TextSpan(text: 'Com base em ', style: textStyle),
                             TextSpan(
                                 text:
-                                    '${formatNumber(sorteioFrequencia.qtdConcursos)}',
+                                    '${formatNumber(sorteioFrequencia.contestQuantity)}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: textColor)),

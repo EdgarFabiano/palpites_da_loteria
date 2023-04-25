@@ -6,6 +6,6 @@ import '../../model/sorteio_frequencia.dart';
 
 abstract class AbstractSorteioGenerator {
 
-  Future<SorteioFrequencia> sortear(Contest contest, int gameSize, [DateTimeRange? dateTimeRange]);
+  Future<FrequencyDraw> sortear(Contest contest, int gameSize, [DateTimeRange? dateTimeRange]);
 
 }
