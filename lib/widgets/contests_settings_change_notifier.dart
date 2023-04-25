@@ -5,11 +5,11 @@ import 'package:palpites_da_loteria/model/model_export.dart';
 import '../defaults/constants.dart';
 import '../service/contest_service.dart';
 
-class ConcursosSettingsChangeNotifier with ChangeNotifier {
+class ContestsSettingsChangeNotifier with ChangeNotifier {
   List<Contest> _contests = [];
   ContestService? _contestService = ContestService();
 
-  ConcursosSettingsChangeNotifier();
+  ContestsSettingsChangeNotifier();
 
   getContests() => _contests;
 

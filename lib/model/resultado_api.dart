@@ -94,7 +94,7 @@ class ResultadoAPI {
     return data;
   }
 
-  String getDataConcursoDisplayValue() {
+  String getContestDataDisplayValue() {
     if (data != null) return (data!);
     return '';
   }
@@ -111,12 +111,12 @@ class ResultadoAPI {
   //   return '';
   // }
 
-  String getValorEstimadoProximoConcursoDisplayValue() {
+  String getNextContestEstimatedPrizeDisplayValue() {
     if (acumuladaProxConcurso != null) return '${acumuladaProxConcurso!}';
     return '';
   }
 
-  String getDataProximoConcursoDisplayValue() {
+  String getNextContestDateDisplayValue() {
     if (dataProxConcurso != null) return (dataProxConcurso!);
     return '';
   }
@@ -152,18 +152,18 @@ class ResultadoAPI {
                 : '') +
             'Concurso: $concurso \n' +
             'Data de realização: ' +
-            getDataConcursoDisplayValue() +
+            getContestDataDisplayValue() +
             '\n\n' +
             // 'Arrecadação total: ' + getArrecadacaoTotalDisplayValue() +'\n'
             // 'Acumulado: ' + getValorAcumuladoDisplayValue() + '\n\n'
-            ((getDataProximoConcursoDisplayValue() != '')
+            ((getNextContestDateDisplayValue() != '')
                 ? 'Próximo concurso dia ' +
-                    getDataProximoConcursoDisplayValue() +
+                    getNextContestDateDisplayValue() +
                     '\n'
                 : '') +
-            ((getValorEstimadoProximoConcursoDisplayValue() != '')
+            ((getNextContestEstimatedPrizeDisplayValue() != '')
                 ? 'Prêmio estimado: ' +
-                    getValorEstimadoProximoConcursoDisplayValue() +
+                    getNextContestEstimatedPrizeDisplayValue() +
                     '\n'
                 : '')
         //(nome_acumulado_especial != null ? 'Acumulado $nome_acumulado_especial: ' + getValorAcumuladoEspecialDisplayValue() : '')

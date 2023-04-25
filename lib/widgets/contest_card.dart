@@ -4,16 +4,16 @@ import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/pages/sorteio_resultado_page.dart';
 
-class CardConcursos extends StatefulWidget {
+class ContestCard extends StatefulWidget {
   final Contest _contest;
 
-  const CardConcursos(this._contest, {Key? key}) : super(key: key);
+  const ContestCard(this._contest, {Key? key}) : super(key: key);
 
   @override
-  _CardConcursosState createState() => _CardConcursosState();
+  _ContestCardState createState() => _ContestCardState();
 }
 
-class _CardConcursosState extends State<CardConcursos> {
+class _ContestCardState extends State<ContestCard> {
   Widget build(BuildContext context) {
     var loteriasIconAssetPath = Constants.loteriasIconAssetPath;
     return GestureDetector(

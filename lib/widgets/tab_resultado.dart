@@ -25,14 +25,14 @@ class _TabResultadoState extends State<TabResultado>
     with AutomaticKeepAliveClientMixin {
   Future<ResultadoAPI>? _futureResultado;
   ResultadoAPI? _resultadoAPI;
-  final _concursoTextController = TextEditingController();
+  final _contestTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  int _ultimoConcurso = 0;
-  int _concursoAtual = 0;
+  int _lastContest = 0;
+  int _currentContest = 0;
   LoteriaAPIService _loteriaAPIService = LoteriaAPIService();
 
-  Future<void> _showDialogConcurso() async {
-    _concursoTextController.text = _concursoAtual.toString();
+  Future<void> _showDialogContest() async {
+    _contestTextController.text = _currentContest.toString();
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -46,13 +46,13 @@ class _TabResultadoState extends State<TabResultado>
                 Form(
                   key: _formKey,
                   child: TextFormField(
-                    controller: _concursoTextController,
+                    controller: _contestTextController,
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (!RegExp('[0-9]').hasMatch(value!)) {
                         return "Valor inválido";
-                      } else if (int.parse(value) > _ultimoConcurso) {
-                        return "Valor máximo: $_ultimoConcurso";
+                      } else if (int.parse(value) > _lastContest) {
+                        return "Valor máximo: $_lastContest";
                       } else if (int.parse(value) < 1) {
                         return "Valor mínimo: 1";
                       }
@@ -76,9 +76,9 @@ class _TabResultadoState extends State<TabResultado>
         style: DefaultThemes.flatButtonStyle(context),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  _concursoAtual = int.parse(_concursoTextController.text);
-                  if (_concursoAtual > _ultimoConcurso)
-                    _concursoAtual = _ultimoConcurso;
+                  _currentContest = int.parse(_contestTextController.text);
+                  if (_currentContest > _lastContest)
+                    _currentContest = _lastContest;
                   setState(() {
                     _refreshResultado();
                   });
@@ -95,7 +95,7 @@ class _TabResultadoState extends State<TabResultado>
   void _refreshResultado() {
     widget.refreshResultado(null);
     _futureResultado = _loteriaAPIService
-        .fetchResultado(widget._contest, _concursoAtual)
+        .fetchResultado(widget._contest, _currentContest)
         .then((value) {
       widget.refreshResultado(value);
       return Future.value(value);
@@ -110,8 +110,8 @@ class _TabResultadoState extends State<TabResultado>
         .then((value) {
       widget.refreshResultado(value);
       setState(() {
-        _ultimoConcurso = value.concurso!;
-        _concursoAtual = value.concurso!;
+        _lastContest = value.concurso!;
+        _currentContest = value.concurso!;
       });
       return Future.value(value);
     });
@@ -123,7 +123,7 @@ class _TabResultadoState extends State<TabResultado>
 
   @override
   void dispose() {
-    _concursoTextController.dispose();
+    _contestTextController.dispose();
     super.dispose();
   }
 
@@ -140,7 +140,7 @@ class _TabResultadoState extends State<TabResultado>
     return Column(
       children: [
         isDisconnected ? InternetNotAvailable() : SizedBox.shrink(),
-        !isDisconnected && _concursoAtual != 0
+        !isDisconnected && _currentContest != 0
             ? _getButtonsTop()
             : SizedBox.shrink(),
         Expanded(
@@ -216,7 +216,7 @@ class _TabResultadoState extends State<TabResultado>
           ),
           Padding(
             padding: EdgeInsets.all(10),
-            child: Text("Data: " + resultado.getDataConcursoDisplayValue()),
+            child: Text("Data: " + resultado.getContestDataDisplayValue()),
           )
         ],
       ));
@@ -397,10 +397,10 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    List<Widget> proxConcurso = [];
+    List<Widget> nextContest = [];
 
-    if (resultado.getValorEstimadoProximoConcursoDisplayValue() != '') {
-      proxConcurso.add(
+    if (resultado.getNextContestEstimatedPrizeDisplayValue() != '') {
+      nextContest.add(
         Text(
           "Prêmio estimado para o próximo concurso",
           style: TextStyle(
@@ -408,33 +408,33 @@ class _TabResultadoState extends State<TabResultado>
           ),
         ),
       );
-      proxConcurso.add(Text(
-        resultado.getValorEstimadoProximoConcursoDisplayValue(),
+      nextContest.add(Text(
+        resultado.getNextContestEstimatedPrizeDisplayValue(),
       ));
     }
 
-    if ((resultado.getValorEstimadoProximoConcursoDisplayValue() != '') &&
-        (resultado.getDataProximoConcursoDisplayValue() != '')) {
-      proxConcurso.add(Divider());
+    if ((resultado.getNextContestEstimatedPrizeDisplayValue() != '') &&
+        (resultado.getNextContestDateDisplayValue() != '')) {
+      nextContest.add(Divider());
     }
 
-    if (resultado.getDataProximoConcursoDisplayValue() != '') {
-      proxConcurso.add(Text(
+    if (resultado.getNextContestDateDisplayValue() != '') {
+      nextContest.add(Text(
         "Data do próximo concurso",
         style: TextStyle(
           fontWeight: FontWeight.bold,
         ),
       ));
-      proxConcurso.add(Text(resultado.getDataProximoConcursoDisplayValue()));
+      nextContest.add(Text(resultado.getNextContestDateDisplayValue()));
     }
 
-    if ((resultado.getValorEstimadoProximoConcursoDisplayValue() != '') &&
-        (resultado.getDataProximoConcursoDisplayValue() != '')) {
+    if ((resultado.getNextContestEstimatedPrizeDisplayValue() != '') &&
+        (resultado.getNextContestDateDisplayValue() != '')) {
       builder.add(Card(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
-            children: proxConcurso,
+            children: nextContest,
           ),
         ),
       ));
@@ -525,10 +525,10 @@ class _TabResultadoState extends State<TabResultado>
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
-          visible: _concursoAtual > 1,
+          visible: _currentContest > 1,
           child: TextButton(
             onPressed: () => setState(() {
-              --_concursoAtual;
+              --_currentContest;
               _refreshResultado();
             }),
             child: Text("Anterior"),
@@ -536,9 +536,9 @@ class _TabResultadoState extends State<TabResultado>
           ),
         ),
         TextButton(
-          onPressed: _showDialogConcurso,
+          onPressed: _showDialogContest,
           child: Text(
-            _concursoAtual.toString(),
+            _currentContest.toString(),
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           style: DefaultThemes.flatButtonStyle(context),
@@ -547,10 +547,10 @@ class _TabResultadoState extends State<TabResultado>
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
-          visible: _concursoAtual < _ultimoConcurso,
+          visible: _currentContest < _lastContest,
           child: TextButton(
             onPressed: () => setState(() {
-              ++_concursoAtual;
+              ++_currentContest;
               _refreshResultado();
             }),
             child: Text("Próximo"),

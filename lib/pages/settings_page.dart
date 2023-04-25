@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../defaults/strings.dart';
 import '../model/contest.dart';
-import '../widgets/concursos_settings_change_notifier.dart';
+import '../widgets/contests_settings_change_notifier.dart';
 import '../widgets/list_tem_concurso.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -13,7 +13,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  List<ListItemConcurso> _items = [];
+  List<ListItemContest> _items = [];
 
   bool _isDarkMode = false;
 
@@ -61,11 +61,11 @@ class _SettingsPageState extends State<SettingsPage> {
     var reorderableListView;
 
     var concursosProvider =
-        Provider.of<ConcursosSettingsChangeNotifier>(context);
+        Provider.of<ContestsSettingsChangeNotifier>(context);
     List<Contest> _contests = concursosProvider.getContests();
 
     _items = _contests
-        .map((c) => ListItemConcurso(
+        .map((c) => ListItemContest(
               c,
               key: Key("listItem" + c.name),
             ))

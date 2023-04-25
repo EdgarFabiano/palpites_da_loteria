@@ -5,8 +5,8 @@ import '../defaults/defaults_export.dart';
 import '../model/loteria_banner_ad.dart';
 import '../model/model_export.dart';
 import '../service/admob_service.dart';
-import '../widgets/card_concursos.dart';
-import '../widgets/concursos_settings_change_notifier.dart';
+import '../widgets/contest_card.dart';
+import '../widgets/contests_settings_change_notifier.dart';
 import 'app_drawer.dart';
 import 'home_loading_page.dart';
 
@@ -16,8 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<CardConcursos>? cards;
-  ConcursosSettingsChangeNotifier? concursosProvider;
+  List<ContestCard>? cards;
+  ContestsSettingsChangeNotifier? concursosProvider;
   LoteriaBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.concursosBannerId);
 
@@ -54,13 +54,13 @@ class _HomePageState extends State<HomePage> {
 
     var spacing = mediaQueryData.size.height / 100;
 
-    concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
+    concursosProvider = Provider.of<ContestsSettingsChangeNotifier>(context);
     _contests = concursosProvider?.getContests();
 
     if (concursosProvider != null && _contests != null) {
       cards = _contests
           .where((element) => element.enabled)
-          .map((concurso) => CardConcursos(concurso))
+          .map((concurso) => ContestCard(concurso))
           .toList();
 
       return Scaffold(
