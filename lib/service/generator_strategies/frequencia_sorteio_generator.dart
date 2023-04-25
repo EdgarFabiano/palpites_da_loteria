@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:palpites_da_loteria/model/model_export.dart';
 
-import '../../model/sorteio_frequencia.dart';
+import '../../model/frequency_draw.dart';
 import 'abstract_sorteio_generator.dart';
 
 FrequencyDraw parseResultado(Map<String, dynamic> responseBody) {

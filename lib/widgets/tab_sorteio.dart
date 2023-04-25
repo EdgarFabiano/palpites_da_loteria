@@ -10,7 +10,7 @@ import 'package:palpites_da_loteria/service/saved_game_service.dart';
 import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 import '../model/enum/estrategia_geracao.dart';
-import '../model/sorteio_frequencia.dart';
+import '../model/frequency_draw.dart';
 import '../service/generator_strategies/abstract_sorteio_generator.dart';
 import 'dezenas_loading.dart';
 

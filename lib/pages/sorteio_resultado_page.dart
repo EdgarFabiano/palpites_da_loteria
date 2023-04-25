@@ -31,7 +31,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   int _activeTabIndex = 0;
   TabController? _tabController;
   LotteryAPIResult? _resultado;
-  LoteriaBannerAd _bannerAd =
+  LotteryBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.sorteioBannerId);
   SavedGameService _savedGameService = SavedGameService();
   int? _areadySavedGameId;

@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<ContestCard>? cards;
   ContestsSettingsChangeNotifier? concursosProvider;
-  LoteriaBannerAd _bannerAd =
+  LotteryBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.concursosBannerId);
 
   @override

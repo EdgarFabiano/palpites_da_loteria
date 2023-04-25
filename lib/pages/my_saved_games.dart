@@ -27,7 +27,7 @@ class MySavedGames extends StatefulWidget {
 
 class _MySavedGamesState extends State<MySavedGames>
     with TickerProviderStateMixin {
-  LoteriaBannerAd _bannerAd =
+  LotteryBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.meusJogosBannerId);
 
   SavedGameService _savedGameService = SavedGameService();

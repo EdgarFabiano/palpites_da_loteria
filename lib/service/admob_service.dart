@@ -23,8 +23,8 @@ class AdMobService {
   static final AdRequest request = AdRequest();
 
   /*banner*/
-  static LoteriaBannerAd getBannerAd(String id) {
-    LoteriaBannerAd banner = LoteriaBannerAd(
+  static LotteryBannerAd getBannerAd(String id) {
+    LotteryBannerAd banner = LotteryBannerAd(
       adUnitId: id,
       request: AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(onAdLoaded: (Ad ad) {
@@ -47,7 +47,7 @@ class AdMobService {
     return banner;
   }
 
-  static Widget getBannerAdWidget(LoteriaBannerAd bannerAd) {
+  static Widget getBannerAdWidget(LotteryBannerAd bannerAd) {
     if (Constants.showAds && bannerAd.isLoaded) {
       return Container(
         child: AdWidget(ad: bannerAd),

@@ -1,11 +1,11 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class LoteriaBannerAd extends BannerAd {
+class LotteryBannerAd extends BannerAd {
   bool _isLoaded = false;
 
   bool get isLoaded => _isLoaded;
 
-  LoteriaBannerAd(
+  LotteryBannerAd(
       {required AdSize size,
       required String adUnitId,
       required BannerAdListener listener,
