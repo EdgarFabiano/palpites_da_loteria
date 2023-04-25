@@ -9,7 +9,7 @@ String truncate(String? string, int maxLenght) {
   }
 }
 
-String formatarDezena(String dezena) {
+String formatGuessNumber(String dezena) {
   String text = dezena;
   if (int.tryParse(dezena) != null && int.parse(dezena) < 10) {
     text = "0" + dezena;
@@ -17,7 +17,7 @@ String formatarDezena(String dezena) {
   return text;
 }
 
-String formatarData(DateTime? date) {
+String formatBrDate(DateTime? date) {
   if (date != null) {
     return formatDate(date, [dd, '/', mm, '/', yyyy]).toString();
   } else {
@@ -25,7 +25,7 @@ String formatarData(DateTime? date) {
   }
 }
 
-String formatarDataHora(DateTime? date) {
+String formatBrDateTime(DateTime? date) {
   if (date != null) {
     return formatDate(date, [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn, ':', ss])
         .toString();

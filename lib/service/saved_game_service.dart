@@ -19,9 +19,9 @@ class SavedGameService {
 
   Future<SavedGame> getSavedGameById(int id) async {
     Database db = await DBProvider().database;
-    final List<Map<String, dynamic>> jsons = await db.rawQuery(
+    final List<Map<String, dynamic>> json = await db.rawQuery(
         'SELECT * FROM ${DBProvider.tableSavedGame} WHERE id=?', ['$id']);
-    return jsons.map((json) => SavedGame.fromJsonMap(json)).toList().first;
+    return json.map((json) => SavedGame.fromJsonMap(json)).toList().first;
   }
 
   Future<List<SavedGame>> getSavedGamesByContest(Contest? contest) async {
@@ -31,8 +31,8 @@ class SavedGameService {
             ? ' WHERE ${DBProvider.tableSavedGame}.contestId = ${contest.id} '
             : '') +
         ' ORDER BY ${DBProvider.tableSavedGame}.createdAt DESC ';
-    final List<Map<String, dynamic>> jsons = await db.rawQuery(sql);
-    return jsons.map((json) => SavedGame.fromJsonMap(json)).toList();
+    final List<Map<String, dynamic>> json = await db.rawQuery(sql);
+    return json.map((json) => SavedGame.fromJsonMap(json)).toList();
   }
 
   Future<int?> createOrUpdateSavedGame(SavedGame savedGame) async {
@@ -94,9 +94,9 @@ class SavedGameService {
     var sql = ' SELECT id FROM ${DBProvider.tableSavedGame} ' +
         ' WHERE ${DBProvider.tableSavedGame}.contestId = ${contest.id} '
             ' AND ${DBProvider.tableSavedGame}.numbers = "$numbers"';
-    final List<Map<String, dynamic>> jsons = await db.rawQuery(sql);
-    if (jsons.isNotEmpty) {
-      return jsons.map((json) => json['id'] as int).toList().first;
+    final List<Map<String, dynamic>> json = await db.rawQuery(sql);
+    if (json.isNotEmpty) {
+      return json.map((json) => json['id'] as int).toList().first;
     } else {
       return null;
     }

@@ -46,7 +46,7 @@ class LotteryAPIService {
       parameters: {
         Constants.pm_ContestName: contest.name,
         Constants.pm_ContestNumber: concurso.toString(),
-        Constants.pm_date: formatarDataHora(DateTime.now()),
+        Constants.pm_date: formatBrDateTime(DateTime.now()),
       },
     );
 
@@ -66,7 +66,7 @@ class LotteryAPIService {
       parameters: {
         Constants.pm_ContestName: contest.name,
         Constants.pm_ContestNumber: 'latest',
-        Constants.pm_date: formatarDataHora(DateTime.now()),
+        Constants.pm_date: formatBrDateTime(DateTime.now()),
       },
     );
 

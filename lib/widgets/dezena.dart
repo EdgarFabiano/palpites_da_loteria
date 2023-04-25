@@ -29,7 +29,7 @@ class _DezenaState extends State<Dezena> {
           Flexible(
             child: Center(
               child: Text(
-                formatarDezena(widget._dezena),
+                formatGuessNumber(widget._dezena),
                 style: TextStyle(
                   fontSize: widget._showFrequencia ? null : 20,
                   fontWeight: FontWeight.bold,

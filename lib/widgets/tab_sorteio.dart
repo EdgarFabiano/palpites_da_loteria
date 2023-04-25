@@ -65,8 +65,8 @@ class _TabSorteioState extends State<TabSorteio>
         parameters: {
           Constants.pm_Contest: widget._contest.name,
           Constants.pm_type: estrategiaGeracao.name,
-          Constants.pm_from: formatarData(_dateTimeRange.start),
-          Constants.pm_to: formatarData(_dateTimeRange.end),
+          Constants.pm_from: formatBrDate(_dateTimeRange.start),
+          Constants.pm_to: formatBrDate(_dateTimeRange.end),
           Constants.pm_showFrequencies: _showFrequencia.toString(),
           Constants.pm_game:
               truncate(value.frequencies.map((e) => e.number).join('|'), 100),
@@ -397,13 +397,13 @@ class _TabSorteioState extends State<TabSorteio>
                           text: TextSpan(children: <TextSpan>[
                             TextSpan(text: 'De ', style: textStyle),
                             TextSpan(
-                                text: '${formatarData(_dateTimeRange.start)}',
+                                text: '${formatBrDate(_dateTimeRange.start)}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: textColor)),
                             TextSpan(text: ' a ', style: textStyle),
                             TextSpan(
-                                text: '${formatarData(_dateTimeRange.end)}',
+                                text: '${formatBrDate(_dateTimeRange.end)}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: textColor)),
@@ -481,8 +481,8 @@ class _TabSorteioState extends State<TabSorteio>
 
   void _updateDateTimeRange(DateTime startDate, DateTime endDate) {
     _dateTimeRange = DateTimeRange(start: startDate, end: endDate);
-    _startDateController.text = formatarData(_dateTimeRange.start);
-    _endDateController.text = formatarData(_dateTimeRange.end);
+    _startDateController.text = formatBrDate(_dateTimeRange.start);
+    _endDateController.text = formatBrDate(_dateTimeRange.end);
   }
 
   @override

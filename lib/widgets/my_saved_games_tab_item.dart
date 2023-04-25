@@ -84,7 +84,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          formatarDezena(e),
+                          formatGuessNumber(e),
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -95,7 +95,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
             ),
           ],
         ),
-        subtitle: Text('Criado em: ${formatarDataHora(savedGame.createdAt!)}'),
+        subtitle: Text('Criado em: ${formatBrDateTime(savedGame.createdAt!)}'),
         isThreeLine: true,
         trailing: IconButton(
           icon: Icon(Icons.delete),

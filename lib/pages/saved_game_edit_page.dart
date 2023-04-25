@@ -113,7 +113,7 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                formatarDezena(e.toString()),
+                                formatGuessNumber(e.toString()),
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
@@ -165,7 +165,7 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        formatarDezena(e.toString()),
+                        formatGuessNumber(e.toString()),
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -179,7 +179,7 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      formatarDezena(e.toString()),
+                      formatGuessNumber(e.toString()),
                     ),
                   ),
                 ),
