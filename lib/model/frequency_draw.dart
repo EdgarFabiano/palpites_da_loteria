@@ -7,7 +7,8 @@ class FrequencyDraw {
   int contestQuantity = 0;
 
   FrequencyDraw(
-      {required this.frequencies, this.frequencies_2, this.contestQuantity = 0});
+      {required this.frequencies,
+      this.frequencies_2, this.contestQuantity = 0});
 
   static FrequencyDraw empty() {
     return FrequencyDraw(frequencies: []);

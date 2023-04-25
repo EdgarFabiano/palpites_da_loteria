@@ -29,8 +29,7 @@ class _ListItemContestState extends State<ListItemContest> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _contestsProvider =
-        Provider.of<ContestsSettingsChangeNotifier>(context);
+    _contestsProvider = Provider.of<ContestsSettingsChangeNotifier>(context);
   }
 
   @override

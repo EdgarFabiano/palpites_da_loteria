@@ -22,7 +22,10 @@ class TabSorteio extends StatefulWidget {
   final AlreadySavedResolver notifyParent;
   final GeneratedGameResolver generatedGameResolver;
 
-  const TabSorteio(this._contest, {Key? key, required this.notifyParent, required this.generatedGameResolver})
+  const TabSorteio(this._contest,
+      {Key? key,
+      required this.notifyParent,
+      required this.generatedGameResolver})
       : super(key: key);
 
   @override
@@ -50,9 +53,11 @@ class _TabSorteioState extends State<TabSorteio>
     _numeroDeDezenasASortear += increment;
     _futureSorteio = _sorteioGenerator.generateGuess(
         widget._contest, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
-    _futureSorteio!.then((value) => widget.generatedGameResolver(value.frequencies.map((e) => e.number).join('|')));
-    _futureSorteio!.then((value) => _savedGameService.existsSavedGame(
-        widget._contest, value.frequencies.map((e) => e.number).toList())
+    _futureSorteio!.then((value) => widget.generatedGameResolver(
+        value.frequencies.map((e) => e.number).join('|')));
+    _futureSorteio!.then((value) => _savedGameService
+        .existsSavedGame(
+            widget._contest, value.frequencies.map((e) => e.number).toList())
         .then((value) => widget.notifyParent(value)));
     _futureSorteio!.then((value) async {
       await FirebaseAnalytics.instance.logEvent(
@@ -63,13 +68,12 @@ class _TabSorteioState extends State<TabSorteio>
           Constants.pm_from: formatarData(_dateTimeRange.start),
           Constants.pm_to: formatarData(_dateTimeRange.end),
           Constants.pm_showFrequencies: _showFrequencia.toString(),
-          Constants.pm_game: truncate(value.frequencies.map((e) => e.number).join('|'), 100),
+          Constants.pm_game:
+              truncate(value.frequencies.map((e) => e.number).join('|'), 100),
           Constants.pm_size: value.frequencies.length,
         },
       );
     });
-
-
   }
 
   void sortearComAnuncio(double increment) {
@@ -133,7 +137,8 @@ class _TabSorteioState extends State<TabSorteio>
             _showFrequencia = estrategiaGeracao != GenerationStrategy.RANDOM;
             sortearComAnuncio(0);
           },
-          buttons: GenerationStrategy.values.map((e) => e.displayTitle).toList(),
+          buttons:
+              GenerationStrategy.values.map((e) => e.displayTitle).toList(),
           options: GroupButtonOptions(
             selectedShadow: const [],
             selectedTextStyle: TextStyle(

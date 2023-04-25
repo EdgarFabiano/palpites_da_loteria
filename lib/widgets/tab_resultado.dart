@@ -29,7 +29,7 @@ class _TabResultadoState extends State<TabResultado>
   final _formKey = GlobalKey<FormState>();
   int _lastContest = 0;
   int _currentContest = 0;
-  LotteryAPIService _loteriaAPIService = LotteryAPIService();
+  LotteryAPIService _lotteryAPIService = LotteryAPIService();
 
   Future<void> _showDialogContest() async {
     _contestTextController.text = _currentContest.toString();
@@ -66,14 +66,14 @@ class _TabResultadoState extends State<TabResultado>
           actions: <Widget>[
             TextButton(
               child: Text('Cancelar'),
-        style: DefaultThemes.flatButtonStyle(context),
+              style: DefaultThemes.flatButtonStyle(context),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text('Buscar'),
-        style: DefaultThemes.flatButtonStyle(context),
+              style: DefaultThemes.flatButtonStyle(context),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _currentContest = int.parse(_contestTextController.text);
@@ -94,7 +94,7 @@ class _TabResultadoState extends State<TabResultado>
 
   void _refreshResultado() {
     widget.refreshResultado(null);
-    _futureResultado = _loteriaAPIService
+    _futureResultado = _lotteryAPIService
         .fetchResultado(widget._contest, _currentContest)
         .then((value) {
       widget.refreshResultado(value);
@@ -105,9 +105,8 @@ class _TabResultadoState extends State<TabResultado>
   @override
   void initState() {
     super.initState();
-    _futureResultado = _loteriaAPIService
-        .fetchLatestResultado(widget._contest)
-        .then((value) {
+    _futureResultado =
+        _lotteryAPIService.fetchLatestResultado(widget._contest).then((value) {
       widget.refreshResultado(value);
       setState(() {
         _lastContest = value.contestNumber!;

@@ -26,29 +26,28 @@ class ContestService {
 
   Future<List<Contest>> getContests() async {
     Database db = await DBProvider().database;
-    final List<Map<String, dynamic>> jsons =
-        await db.rawQuery('SELECT * FROM ${DBProvider.tableContest} ORDER BY sortOrder');
+    final List<Map<String, dynamic>> jsons = await db.rawQuery(
+        'SELECT * FROM ${DBProvider.tableContest} ORDER BY sortOrder');
     return jsons.map((json) => Contest.fromJson(json)).toList();
   }
 
   Future<Contest> getContestById(int id) async {
     Database db = await DBProvider().database;
-    final List<Map<String, dynamic>> jsons =
-    await db.rawQuery('SELECT * FROM ${DBProvider.tableContest} WHERE id=?', ['$id']);
+    final List<Map<String, dynamic>> jsons = await db.rawQuery(
+        'SELECT * FROM ${DBProvider.tableContest} WHERE id=?', ['$id']);
     return jsons.map((json) => Contest.fromJson(json)).toList().first;
   }
 
   Future<List<Contest>> getActiveContests() async {
     Database db = await DBProvider().database;
-    final List<Map<String, dynamic>> jsons =
-    await db.rawQuery('SELECT * FROM ${DBProvider.tableContest} WHERE enabled = 1 ORDER BY sortOrder');
+    final List<Map<String, dynamic>> jsons = await db.rawQuery(
+        'SELECT * FROM ${DBProvider.tableContest} WHERE enabled = 1 ORDER BY sortOrder');
     return jsons.map((json) => Contest.fromJson(json)).toList();
   }
 
   Future<List<Contest>> getContestsWithSavedGames() async {
     Database db = await DBProvider().database;
-    final List<Map<String, dynamic>> jsons =
-    await db.rawQuery(''
+    final List<Map<String, dynamic>> jsons = await db.rawQuery(''
         ' SELECT * '
         ' FROM ${DBProvider.tableSavedGame} '
         ' JOIN ${DBProvider.tableContest} ON ${DBProvider.tableContest}.id = ${DBProvider.tableSavedGame}.contestId '
@@ -67,7 +66,8 @@ class ContestService {
     );
   }
 
-  Future<void> updateOrderAndEnabledContest(Contest contest, {bool log = true}) async {
+  Future<void> updateOrderAndEnabledContest(Contest contest,
+      {bool log = true}) async {
     Database db = await DBProvider().database;
     await db.update(
       DBProvider.tableContest,
@@ -75,7 +75,7 @@ class ContestService {
       where: 'id = ?',
       whereArgs: [contest.id],
     );
-    if(log) {
+    if (log) {
       await FirebaseAnalytics.instance.logEvent(
         name: Constants.ev_UpdateContestHomeScreen,
         parameters: {

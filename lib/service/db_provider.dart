@@ -68,5 +68,4 @@ class DBProvider {
     }
     return Future.value(_db);
   }
-
 }

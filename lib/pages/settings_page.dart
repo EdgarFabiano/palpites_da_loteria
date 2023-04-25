@@ -49,7 +49,6 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

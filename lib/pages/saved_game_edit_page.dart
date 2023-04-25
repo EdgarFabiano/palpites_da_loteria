@@ -124,10 +124,10 @@ class _SavedGameEditPageState extends State<SavedGameEditPage> {
                   ),
                 );
               } else {
-                var title ='';
+                var title = '';
                 if (widget.contest.minSize != widget.contest.maxSize) {
-
-                title = 'Selecione de ${widget.contest.minSize} a ${widget.contest.maxSize} dezenas';
+                  title =
+                      'Selecione de ${widget.contest.minSize} a ${widget.contest.maxSize} dezenas';
                 } else {
                   title = 'Selecione ${widget.contest.maxSize} dezenas';
                 }

@@ -63,8 +63,9 @@ class _MySavedGamesState extends State<MySavedGames>
         _initPosition = 0;
         _currentContest = null;
       }
-      if(_initPositionGameId != null) {
-        var savedGame = await _savedGameService.getSavedGameById(_initPositionGameId!);
+      if (_initPositionGameId != null) {
+        var savedGame =
+            await _savedGameService.getSavedGameById(_initPositionGameId!);
         _initPositionGameId = null;
         Navigator.of(context).push(
           CupertinoPageRoute(
@@ -72,7 +73,7 @@ class _MySavedGamesState extends State<MySavedGames>
                 return SavedGameEditPage(
                   _currentContest!,
                   savedGame,
-                      () => _updateUI(false),
+                  () => _updateUI(false),
                 );
               },
               fullscreenDialog: true),

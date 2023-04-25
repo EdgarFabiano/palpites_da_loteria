@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-enum PeriodFilter {
-  THREE_MONTHS, SIX_MONTHS, ONE_YEAR, ALL, CUSTOM
-}
+enum PeriodFilter { THREE_MONTHS, SIX_MONTHS, ONE_YEAR, ALL, CUSTOM }
 
 extension PeriodFilterExtension on PeriodFilter {
   String get name => describeEnum(this);
@@ -41,11 +39,14 @@ extension PeriodFilterExtension on PeriodFilter {
     var dateTimeNow = DateTime.now();
     switch (this) {
       case PeriodFilter.THREE_MONTHS:
-        return DateTime(dateTimeNow.year, dateTimeNow.month - 3, dateTimeNow.day);
+        return DateTime(
+            dateTimeNow.year, dateTimeNow.month - 3, dateTimeNow.day);
       case PeriodFilter.SIX_MONTHS:
-        return DateTime(dateTimeNow.year, dateTimeNow.month - 6, dateTimeNow.day);
+        return DateTime(
+            dateTimeNow.year, dateTimeNow.month - 6, dateTimeNow.day);
       case PeriodFilter.ONE_YEAR:
-        return DateTime(dateTimeNow.year - 1, dateTimeNow.month, dateTimeNow.day);
+        return DateTime(
+            dateTimeNow.year - 1, dateTimeNow.month, dateTimeNow.day);
       case PeriodFilter.ALL:
         return DateTime(1994, 1, 1); //Não há sorteios realizados antes disso
       case PeriodFilter.CUSTOM:
@@ -55,7 +56,6 @@ extension PeriodFilterExtension on PeriodFilter {
   }
 
   DateTime get endDate {
-      return DateTime.now();
+    return DateTime.now();
   }
-
 }

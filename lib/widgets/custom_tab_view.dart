@@ -27,7 +27,8 @@ class CustomTabView extends StatefulWidget {
   _CustomTabsState createState() => _CustomTabsState();
 }
 
-class _CustomTabsState extends State<CustomTabView> with TickerProviderStateMixin {
+class _CustomTabsState extends State<CustomTabView>
+    with TickerProviderStateMixin {
   late TabController controller;
   late int _currentCount;
   int? _currentPosition;
@@ -59,11 +60,10 @@ class _CustomTabsState extends State<CustomTabView> with TickerProviderStateMixi
 
       if (_currentPosition! > widget.itemCount - 1) {
         _currentPosition = widget.itemCount - 1;
-        _currentPosition = _currentPosition! < 0 ? 0 :
-        _currentPosition;
+        _currentPosition = _currentPosition! < 0 ? 0 : _currentPosition;
         if (widget.onPositionChange is ValueChanged<int>) {
-          WidgetsBinding.instance.addPostFrameCallback((_){
-            if(mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
               widget.onPositionChange!(_currentPosition!);
             }
           });
@@ -110,12 +110,11 @@ class _CustomTabsState extends State<CustomTabView> with TickerProviderStateMixi
             labelColor: Colors.white,
             unselectedLabelColor: Theme.of(context).hintColor,
             indicator: BoxDecoration(
-              color: widget.colorBuilder(context, _currentPosition!),
-              borderRadius: BorderRadius.all(Radius.circular(10))
-            ),
+                color: widget.colorBuilder(context, _currentPosition!),
+                borderRadius: BorderRadius.all(Radius.circular(10))),
             tabs: List.generate(
               widget.itemCount,
-                  (index) => widget.tabBuilder(context, index),
+              (index) => widget.tabBuilder(context, index),
             ),
           ),
         ),
@@ -124,7 +123,7 @@ class _CustomTabsState extends State<CustomTabView> with TickerProviderStateMixi
             controller: controller,
             children: List.generate(
               widget.itemCount,
-                  (index) => widget.pageBuilder(context, index),
+              (index) => widget.pageBuilder(context, index),
             ),
           ),
         ),

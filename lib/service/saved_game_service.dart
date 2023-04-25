@@ -19,8 +19,8 @@ class SavedGameService {
 
   Future<SavedGame> getSavedGameById(int id) async {
     Database db = await DBProvider().database;
-    final List<Map<String, dynamic>> jsons =
-    await db.rawQuery('SELECT * FROM ${DBProvider.tableSavedGame} WHERE id=?', ['$id']);
+    final List<Map<String, dynamic>> jsons = await db.rawQuery(
+        'SELECT * FROM ${DBProvider.tableSavedGame} WHERE id=?', ['$id']);
     return jsons.map((json) => SavedGame.fromJsonMap(json)).toList().first;
   }
 

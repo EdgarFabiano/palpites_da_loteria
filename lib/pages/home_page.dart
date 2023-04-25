@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<ContestCard>? cards;
-  ContestsSettingsChangeNotifier? concursosProvider;
+  ContestsSettingsChangeNotifier? contestsProvider;
   LotteryBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.concursosBannerId);
 
@@ -54,10 +54,10 @@ class _HomePageState extends State<HomePage> {
 
     var spacing = mediaQueryData.size.height / 100;
 
-    concursosProvider = Provider.of<ContestsSettingsChangeNotifier>(context);
-    _contests = concursosProvider?.getContests();
+    contestsProvider = Provider.of<ContestsSettingsChangeNotifier>(context);
+    _contests = contestsProvider?.getContests();
 
-    if (concursosProvider != null && _contests != null) {
+    if (contestsProvider != null && _contests != null) {
       cards = _contests
           .where((element) => element.enabled)
           .map((concurso) => ContestCard(concurso))
@@ -88,30 +88,31 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               if (cards!.isEmpty)
-              Expanded(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.refresh,
-                              color: DefaultThemes.textColor(context),
-                            ),
-                            Text(
-                              "Recarregar",
-                              style: TextStyle(color: DefaultThemes.textColor(context)),
-                            ),
-                          ]),
+                Expanded(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.refresh,
+                                color: DefaultThemes.textColor(context),
+                              ),
+                              Text(
+                                "Recarregar",
+                                style: TextStyle(
+                                    color: DefaultThemes.textColor(context)),
+                              ),
+                            ]),
+                      ),
+                      onPressed: () => setState(() {}),
                     ),
-                    onPressed: () => setState(() {}),
                   ),
                 ),
-              ),
               AdMobService.getBannerAdWidget(_bannerAd),
             ],
           ),

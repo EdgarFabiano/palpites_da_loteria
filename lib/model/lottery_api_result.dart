@@ -52,8 +52,7 @@ class LotteryAPIResult {
       });
       if (lotteryName == "dupla-sena" && prizes != null) {
         var part1 = prizes!.sublist(0, ((prizes!.length) ~/ 2) - 1);
-        var part2 = prizes!
-            .sublist((prizes!.length) ~/ 2, prizes!.length - 1);
+        var part2 = prizes!.sublist((prizes!.length) ~/ 2, prizes!.length - 1);
         prizes = part1;
         prizes_2 = part2;
       }
@@ -147,7 +146,8 @@ class LotteryAPIResult {
             (numbers_2 != null && numbers_2!.isNotEmpty
                 ? getDezenas2DisplayValue() + '\n\n'
                 : '') +
-            ((teamOfTheHeartOrLuckyMonth != '' && teamOfTheHeartOrLuckyMonth != null)
+            ((teamOfTheHeartOrLuckyMonth != '' &&
+                    teamOfTheHeartOrLuckyMonth != null)
                 ? '$teamOfTheHeartOrLuckyMonth \n\n'
                 : '') +
             'Concurso: $contestNumber \n' +

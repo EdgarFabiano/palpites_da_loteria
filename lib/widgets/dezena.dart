@@ -17,7 +17,6 @@ class Dezena extends StatefulWidget {
 }
 
 class _DezenaState extends State<Dezena> {
-
   @override
   Widget build(BuildContext context) {
     return Card(

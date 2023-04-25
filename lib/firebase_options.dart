@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '13086829220',
     projectId: 'palpites-da-loteria-2',
     storageBucket: 'palpites-da-loteria-2.appspot.com',
-    iosClientId: '13086829220-1rb34iho3oev9i4pkr8mvdo0o69gc6dt.apps.googleusercontent.com',
+    iosClientId:
+        '13086829220-1rb34iho3oev9i4pkr8mvdo0o69gc6dt.apps.googleusercontent.com',
     iosBundleId: 'com.example.palpitesDaLoteria',
   );
 }

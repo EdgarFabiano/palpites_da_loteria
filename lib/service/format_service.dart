@@ -18,7 +18,7 @@ String formatarDezena(String dezena) {
 }
 
 String formatarData(DateTime? date) {
-  if (date != null){
+  if (date != null) {
     return formatDate(date, [dd, '/', mm, '/', yyyy]).toString();
   } else {
     return '';
