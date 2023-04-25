@@ -23,8 +23,8 @@ class TabResultado extends StatefulWidget {
 
 class _TabResultadoState extends State<TabResultado>
     with AutomaticKeepAliveClientMixin {
-  Future<ResultadoAPI>? _futureResultado;
-  ResultadoAPI? _resultadoAPI;
+  Future<LotteryAPIResult>? _futureResultado;
+  LotteryAPIResult? _resultadoAPI;
   final _contestTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   int _lastContest = 0;
@@ -110,8 +110,8 @@ class _TabResultadoState extends State<TabResultado>
         .then((value) {
       widget.refreshResultado(value);
       setState(() {
-        _lastContest = value.concurso!;
-        _currentContest = value.concurso!;
+        _lastContest = value.contestNumber!;
+        _currentContest = value.contestNumber!;
       });
       return Future.value(value);
     });
@@ -144,7 +144,7 @@ class _TabResultadoState extends State<TabResultado>
             ? _getButtonsTop()
             : SizedBox.shrink(),
         Expanded(
-          child: FutureBuilder<ResultadoAPI>(
+          child: FutureBuilder<LotteryAPIResult>(
             future: _futureResultado,
             builder: (context, snapshot) {
               if (snapshot.hasData &&
@@ -182,7 +182,7 @@ class _TabResultadoState extends State<TabResultado>
     );
   }
 
-  _getResultadoWidgets(ResultadoAPI resultado, BuildContext context) {
+  _getResultadoWidgets(LotteryAPIResult resultado, BuildContext context) {
     List<Widget> builder = [];
 
     var defaultTableBorder = BorderSide(
@@ -195,7 +195,7 @@ class _TabResultadoState extends State<TabResultado>
       child: Padding(
         padding: EdgeInsets.only(top: 10, bottom: 10),
         child: Text(
-          resultado.acumulou ? "ACUMULOU!" : "TEVE GANHADOR",
+          resultado.accumulated ? "ACUMULOU!" : "TEVE GANHADOR",
           style: TextStyle(fontSize: 25),
         ),
       ),
@@ -206,13 +206,13 @@ class _TabResultadoState extends State<TabResultado>
       endIndent: 50,
     ));
 
-    if (resultado.concurso != null && resultado.data != null) {
+    if (resultado.contestNumber != null && resultado.date != null) {
       builder.add(Wrap(
         alignment: WrapAlignment.spaceBetween,
         children: [
           Padding(
             padding: EdgeInsets.all(10),
-            child: Text("Concurso: " + resultado.concurso.toString()),
+            child: Text("Concurso: " + resultado.contestNumber.toString()),
           ),
           Padding(
             padding: EdgeInsets.all(10),
@@ -222,7 +222,7 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.dezenas != null && resultado.dezenas!.isNotEmpty) {
+    if (resultado.numbers != null && resultado.numbers!.isNotEmpty) {
       builder.add(Card(
         color: widget._contest.getColor(context),
         child: Padding(
@@ -238,15 +238,15 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.timeCoracaoOuMesSorte != null &&
-        resultado.timeCoracaoOuMesSorte != "") {
+    if (resultado.teamOfTheHeartOrLuckyMonth != null &&
+        resultado.teamOfTheHeartOrLuckyMonth != "") {
       builder.add(Card(
         color: widget._contest.getColor(context),
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
             child: Text(
-              resultado.timeCoracaoOuMesSorte!,
+              resultado.teamOfTheHeartOrLuckyMonth!,
               style: TextStyle(
                 fontSize: 26,
                 color: Colors.white,
@@ -337,19 +337,19 @@ class _TabResultadoState extends State<TabResultado>
     //   ));
     // }
 
-    if (resultado.premiacoes != null && resultado.premiacoes!.isNotEmpty) {
+    if (resultado.prizes != null && resultado.prizes!.isNotEmpty) {
       builder.add(Card(
         child: Table(
           border: TableBorder(
             bottom: defaultTableBorder,
             horizontalInside: defaultTableBorder,
           ),
-          children: _criarTabelaPremiacao(resultado.premiacoes!),
+          children: _criarTabelaPremiacao(resultado.prizes!),
         ),
       ));
     }
 
-    if (resultado.dezenas_2 != null && resultado.dezenas_2!.isNotEmpty) {
+    if (resultado.numbers_2 != null && resultado.numbers_2!.isNotEmpty) {
       builder.add(Card(
         color: widget._contest.getColor(context),
         child: Padding(
@@ -365,35 +365,35 @@ class _TabResultadoState extends State<TabResultado>
       ));
     }
 
-    if (resultado.premiacoes_2 != null && resultado.premiacoes_2!.isNotEmpty) {
+    if (resultado.prizes_2 != null && resultado.prizes_2!.isNotEmpty) {
       builder.add(Card(
         child: Table(
           border: TableBorder(
             bottom: defaultTableBorder,
             horizontalInside: defaultTableBorder,
           ),
-          children: _criarTabelaPremiacao(resultado.premiacoes_2!),
+          children: _criarTabelaPremiacao(resultado.prizes_2!),
         ),
       ));
     }
 
-    if (resultado.estadosPremiados != null &&
-        resultado.estadosPremiados!.isNotEmpty) {
+    if (resultado.winningEstates != null &&
+        resultado.winningEstates!.isNotEmpty) {
       builder.add(Card(
         child: Table(
           border: TableBorder(
             bottom: defaultTableBorder,
             horizontalInside: defaultTableBorder,
           ),
-          children: _criarTabelaLocalGanhadores(resultado.estadosPremiados!),
+          children: _criarTabelaLocalGanhadores(resultado.winningEstates!),
         ),
       ));
     }
 
-    if (resultado.local != null && resultado.local != "") {
+    if (resultado.place != null && resultado.place != "") {
       builder.add(Padding(
         padding: EdgeInsets.only(top: 15),
-        child: Center(child: Text("Local de realização: " + resultado.local!)),
+        child: Center(child: Text("Local de realização: " + resultado.place!)),
       ));
     }
 

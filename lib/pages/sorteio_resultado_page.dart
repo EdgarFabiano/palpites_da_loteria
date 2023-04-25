@@ -30,7 +30,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   ];
   int _activeTabIndex = 0;
   TabController? _tabController;
-  ResultadoAPI? _resultado;
+  LotteryAPIResult? _resultado;
   LoteriaBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.sorteioBannerId);
   SavedGameService _savedGameService = SavedGameService();
@@ -43,7 +43,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     });
   }
 
-  void refreshResultado(ResultadoAPI? resultadoAPI) {
+  void refreshResultado(LotteryAPIResult? resultadoAPI) {
     setState(() {
       _resultado = resultadoAPI;
     });
@@ -101,8 +101,8 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
                 onPressed: () async {
                   Share.share(_resultado!.shareString());
                   await FirebaseAnalytics.instance.logShare(
-                      contentType: _resultado!.nome!,
-                      itemId: _resultado!.concurso!.toString(),
+                      contentType: _resultado!.name!,
+                      itemId: _resultado!.contestNumber!.toString(),
                       method: 'app');
                 },
               ),

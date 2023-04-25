@@ -10,8 +10,8 @@ import 'package:palpites_da_loteria/model/model_export.dart';
 import '../defaults/constants.dart';
 import 'format_service.dart';
 
-ResultadoAPI parseResultado(Map<String, dynamic> responseBody) {
-  return ResultadoAPI.fromJson(responseBody);
+LotteryAPIResult parseResultado(Map<String, dynamic> responseBody) {
+  return LotteryAPIResult.fromJson(responseBody);
 }
 
 class LoteriaAPIService {
@@ -39,7 +39,7 @@ class LoteriaAPIService {
     _options.headers = {'Authorization': _basicAuth};
   }
 
-  Future<ResultadoAPI> fetchResultado(Contest contest, int concurso) async {
+  Future<LotteryAPIResult> fetchResultado(Contest contest, int concurso) async {
     var url = _server + "/Loteria/${contest.getEnpoint()}/$concurso";
     await FirebaseAnalytics.instance.logEvent(
       name: Constants.ev_contestResult,
@@ -57,10 +57,10 @@ class LoteriaAPIService {
         return compute(parseResultado, response.data as Map<String, dynamic>);
       }
     }
-    return Future.value(ResultadoAPI());
+    return Future.value(LotteryAPIResult());
   }
 
-  Future<ResultadoAPI> fetchLatestResultado(Contest contest) async {
+  Future<LotteryAPIResult> fetchLatestResultado(Contest contest) async {
     var url = _server + "/Loteria/${contest.getEnpoint()}/Latest";
     await FirebaseAnalytics.instance.logEvent(
       name: Constants.ev_contestResult,
@@ -76,6 +76,6 @@ class LoteriaAPIService {
     if (response.statusCode == 200 && response.data is Map) {
       return compute(parseResultado, response.data as Map<String, dynamic>);
     }
-    return Future.value(ResultadoAPI());
+    return Future.value(LotteryAPIResult());
   }
 }

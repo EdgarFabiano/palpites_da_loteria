@@ -1,101 +1,101 @@
 import 'package:palpites_da_loteria/service/format_service.dart';
 
-class ResultadoAPI {
-  String? loteria;
-  String? nome;
-  int? concurso;
-  String? data;
-  String? local;
-  List<String>? dezenas;
-  List<String>? dezenas_2;
-  List<Premiacoes>? premiacoes;
-  List<Premiacoes>? premiacoes_2;
-  List<EstadosPremiados>? estadosPremiados;
-  bool acumulou = false;
-  String? acumuladaProxConcurso;
-  String? dataProxConcurso;
-  int? proxConcurso;
-  String? timeCoracaoOuMesSorte;
+class LotteryAPIResult {
+  String? lotteryName;
+  String? name;
+  int? contestNumber;
+  String? date;
+  String? place;
+  List<String>? numbers;
+  List<String>? numbers_2;
+  List<Premiacoes>? prizes;
+  List<Premiacoes>? prizes_2;
+  List<EstadosPremiados>? winningEstates;
+  bool accumulated = false;
+  String? accumulatedToNextContest;
+  String? nextContestDate;
+  int? nextContest;
+  String? teamOfTheHeartOrLuckyMonth;
 
-  ResultadoAPI(
-      {this.loteria,
-      this.nome,
-      this.concurso,
-      this.data,
-      this.local,
-      this.dezenas,
-      this.premiacoes,
-      this.estadosPremiados,
-      this.acumulou = false,
-      this.acumuladaProxConcurso,
-      this.dataProxConcurso,
-      this.proxConcurso,
-      this.timeCoracaoOuMesSorte});
+  LotteryAPIResult(
+      {this.lotteryName,
+      this.name,
+      this.contestNumber,
+      this.date,
+      this.place,
+      this.numbers,
+      this.prizes,
+      this.winningEstates,
+      this.accumulated = false,
+      this.accumulatedToNextContest,
+      this.nextContestDate,
+      this.nextContest,
+      this.teamOfTheHeartOrLuckyMonth});
 
-  ResultadoAPI.fromJson(Map<String, dynamic> json) {
-    loteria = json['loteria'];
-    nome = json['nome'];
-    concurso = json['concurso'];
-    data = json['data'];
-    local = json['local'];
-    dezenas = json['dezenas'].cast<String>();
-    if (loteria == "dupla-sena" && dezenas != null) {
-      var part1 = dezenas!.sublist(0, ((dezenas!.length) ~/ 2) - 1);
-      var part2 = dezenas!.sublist((dezenas!.length) ~/ 2, dezenas!.length - 1);
-      dezenas = part1;
-      dezenas_2 = part2;
+  LotteryAPIResult.fromJson(Map<String, dynamic> json) {
+    lotteryName = json['loteria'];
+    name = json['nome'];
+    contestNumber = json['concurso'];
+    date = json['data'];
+    place = json['local'];
+    numbers = json['dezenas'].cast<String>();
+    if (lotteryName == "dupla-sena" && numbers != null) {
+      var part1 = numbers!.sublist(0, ((numbers!.length) ~/ 2) - 1);
+      var part2 = numbers!.sublist((numbers!.length) ~/ 2, numbers!.length - 1);
+      numbers = part1;
+      numbers_2 = part2;
     }
     if (json['premiacoes'] != null) {
-      premiacoes = <Premiacoes>[];
+      prizes = <Premiacoes>[];
       json['premiacoes'].forEach((v) {
-        premiacoes!.add(new Premiacoes.fromJson(v));
+        prizes!.add(new Premiacoes.fromJson(v));
       });
-      if (loteria == "dupla-sena" && premiacoes != null) {
-        var part1 = premiacoes!.sublist(0, ((premiacoes!.length) ~/ 2) - 1);
-        var part2 = premiacoes!
-            .sublist((premiacoes!.length) ~/ 2, premiacoes!.length - 1);
-        premiacoes = part1;
-        premiacoes_2 = part2;
+      if (lotteryName == "dupla-sena" && prizes != null) {
+        var part1 = prizes!.sublist(0, ((prizes!.length) ~/ 2) - 1);
+        var part2 = prizes!
+            .sublist((prizes!.length) ~/ 2, prizes!.length - 1);
+        prizes = part1;
+        prizes_2 = part2;
       }
     }
     if (json['estadosPremiados'] != null) {
-      estadosPremiados = <EstadosPremiados>[];
+      winningEstates = <EstadosPremiados>[];
       json['estadosPremiados'].forEach((v) {
-        estadosPremiados!.add(new EstadosPremiados.fromJson(v));
+        winningEstates!.add(new EstadosPremiados.fromJson(v));
       });
     }
-    acumulou = json['acumulou'] != null ? json['acumulou'] : false;
-    acumuladaProxConcurso = json['acumuladaProxConcurso'];
-    dataProxConcurso = json['dataProxConcurso'];
-    proxConcurso = json['proxConcurso'];
-    timeCoracaoOuMesSorte = json['timeCoracaoOuMesSorte'];
+    accumulated = json['acumulou'] != null ? json['acumulou'] : false;
+    accumulatedToNextContest = json['acumuladaProxConcurso'];
+    nextContestDate = json['dataProxConcurso'];
+    nextContest = json['proxConcurso'];
+    teamOfTheHeartOrLuckyMonth = json['timeCoracaoOuMesSorte'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['loteria'] = this.loteria;
-    data['nome'] = this.nome;
-    data['concurso'] = this.concurso;
-    data['data'] = this.data;
-    data['local'] = this.local;
-    data['dezenas'] = this.dezenas;
-    if (this.premiacoes != null) {
-      data['premiacoes'] = this.premiacoes!.map((v) => v.toJson()).toList();
+    data['loteria'] = this.lotteryName;
+    data['nome'] = this.name;
+    data['concurso'] = this.contestNumber;
+    data['data'] = this.date;
+    data['local'] = this.place;
+    data['dezenas'] = this.numbers;
+    if (this.prizes != null) {
+      data['premiacoes'] = this.prizes!.map((v) => v.toJson()).toList();
     }
-    if (this.estadosPremiados != null) {
+    if (this.winningEstates != null) {
       data['estadosPremiados'] =
-          this.estadosPremiados!.map((v) => v.toJson()).toList();
+          this.winningEstates!.map((v) => v.toJson()).toList();
     }
-    data['acumulou'] = this.acumulou;
-    data['acumuladaProxConcurso'] = this.acumuladaProxConcurso;
-    data['dataProxConcurso'] = this.dataProxConcurso;
-    data['proxConcurso'] = this.proxConcurso;
-    data['timeCoracao'] = this.timeCoracaoOuMesSorte;
+    data['acumulou'] = this.accumulated;
+    data['acumuladaProxConcurso'] = this.accumulatedToNextContest;
+    data['dataProxConcurso'] = this.nextContestDate;
+    data['proxConcurso'] = this.nextContest;
+    data['timeCoracao'] = this.teamOfTheHeartOrLuckyMonth;
     return data;
   }
 
   String getContestDataDisplayValue() {
-    if (data != null) return (data!);
+    if (date != null) return (date!);
     return '';
   }
 
@@ -112,12 +112,12 @@ class ResultadoAPI {
   // }
 
   String getNextContestEstimatedPrizeDisplayValue() {
-    if (acumuladaProxConcurso != null) return '${acumuladaProxConcurso!}';
+    if (accumulatedToNextContest != null) return '${accumulatedToNextContest!}';
     return '';
   }
 
   String getNextContestDateDisplayValue() {
-    if (dataProxConcurso != null) return (dataProxConcurso!);
+    if (nextContestDate != null) return (nextContestDate!);
     return '';
   }
 
@@ -128,29 +128,29 @@ class ResultadoAPI {
   // }
 
   String getDezenasDisplayValue() {
-    return getDezenasResultadoDisplayValue(dezenas!);
+    return getDezenasResultadoDisplayValue(numbers!);
   }
 
   String getDezenas2DisplayValue() {
-    return getDezenasResultadoDisplayValue(dezenas_2!);
+    return getDezenasResultadoDisplayValue(numbers_2!);
   }
 
   String shareString() {
     return 'Aplicativo Palpites da loteria\n'
                 ' 👉 https://rb.gy/3dcmmn 🍀\n\n'
-                'Resultado $nome\n\n' +
-            (acumulou ? 'ACUMULOU' : 'TEVE GANHADOR') +
+                'Resultado $name\n\n' +
+            (accumulated ? 'ACUMULOU' : 'TEVE GANHADOR') +
             '\n\n' +
-            (dezenas != null && dezenas!.isNotEmpty
+            (numbers != null && numbers!.isNotEmpty
                 ? getDezenasDisplayValue() + '\n\n'
                 : '') +
-            (dezenas_2 != null && dezenas_2!.isNotEmpty
+            (numbers_2 != null && numbers_2!.isNotEmpty
                 ? getDezenas2DisplayValue() + '\n\n'
                 : '') +
-            ((timeCoracaoOuMesSorte != '' && timeCoracaoOuMesSorte != null)
-                ? '$timeCoracaoOuMesSorte \n\n'
+            ((teamOfTheHeartOrLuckyMonth != '' && teamOfTheHeartOrLuckyMonth != null)
+                ? '$teamOfTheHeartOrLuckyMonth \n\n'
                 : '') +
-            'Concurso: $concurso \n' +
+            'Concurso: $contestNumber \n' +
             'Data de realização: ' +
             getContestDataDisplayValue() +
             '\n\n' +
