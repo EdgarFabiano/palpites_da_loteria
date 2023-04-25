@@ -15,7 +15,7 @@ class ContestCard extends StatefulWidget {
 
 class _ContestCardState extends State<ContestCard> {
   Widget build(BuildContext context) {
-    var loteriasIconAssetPath = Constants.loteriasIconAssetPath;
+    var lotteryIconAssetPath = Constants.lotteryIconAssetPath;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -38,7 +38,7 @@ class _ContestCardState extends State<ContestCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Image.asset(
-                    loteriasIconAssetPath,
+                    lotteryIconAssetPath,
                     height: maxWidth / 2,
                     width: maxWidth / 2,
                   ),

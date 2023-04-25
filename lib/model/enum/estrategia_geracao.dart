@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:palpites_da_loteria/service/generator_strategies/abstract_sorteio_generator.dart';
-import 'package:palpites_da_loteria/service/generator_strategies/frequencia_sorteio_generator.dart';
-import 'package:palpites_da_loteria/service/generator_strategies/random_sorteio_generator.dart';
+import 'package:palpites_da_loteria/service/generator_strategies/abstract_guess_generator.dart';
+import 'package:palpites_da_loteria/service/generator_strategies/frequency_guess_generator.dart';
+import 'package:palpites_da_loteria/service/generator_strategies/random_guess_generator.dart';
 
 enum EstrategiaGeracao { ALEATORIO, MAIS_SAIDAS, MAIS_ATRASADAS }
 
@@ -20,16 +20,16 @@ extension EstrategiaGeracaoExtension on EstrategiaGeracao {
     }
   }
 
-  AbstractSorteioGenerator get sorteioGenerator {
+  AbstractGuessGenerator get sorteioGenerator {
     switch (this) {
       case EstrategiaGeracao.ALEATORIO:
-        return RandomSorteioGenerator();
+        return RandomGuessGenerator();
       case EstrategiaGeracao.MAIS_SAIDAS:
-        return FrequenciaSorteioGenerator(false);
+        return FrequencyGuessGenerator(false);
       case EstrategiaGeracao.MAIS_ATRASADAS:
-        return FrequenciaSorteioGenerator(true);
+        return FrequencyGuessGenerator(true);
       default:
-        return RandomSorteioGenerator();
+        return RandomGuessGenerator();
     }
   }
 }

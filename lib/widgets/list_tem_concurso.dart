@@ -46,7 +46,7 @@ class _ListItemContestState extends State<ListItemContest> {
             Row(
               children: <Widget>[
                 Image.asset(
-                  Constants.loteriasIconAssetPath,
+                  Constants.lotteryIconAssetPath,
                   width: 25,
                   color: widget._contest.getColor(context),
                   colorBlendMode: BlendMode.modulate,

@@ -11,7 +11,7 @@ import 'package:palpites_da_loteria/widgets/dezena.dart';
 
 import '../model/enum/estrategia_geracao.dart';
 import '../model/frequency_draw.dart';
-import '../service/generator_strategies/abstract_sorteio_generator.dart';
+import '../service/generator_strategies/abstract_guess_generator.dart';
 import 'dezenas_loading.dart';
 
 typedef AlreadySavedResolver = Function(int? alreadySavedGameId);
@@ -32,7 +32,7 @@ class TabSorteio extends StatefulWidget {
 class _TabSorteioState extends State<TabSorteio>
     with AutomaticKeepAliveClientMixin {
   EstrategiaGeracao estrategiaGeracao = EstrategiaGeracao.ALEATORIO;
-  AbstractSorteioGenerator _sorteioGenerator =
+  AbstractGuessGenerator _sorteioGenerator =
       EstrategiaGeracao.ALEATORIO.sorteioGenerator;
   double _numeroDeDezenasASortear = 0;
   int _chance = 3;
@@ -48,7 +48,7 @@ class _TabSorteioState extends State<TabSorteio>
 
   void _sortear(double increment) async {
     _numeroDeDezenasASortear += increment;
-    _futureSorteio = _sorteioGenerator.sortear(
+    _futureSorteio = _sorteioGenerator.generateGuess(
         widget._contest, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
     _futureSorteio!.then((value) => widget.generatedGameResolver(value.frequencies.map((e) => e.number).join('|')));
     _futureSorteio!.then((value) => _savedGameService.existsSavedGame(

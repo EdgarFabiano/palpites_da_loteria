@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
-import 'package:palpites_da_loteria/service/loteria_api_service.dart';
+import 'package:palpites_da_loteria/service/lottery_api_service.dart';
 import 'package:palpites_da_loteria/widgets/internet_not_available.dart';
 
 import '../defaults/themes.dart';
@@ -29,7 +29,7 @@ class _TabResultadoState extends State<TabResultado>
   final _formKey = GlobalKey<FormState>();
   int _lastContest = 0;
   int _currentContest = 0;
-  LoteriaAPIService _loteriaAPIService = LoteriaAPIService();
+  LotteryAPIService _loteriaAPIService = LotteryAPIService();
 
   Future<void> _showDialogContest() async {
     _contestTextController.text = _currentContest.toString();

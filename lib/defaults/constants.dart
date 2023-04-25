@@ -7,7 +7,7 @@ class Constants {
 
   static const String logoTransparentAssetPath =
       'assets/images/logo-transparent.png';
-  static const String loteriasIconAssetPath = 'assets/images/loterica.png';
+  static const String lotteryIconAssetPath = 'assets/images/loterica.png';
 
   static const String refreshWhiteAssetPath = 'assets/images/refresh-white.png';
   static const String refreshDarkAssetPath = 'assets/images/refresh-dark.png';

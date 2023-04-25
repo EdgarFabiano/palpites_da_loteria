@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../service/contest_service.dart';
 
-class PalpitesLoteriaApp extends StatelessWidget {
+class LotteryGuessesApp extends StatelessWidget {
   final ContestService _contestService = ContestService();
 
   @override
