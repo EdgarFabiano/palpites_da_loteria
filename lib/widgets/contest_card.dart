@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/pages/sorteio_resultado_page.dart';
+import 'package:palpites_da_loteria/pages/generate_guess_result_page.dart';
 
 class ContestCard extends StatefulWidget {
   final Contest _contest;
@@ -21,7 +21,7 @@ class _ContestCardState extends State<ContestCard> {
         Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) => SorteioResultadoPage(widget._contest),
+            builder: (context) => GenerateGuessResult(widget._contest),
           ),
         );
       },

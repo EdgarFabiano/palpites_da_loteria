@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
-import 'package:palpites_da_loteria/widgets/tab_resultado.dart';
-import 'package:palpites_da_loteria/widgets/tab_sorteio.dart';
+import 'package:palpites_da_loteria/widgets/tab_result.dart';
+import 'package:palpites_da_loteria/widgets/tab_generate_guess.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../defaults/constants.dart';
@@ -13,16 +13,16 @@ import '../model/saved_game.dart';
 import '../service/saved_game_service.dart';
 import 'my_saved_games.dart';
 
-class SorteioResultadoPage extends StatefulWidget {
+class GenerateGuessResult extends StatefulWidget {
   final Contest contest;
 
-  SorteioResultadoPage(this.contest, {Key? key}) : super(key: key);
+  GenerateGuessResult(this.contest, {Key? key}) : super(key: key);
 
   @override
-  _SorteioResultadoPageState createState() => _SorteioResultadoPageState();
+  _GenerateGuessResultState createState() => _GenerateGuessResultState();
 }
 
-class _SorteioResultadoPageState extends State<SorteioResultadoPage>
+class _GenerateGuessResultState extends State<GenerateGuessResult>
     with SingleTickerProviderStateMixin {
   List<Tab> _tabs = <Tab>[
     Tab(child: Text("Sorteio")),
@@ -30,11 +30,11 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
   ];
   int _activeTabIndex = 0;
   TabController? _tabController;
-  LotteryAPIResult? _resultado;
+  LotteryAPIResult? _lotteryAPIResult;
   LotteryBannerAd _bannerAd =
-      AdMobService.getBannerAd(AdMobService.sorteioBannerId);
+      AdMobService.getBannerAd(AdMobService.generateGuessBannerId);
   SavedGameService _savedGameService = SavedGameService();
-  int? _areadySavedGameId;
+  int? _alreadySavedGameId;
   String _generatedGame = '';
 
   void _setActiveTabIndex() {
@@ -43,9 +43,9 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     });
   }
 
-  void refreshResultado(LotteryAPIResult? resultadoAPI) {
+  void refreshResult(LotteryAPIResult? lotteryAPIResult) {
     setState(() {
-      _resultado = resultadoAPI;
+      _lotteryAPIResult = lotteryAPIResult;
     });
   }
 
@@ -84,25 +84,25 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
           actions: <Widget>[
             if (_activeTabIndex == 0)
               IconButton(
-                icon: _areadySavedGameId != null
+                icon: _alreadySavedGameId != null
                     ? Icon(Icons.favorite)
                     : Icon(Icons.favorite_border),
-                tooltip: _areadySavedGameId == null
+                tooltip: _alreadySavedGameId == null
                     ? 'Salvar jogo'
                     : 'Excluir jogo salvo',
                 color: Colors.white,
                 onPressed: saveGameOnTap,
               )
-            else if (_resultado != null)
+            else if (_lotteryAPIResult != null)
               IconButton(
                 icon: const Icon(Icons.share),
                 tooltip: 'Compartilhar resultado',
                 color: Colors.white,
                 onPressed: () async {
-                  Share.share(_resultado!.shareString());
+                  Share.share(_lotteryAPIResult!.shareString());
                   await FirebaseAnalytics.instance.logShare(
-                      contentType: _resultado!.name!,
-                      itemId: _resultado!.contestNumber!.toString(),
+                      contentType: _lotteryAPIResult!.name!,
+                      itemId: _lotteryAPIResult!.contestNumber!.toString(),
                       method: 'app');
                 },
               ),
@@ -118,10 +118,10 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  TabSorteio(widget.contest,
+                  TabGenerateGuess(widget.contest,
                       notifyParent: _updateUI,
                       generatedGameResolver: _resolveGeneratedGame),
-                  TabResultado(widget.contest, refreshResultado),
+                  TabResult(widget.contest, refreshResult),
                 ],
               ),
             ),
@@ -134,17 +134,17 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
 
   void saveGameOnTap() async {
     SnackBar snackBar;
-    if (_areadySavedGameId != null) {
-      _savedGameService.deleteSavedGameById(_areadySavedGameId!);
-      _areadySavedGameId = null;
+    if (_alreadySavedGameId != null) {
+      _savedGameService.deleteSavedGameById(_alreadySavedGameId!);
+      _alreadySavedGameId = null;
       snackBar = _getDeletedGameSnackBar();
     } else {
-      _areadySavedGameId = await _savedGameService.createOrUpdateSavedGame(
+      _alreadySavedGameId = await _savedGameService.createOrUpdateSavedGame(
         SavedGame(contestId: widget.contest.id, numbers: _generatedGame),
       );
       snackBar = _getSavedGameSnackBar();
     }
-    _updateUI(_areadySavedGameId);
+    _updateUI(_alreadySavedGameId);
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
@@ -153,8 +153,8 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
     _generatedGame = generatedGame;
   }
 
-  Future<void> _updateUI(int? areadySavedGameId) async {
-    _areadySavedGameId = areadySavedGameId;
+  Future<void> _updateUI(int? alreadySavedGameId) async {
+    _alreadySavedGameId = alreadySavedGameId;
     setState(() {});
   }
 
@@ -170,7 +170,7 @@ class _SorteioResultadoPageState extends State<SorteioResultadoPage>
             CupertinoPageRoute(
               builder: (context) => MySavedGames(
                 initPositionContest: widget.contest,
-                initPositionGameId: _areadySavedGameId,
+                initPositionGameId: _alreadySavedGameId,
               ),
             ),
           );

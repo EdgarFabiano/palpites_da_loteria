@@ -17,22 +17,22 @@ import 'guess_number_loading.dart';
 typedef AlreadySavedResolver = Function(int? alreadySavedGameId);
 typedef GeneratedGameResolver = Function(String generatedGame);
 
-class TabSorteio extends StatefulWidget {
+class TabGenerateGuess extends StatefulWidget {
   final Contest _contest;
   final AlreadySavedResolver notifyParent;
   final GeneratedGameResolver generatedGameResolver;
 
-  const TabSorteio(this._contest,
+  const TabGenerateGuess(this._contest,
       {Key? key,
       required this.notifyParent,
       required this.generatedGameResolver})
       : super(key: key);
 
   @override
-  _TabSorteioState createState() => _TabSorteioState();
+  _TabGenerateGuessState createState() => _TabGenerateGuessState();
 }
 
-class _TabSorteioState extends State<TabSorteio>
+class _TabGenerateGuessState extends State<TabGenerateGuess>
     with AutomaticKeepAliveClientMixin {
   GenerationStrategy generationStrategy = GenerationStrategy.RANDOM;
   AbstractGuessGenerator _guessGenerator =
@@ -81,7 +81,7 @@ class _TabSorteioState extends State<TabSorteio>
       _generateGuess(increment);
       _chance++;
       if (_chance >= 5) {
-        AdMobService.showSorteioInterstitialAd();
+        AdMobService.showGenerateGuessInterstitialAd();
         _chance = 0;
       }
     });
@@ -90,7 +90,7 @@ class _TabSorteioState extends State<TabSorteio>
   @override
   void initState() {
     super.initState();
-    AdMobService.createSorteioInterstitialAd();
+    AdMobService.createGenerateGuessInterstitialAd();
     _buttonGroupController.selectIndex(0);
     _guessNumberQuantityToRaffle = widget._contest.minSize.toDouble();
     _generateGuess(0);

@@ -8,9 +8,9 @@ class LotteryAPIResult {
   String? place;
   List<String>? numbers;
   List<String>? numbers_2;
-  List<Premiacoes>? prizes;
-  List<Premiacoes>? prizes_2;
-  List<EstadosPremiados>? winningEstates;
+  List<Prizes>? prizes;
+  List<Prizes>? prizes_2;
+  List<StateWithPrize>? winningEstates;
   bool accumulated = false;
   String? accumulatedToNextContest;
   String? nextContestDate;
@@ -46,9 +46,9 @@ class LotteryAPIResult {
       numbers_2 = part2;
     }
     if (json['premiacoes'] != null) {
-      prizes = <Premiacoes>[];
+      prizes = <Prizes>[];
       json['premiacoes'].forEach((v) {
-        prizes!.add(new Premiacoes.fromJson(v));
+        prizes!.add(new Prizes.fromJson(v));
       });
       if (lotteryName == "dupla-sena" && prizes != null) {
         var part1 = prizes!.sublist(0, ((prizes!.length) ~/ 2) - 1);
@@ -58,9 +58,9 @@ class LotteryAPIResult {
       }
     }
     if (json['estadosPremiados'] != null) {
-      winningEstates = <EstadosPremiados>[];
+      winningEstates = <StateWithPrize>[];
       json['estadosPremiados'].forEach((v) {
-        winningEstates!.add(new EstadosPremiados.fromJson(v));
+        winningEstates!.add(new StateWithPrize.fromJson(v));
       });
     }
     accumulated = json['acumulou'] != null ? json['acumulou'] : false;
@@ -171,14 +171,14 @@ class LotteryAPIResult {
   }
 }
 
-class Premiacoes {
+class Prizes {
   String? acertos;
   String? vencedores;
   String? premio;
 
-  Premiacoes({this.acertos, this.vencedores, this.premio});
+  Prizes({this.acertos, this.vencedores, this.premio});
 
-  Premiacoes.fromJson(Map<String, dynamic> json) {
+  Prizes.fromJson(Map<String, dynamic> json) {
     acertos = json['acertos'];
     vencedores = json['vencedores'];
     premio = json['premio'];
@@ -193,7 +193,7 @@ class Premiacoes {
   }
 }
 
-class EstadosPremiados {
+class StateWithPrize {
   String? nome;
   String? uf;
   String? vencedores;
@@ -201,7 +201,7 @@ class EstadosPremiados {
   String? longitude;
   List<Cidades>? cidades;
 
-  EstadosPremiados(
+  StateWithPrize(
       {this.nome,
       this.uf,
       this.vencedores,
@@ -209,7 +209,7 @@ class EstadosPremiados {
       this.longitude,
       this.cidades});
 
-  EstadosPremiados.fromJson(Map<String, dynamic> json) {
+  StateWithPrize.fromJson(Map<String, dynamic> json) {
     nome = json['nome'];
     uf = json['uf'];
     vencedores = json['vencedores'];

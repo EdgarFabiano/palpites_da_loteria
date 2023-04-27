@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   List<ContestCard>? cards;
   ContestsSettingsChangeNotifier? contestsProvider;
   LotteryBannerAd _bannerAd =
-      AdMobService.getBannerAd(AdMobService.concursosBannerId);
+      AdMobService.getBannerAd(AdMobService.contestsBannerId);
 
   @override
   void initState() {

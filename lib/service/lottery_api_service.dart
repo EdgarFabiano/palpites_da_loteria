@@ -39,7 +39,7 @@ class LotteryAPIService {
     _options.headers = {'Authorization': _basicAuth};
   }
 
-  Future<LotteryAPIResult> fetchResultado(Contest contest, int concurso) async {
+  Future<LotteryAPIResult> fetchResult(Contest contest, int concurso) async {
     var url = _server + "/Loteria/${contest.getEnpoint()}/$concurso";
     await FirebaseAnalytics.instance.logEvent(
       name: Constants.ev_contestResult,
@@ -59,7 +59,7 @@ class LotteryAPIService {
     return Future.value(LotteryAPIResult());
   }
 
-  Future<LotteryAPIResult> fetchLatestResultado(Contest contest) async {
+  Future<LotteryAPIResult> fetchLatestResult(Contest contest) async {
     var url = _server + "/Loteria/${contest.getEnpoint()}/Latest";
     await FirebaseAnalytics.instance.logEvent(
       name: Constants.ev_contestResult,
