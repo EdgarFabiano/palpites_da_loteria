@@ -127,11 +127,11 @@ class LotteryAPIResult {
   // }
 
   String getGuessNumberDisplayValue() {
-    return getDezenasResultadoDisplayValue(numbers!);
+    return getGuessNumberResultDisplayValue(numbers!);
   }
 
   String getGuessNumbers2DisplayValue() {
-    return getDezenasResultadoDisplayValue(numbers_2!);
+    return getGuessNumberResultDisplayValue(numbers_2!);
   }
 
   String shareString() {

@@ -42,16 +42,16 @@ String formatCurrency(dynamic valor) {
   return 'R\$ ' + NumberFormat.compactLong(locale: 'pt_BR').format(valor);
 }
 
-String getDezenasResultadoDisplayValue(List<String> resultado) {
+String getGuessNumberResultDisplayValue(List<String> result) {
   var value = "";
-  if (resultado.length <= 7) {
-    resultado.forEach((element) {
+  if (result.length <= 7) {
+    result.forEach((element) {
       value += value == "" ? element : " | " + element;
     });
   } else {
     var count = 0;
-    var iterator = resultado.iterator;
-    resultado.forEach((element) {
+    var iterator = result.iterator;
+    result.forEach((element) {
       value += value == "" || value.endsWith("\n") ? element : " | " + element;
       count++;
       if (count >= 5) {

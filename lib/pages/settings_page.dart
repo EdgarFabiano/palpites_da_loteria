@@ -59,9 +59,9 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     var reorderableListView;
 
-    var concursosProvider =
+    var contestProvider =
         Provider.of<ContestsSettingsChangeNotifier>(context);
-    List<Contest> _contests = concursosProvider.getContests();
+    List<Contest> _contests = contestProvider.getContests();
 
     _items = _contests
         .map((c) => ListItemContest(
@@ -73,7 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
       children: _items,
       onReorder: (start, current) {
         _onReorder(start, current);
-        concursosProvider.onReorder(start, current);
+        contestProvider.onReorder(start, current);
       },
     );
 

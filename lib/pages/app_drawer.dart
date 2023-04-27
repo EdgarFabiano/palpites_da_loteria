@@ -71,7 +71,7 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         ListTile(
           leading: Icon(Icons.favorite),
-          title: Text("Meus jogos salvos"),
+          title: Text(Strings.mySavedGames),
           onTap: () {
             Navigator.of(context).pop();
             Navigator.push(context,
@@ -80,7 +80,7 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         ListTile(
           leading: Icon(Icons.settings),
-          title: Text("Configurações"),
+          title: Text(Strings.settings),
           onTap: () {
             Navigator.of(context).pop();
             Navigator.push(context,
@@ -89,12 +89,12 @@ class _AppDrawerState extends State<AppDrawer> {
         ),
         ListTile(
           leading: Icon(Icons.star),
-          title: Text("Avaliar"),
+          title: Text(Strings.evaluate),
           onTap: _requestReview,
         ),
         ListTile(
           leading: Icon(Icons.store),
-          title: Text("Mais apps como este"),
+          title: Text(Strings.moreAppsLikeThis),
           onTap: () {
             try {
               launch(

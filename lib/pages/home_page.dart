@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
     if (contestsProvider != null && _contests != null) {
       cards = _contests
           .where((element) => element.enabled)
-          .map((concurso) => ContestCard(concurso))
+          .map((c) => ContestCard(c))
           .toList();
 
       return Scaffold(

@@ -19,21 +19,21 @@ class HomeLoadingPage extends StatelessWidget {
         maxCrossAxisExtent: tileSize,
       ),
       children: [
-        EmptyCardConcursos(),
-        EmptyCardConcursos(),
-        EmptyCardConcursos(),
-        EmptyCardConcursos(),
-        EmptyCardConcursos(),
-        EmptyCardConcursos(),
-        EmptyCardConcursos(),
-        EmptyCardConcursos()
+        EmptyCardContest(),
+        EmptyCardContest(),
+        EmptyCardContest(),
+        EmptyCardContest(),
+        EmptyCardContest(),
+        EmptyCardContest(),
+        EmptyCardContest(),
+        EmptyCardContest()
       ],
     ));
   }
 }
 
-class EmptyCardConcursos extends StatelessWidget {
-  const EmptyCardConcursos({Key? key}) : super(key: key);
+class EmptyCardContest extends StatelessWidget {
+  const EmptyCardContest({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
