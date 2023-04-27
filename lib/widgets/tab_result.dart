@@ -368,20 +368,20 @@ class _TabResultState extends State<TabResult>
         Container(
           alignment: Alignment.center,
           child: Text(
-            headerItem.acertos.toString(),
+            headerItem.hits.toString(),
           ),
           padding: EdgeInsets.all(10.0),
         ),
         Container(
           alignment: Alignment.center,
           child: Text(
-            headerItem.vencedores!,
+            headerItem.winners!,
           ),
           padding: EdgeInsets.all(10.0),
         ),
         Container(
           alignment: Alignment.center,
-          child: Text("${headerItem.premio!}"),
+          child: Text("${headerItem.prize!}"),
           padding: EdgeInsets.all(10.0),
         )
       ]);
@@ -391,20 +391,20 @@ class _TabResultState extends State<TabResult>
     return list;
   }
 
-  _createWinnersLocationTable(List<StateWithPrize> premiacao) {
+  _createWinnersLocationTable(List<StateWithPrize> stateWithPrize) {
     var header = _createTableHeader("Local, Ganhadores");
-    var list = premiacao.map((winningState) {
+    var list = stateWithPrize.map((winningState) {
       return TableRow(children: [
         Container(
           alignment: Alignment.center,
           child: Text(
-            winningState.nome! + " - " + winningState.uf!,
+            winningState.name! + " - " + winningState.stateAbbreviation!,
           ),
           padding: EdgeInsets.all(10.0),
         ),
         Container(
           alignment: Alignment.center,
-          child: Text(winningState.vencedores!),
+          child: Text(winningState.winners!),
           padding: EdgeInsets.all(10.0),
         )
       ]);

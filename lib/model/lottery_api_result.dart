@@ -172,90 +172,90 @@ class LotteryAPIResult {
 }
 
 class Prizes {
-  String? acertos;
-  String? vencedores;
-  String? premio;
+  String? hits;
+  String? winners;
+  String? prize;
 
-  Prizes({this.acertos, this.vencedores, this.premio});
+  Prizes({this.hits, this.winners, this.prize});
 
   Prizes.fromJson(Map<String, dynamic> json) {
-    acertos = json['acertos'];
-    vencedores = json['vencedores'];
-    premio = json['premio'];
+    hits = json['acertos'];
+    winners = json['vencedores'];
+    prize = json['premio'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['acertos'] = this.acertos;
-    data['vencedores'] = this.vencedores;
-    data['premio'] = this.premio;
+    data['acertos'] = this.hits;
+    data['vencedores'] = this.winners;
+    data['premio'] = this.prize;
     return data;
   }
 }
 
 class StateWithPrize {
-  String? nome;
-  String? uf;
-  String? vencedores;
+  String? name;
+  String? stateAbbreviation;
+  String? winners;
   String? latitude;
   String? longitude;
-  List<Cidades>? cidades;
+  List<City>? cities;
 
   StateWithPrize(
-      {this.nome,
-      this.uf,
-      this.vencedores,
+      {this.name,
+      this.stateAbbreviation,
+      this.winners,
       this.latitude,
       this.longitude,
-      this.cidades});
+      this.cities});
 
   StateWithPrize.fromJson(Map<String, dynamic> json) {
-    nome = json['nome'];
-    uf = json['uf'];
-    vencedores = json['vencedores'];
+    name = json['nome'];
+    stateAbbreviation = json['uf'];
+    winners = json['vencedores'];
     latitude = json['latitude'];
     longitude = json['longitude'];
     if (json['cidades'] != null) {
-      cidades = <Cidades>[];
+      cities = <City>[];
       json['cidades'].forEach((v) {
-        cidades!.add(new Cidades.fromJson(v));
+        cities!.add(new City.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['nome'] = this.nome;
-    data['uf'] = this.uf;
-    data['vencedores'] = this.vencedores;
+    data['nome'] = this.name;
+    data['uf'] = this.stateAbbreviation;
+    data['vencedores'] = this.winners;
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
-    if (this.cidades != null) {
-      data['cidades'] = this.cidades!.map((v) => v.toJson()).toList();
+    if (this.cities != null) {
+      data['cidades'] = this.cities!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class Cidades {
-  String? cidade;
-  String? vencedores;
+class City {
+  String? cityName;
+  String? winners;
   String? latitude;
   String? longitude;
 
-  Cidades({this.cidade, this.vencedores, this.latitude, this.longitude});
+  City({this.cityName, this.winners, this.latitude, this.longitude});
 
-  Cidades.fromJson(Map<String, dynamic> json) {
-    cidade = json['cidade'];
-    vencedores = json['vencedores'];
+  City.fromJson(Map<String, dynamic> json) {
+    cityName = json['cidade'];
+    winners = json['vencedores'];
     latitude = json['latitude'];
     longitude = json['longitude'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['cidade'] = this.cidade;
-    data['vencedores'] = this.vencedores;
+    data['cidade'] = this.cityName;
+    data['vencedores'] = this.winners;
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
     return data;
