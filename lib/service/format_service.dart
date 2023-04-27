@@ -9,10 +9,10 @@ String truncate(String? string, int maxLenght) {
   }
 }
 
-String formatGuessNumber(String dezena) {
-  String text = dezena;
-  if (int.tryParse(dezena) != null && int.parse(dezena) < 10) {
-    text = "0" + dezena;
+String formatGuessNumber(String guessNumber) {
+  String text = guessNumber;
+  if (int.tryParse(guessNumber) != null && int.parse(guessNumber) < 10) {
+    text = "0" + guessNumber;
   }
   return text;
 }

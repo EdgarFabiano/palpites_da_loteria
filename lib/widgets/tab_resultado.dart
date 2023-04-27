@@ -227,7 +227,7 @@ class _TabResultadoState extends State<TabResultado>
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
-            child: Text(resultado.getDezenasDisplayValue(),
+            child: Text(resultado.getGuessNumberDisplayValue(),
                 style: TextStyle(
                   fontSize: 26,
                   color: Colors.white,
@@ -354,7 +354,7 @@ class _TabResultadoState extends State<TabResultado>
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Center(
-            child: Text(resultado.getDezenas2DisplayValue(),
+            child: Text(resultado.getGuessNumbers2DisplayValue(),
                 style: TextStyle(
                   fontSize: 26,
                   color: Colors.white,

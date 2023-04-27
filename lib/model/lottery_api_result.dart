@@ -126,11 +126,11 @@ class LotteryAPIResult {
   //   return '';
   // }
 
-  String getDezenasDisplayValue() {
+  String getGuessNumberDisplayValue() {
     return getDezenasResultadoDisplayValue(numbers!);
   }
 
-  String getDezenas2DisplayValue() {
+  String getGuessNumbers2DisplayValue() {
     return getDezenasResultadoDisplayValue(numbers_2!);
   }
 
@@ -141,10 +141,10 @@ class LotteryAPIResult {
             (accumulated ? 'ACUMULOU' : 'TEVE GANHADOR') +
             '\n\n' +
             (numbers != null && numbers!.isNotEmpty
-                ? getDezenasDisplayValue() + '\n\n'
+                ? getGuessNumberDisplayValue() + '\n\n'
                 : '') +
             (numbers_2 != null && numbers_2!.isNotEmpty
-                ? getDezenas2DisplayValue() + '\n\n'
+                ? getGuessNumbers2DisplayValue() + '\n\n'
                 : '') +
             ((teamOfTheHeartOrLuckyMonth != '' &&
                     teamOfTheHeartOrLuckyMonth != null)
