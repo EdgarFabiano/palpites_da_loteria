@@ -1,5 +1,6 @@
 class Constants {
   static bool showAds = true;
+  static bool isDev = false;
 
   static const String appName = "Palpites da loteria";
   static const String concursosSharedPreferencesKey = 'concursos';
