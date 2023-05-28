@@ -2,22 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../service/format_service.dart';
 
-class Dezena extends StatefulWidget {
-  final String _dezena;
+class GuessNumberWidget extends StatefulWidget {
+  final String _guessNumber;
   final Color _color;
-  final int? _frequencia;
-  bool _showFrequencia;
+  final int? _frequency;
+  final bool _showFrequency;
 
-  Dezena(this._dezena, this._color,
-      [this._showFrequencia = false, this._frequencia, Key? key])
+  GuessNumberWidget(this._guessNumber, this._color,
+      [this._showFrequency = false, this._frequency, Key? key])
       : super(key: key);
 
   @override
-  _DezenaState createState() => _DezenaState();
+  _GuessNumberWidgetState createState() => _GuessNumberWidgetState();
 }
 
-class _DezenaState extends State<Dezena> {
-
+class _GuessNumberWidgetState extends State<GuessNumberWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -30,9 +29,9 @@ class _DezenaState extends State<Dezena> {
           Flexible(
             child: Center(
               child: Text(
-                formatarDezena(widget._dezena),
+                formatGuessNumber(widget._guessNumber),
                 style: TextStyle(
-                  fontSize: widget._showFrequencia ? null : 20,
+                  fontSize: widget._showFrequency ? null : 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -40,14 +39,14 @@ class _DezenaState extends State<Dezena> {
             ),
           ),
           Visibility(
-            visible: widget._showFrequencia && widget._frequencia != null,
+            visible: widget._showFrequency && widget._frequency != null,
             child: Divider(height: 0),
           ),
           Flexible(
             child: Visibility(
-                visible: widget._showFrequencia && widget._frequencia != null,
+                visible: widget._showFrequency && widget._frequency != null,
                 child: Text(
-                  widget._frequencia.toString(),
+                  widget._frequency.toString(),
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.white54,

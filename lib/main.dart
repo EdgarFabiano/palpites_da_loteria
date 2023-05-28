@@ -6,7 +6,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 
 import 'firebase_options.dart';
-import 'widgets/palpites_loteria_app.dart';
+import 'widgets/lottery_guesses_app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,5 +16,5 @@ void main() async {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   }
   MobileAds.instance.initialize();
-  runApp(PalpitesLoteriaApp());
+  runApp(LotteryGuessesApp());
 }

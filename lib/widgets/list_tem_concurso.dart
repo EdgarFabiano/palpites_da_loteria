@@ -3,34 +3,33 @@ import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:provider/provider.dart';
 
-import 'concursos_settings_change_notifier.dart';
+import 'contests_settings_change_notifier.dart';
 
-class ListItemConcurso extends StatefulWidget {
+class ListItemContest extends StatefulWidget {
   final Contest _contest;
 
-  ListItemConcurso(this._contest, {Key? key}) : super(key: key);
+  ListItemContest(this._contest, {Key? key}) : super(key: key);
 
-  Contest get concursoBean => _contest;
+  Contest get contest => _contest;
 
   @override
-  _ListItemConcursoState createState() => _ListItemConcursoState();
+  _ListItemContestState createState() => _ListItemContestState();
 }
 
-class _ListItemConcursoState extends State<ListItemConcurso> {
-  late ConcursosSettingsChangeNotifier _concursosProvider;
+class _ListItemContestState extends State<ListItemContest> {
+  late ContestsSettingsChangeNotifier _contestsProvider;
 
   void changeEnabled() {
     setState(() {
       widget._contest.enabled = !widget._contest.enabled;
     });
-    _concursosProvider.updateContest(widget._contest);
+    _contestsProvider.updateContest(widget._contest);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _concursosProvider =
-        Provider.of<ConcursosSettingsChangeNotifier>(context);
+    _contestsProvider = Provider.of<ContestsSettingsChangeNotifier>(context);
   }
 
   @override
@@ -46,7 +45,7 @@ class _ListItemConcursoState extends State<ListItemConcurso> {
             Row(
               children: <Widget>[
                 Image.asset(
-                  Constants.loteriasIconAssetPath,
+                  Constants.lotteryIconAssetPath,
                   width: 25,
                   color: widget._contest.getColor(context),
                   colorBlendMode: BlendMode.modulate,

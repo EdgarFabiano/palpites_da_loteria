@@ -6,15 +6,15 @@ import '../model/loteria_banner_ad.dart';
 
 class AdMobService {
   static final String appId = 'ca-app-pub-5932227223136302~3905280679';
-  static final String concursosBannerId =
+  static final String contestsBannerId =
       'ca-app-pub-5932227223136302/6422249913';
-  static final String sorteioBannerId =
+  static final String generateGuessBannerId =
       'ca-app-pub-5932227223136302/9648561943';
-  static final String meusJogosBannerId =
+  static final String mySavedGamesBannerId =
       'ca-app-pub-5932227223136302/8859309599';
-  static final String sorteioInterstitialId =
+  static final String generateGuessInterstitialId =
       'ca-app-pub-5932227223136302/8769211650';
-  static final String resultadoInterstitialId =
+  static final String resultInterstitialId =
       'ca-app-pub-5932227223136302/8307560117';
 
   static const int maxFailedLoadAttempts = 3;
@@ -23,8 +23,8 @@ class AdMobService {
   static final AdRequest request = AdRequest();
 
   /*banner*/
-  static LoteriaBannerAd getBannerAd(String id) {
-    LoteriaBannerAd banner = LoteriaBannerAd(
+  static LotteryBannerAd getBannerAd(String id) {
+    LotteryBannerAd banner = LotteryBannerAd(
       adUnitId: id,
       request: AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(onAdLoaded: (Ad ad) {
@@ -47,7 +47,7 @@ class AdMobService {
     return banner;
   }
 
-  static Widget getBannerAdWidget(LoteriaBannerAd bannerAd) {
+  static Widget getBannerAdWidget(LotteryBannerAd bannerAd) {
     if (Constants.showAds && bannerAd.isLoaded) {
       return Container(
         child: AdWidget(ad: bannerAd),
@@ -65,93 +65,91 @@ class AdMobService {
     onAdDismissedFullScreenContent: (InterstitialAd ad) {
       print('$ad onAdDismissedFullScreenContent.');
       ad.dispose();
-      createSorteioInterstitialAd();
+      createGenerateGuessInterstitialAd();
     },
     onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
       print('$ad onAdFailedToShowFullScreenContent: $error');
       ad.dispose();
-      createSorteioInterstitialAd();
+      createGenerateGuessInterstitialAd();
     },
   );
 
-  /*sorteio-interstitial*/
-  static InterstitialAd? _sorteioInterstitial;
+  static InterstitialAd? _generateGuessInterstitial;
 
-  static void createSorteioInterstitialAd() {
+  static void createGenerateGuessInterstitialAd() {
     if (Constants.showAds) {
       InterstitialAd.load(
-          adUnitId: sorteioInterstitialId,
+          adUnitId: generateGuessInterstitialId,
           request: request,
           adLoadCallback: InterstitialAdLoadCallback(
             onAdLoaded: (InterstitialAd ad) {
               print('$ad loaded');
-              _sorteioInterstitial = ad;
-              _sorteioInterstitial!.fullScreenContentCallback =
+              _generateGuessInterstitial = ad;
+              _generateGuessInterstitial!.fullScreenContentCallback =
                   _fullScreenContentCallback;
               _numInterstitialLoadAttempts = 0;
-              _sorteioInterstitial!.setImmersiveMode(true);
+              _generateGuessInterstitial!.setImmersiveMode(true);
             },
             onAdFailedToLoad: (LoadAdError error) {
               print('InterstitialAd failed to load: $error.');
               _numInterstitialLoadAttempts += 1;
-              _sorteioInterstitial = null;
+              _generateGuessInterstitial = null;
               if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
-                createSorteioInterstitialAd();
+                createGenerateGuessInterstitialAd();
               }
             },
           ));
     }
   }
 
-  static void showSorteioInterstitialAd() {
+  static void showGenerateGuessInterstitialAd() {
     if (Constants.showAds) {
-      if (_sorteioInterstitial == null) {
+      if (_generateGuessInterstitial == null) {
         print('Warning: attempt to show interstitial before loaded.');
         return;
       }
-      _sorteioInterstitial!.show();
+      _generateGuessInterstitial!.show();
     }
-    _sorteioInterstitial = null;
+    _generateGuessInterstitial = null;
   }
 
-  /*resultado-interstitial*/
-  static InterstitialAd? _resultadoInterstitial;
+  static InterstitialAd? _resultInterstitial;
 
-  static void createResultadoInterstitialAd() {
+  static void createResultInterstitialAd() {
     if (Constants.showAds) {
       InterstitialAd.load(
-          adUnitId: resultadoInterstitialId,
+          adUnitId: resultInterstitialId,
           request: request,
           adLoadCallback: InterstitialAdLoadCallback(
             onAdLoaded: (InterstitialAd ad) {
               print('$ad loaded');
-              _resultadoInterstitial = ad;
-              _resultadoInterstitial!.fullScreenContentCallback =
+              _resultInterstitial = ad;
+              _resultInterstitial!.fullScreenContentCallback =
                   _fullScreenContentCallback;
               _numInterstitialLoadAttempts = 0;
-              _resultadoInterstitial!.setImmersiveMode(true);
+              _resultInterstitial!.setImmersiveMode(true);
             },
             onAdFailedToLoad: (LoadAdError error) {
               print('InterstitialAd failed to load: $error.');
               _numInterstitialLoadAttempts += 1;
-              _resultadoInterstitial = null;
+              _resultInterstitial = null;
               if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
-                createResultadoInterstitialAd();
+                createResultInterstitialAd();
               }
             },
           ));
     }
   }
 
-  static void showResultadoInterstitialAd() {
+  static void showResultInterstitialAd() {
     if (Constants.showAds) {
-      if (_resultadoInterstitial == null) {
+      if (_resultInterstitial == null) {
         print('Warning: attempt to show interstitial before loaded.');
         return;
       }
 
-      _resultadoInterstitial!.show();
+      _resultInterstitial!.show();
     }
-    _resultadoInterstitial = null;
+    _resultInterstitial = null;
   }
 }

@@ -2,82 +2,86 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
-import 'package:palpites_da_loteria/model/enum/filtro_periodo.dart';
+import 'package:palpites_da_loteria/model/enum/period_filter.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 import 'package:palpites_da_loteria/service/admob_service.dart';
 import 'package:palpites_da_loteria/service/format_service.dart';
 import 'package:palpites_da_loteria/service/saved_game_service.dart';
-import 'package:palpites_da_loteria/widgets/dezena.dart';
+import 'package:palpites_da_loteria/widgets/guess_number_widget.dart';
 
-import '../model/enum/estrategia_geracao.dart';
-import '../model/sorteio_frequencia.dart';
-import '../service/generator_strategies/abstract_sorteio_generator.dart';
-import 'dezenas_loading.dart';
+import '../model/enum/generation_strategy.dart';
+import '../model/frequency_draw.dart';
+import '../service/generator_strategies/abstract_guess_generator.dart';
+import 'guess_number_loading.dart';
 
 typedef AlreadySavedResolver = Function(int? alreadySavedGameId);
 typedef GeneratedGameResolver = Function(String generatedGame);
 
-class TabSorteio extends StatefulWidget {
+class TabGenerateGuess extends StatefulWidget {
   final Contest _contest;
   final AlreadySavedResolver notifyParent;
   final GeneratedGameResolver generatedGameResolver;
 
-  const TabSorteio(this._contest, {Key? key, required this.notifyParent, required this.generatedGameResolver})
+  const TabGenerateGuess(this._contest,
+      {Key? key,
+      required this.notifyParent,
+      required this.generatedGameResolver})
       : super(key: key);
 
   @override
-  _TabSorteioState createState() => _TabSorteioState();
+  _TabGenerateGuessState createState() => _TabGenerateGuessState();
 }
 
-class _TabSorteioState extends State<TabSorteio>
+class _TabGenerateGuessState extends State<TabGenerateGuess>
     with AutomaticKeepAliveClientMixin {
-  EstrategiaGeracao estrategiaGeracao = EstrategiaGeracao.ALEATORIO;
-  AbstractSorteioGenerator _sorteioGenerator =
-      EstrategiaGeracao.ALEATORIO.sorteioGenerator;
-  double _numeroDeDezenasASortear = 0;
+  GenerationStrategy generationStrategy = GenerationStrategy.RANDOM;
+  AbstractGuessGenerator _guessGenerator =
+      GenerationStrategy.RANDOM.guessGenerator;
+  double _guessNumberQuantityToRaffle = 0;
   int _chance = 3;
-  Future<SorteioFrequencia>? _futureSorteio;
+  Future<FrequencyDraw>? _futureDraw;
   GroupButtonController _buttonGroupController = GroupButtonController();
-  FiltroPeriodo _dropdownValueFiltroPeriodo = FiltroPeriodo.TRES_MESES;
+  PeriodFilter _dropdownValuePeriodFilter = PeriodFilter.THREE_MONTHS;
   TextEditingController _startDateController = TextEditingController();
   TextEditingController _endDateController = TextEditingController();
   DateTimeRange _dateTimeRange =
       DateTimeRange(start: DateTime.now(), end: DateTime.now());
-  bool _showFrequencia = false;
+  bool _showFrequency = false;
   SavedGameService _savedGameService = SavedGameService();
 
-  void _sortear(double increment) async {
-    _numeroDeDezenasASortear += increment;
-    _futureSorteio = _sorteioGenerator.sortear(
-        widget._contest, _numeroDeDezenasASortear.toInt(), _dateTimeRange);
-    _futureSorteio!.then((value) => widget.generatedGameResolver(value.frequencias.map((e) => e.dezena).join('|')));
-    _futureSorteio!.then((value) => _savedGameService.existsSavedGame(
-        widget._contest, value.frequencias.map((e) => e.dezena).toList())
+  void _generateGuess(double increment) async {
+    _guessNumberQuantityToRaffle += increment;
+    _futureDraw = _guessGenerator.generateGuess(
+        widget._contest, _guessNumberQuantityToRaffle.toInt(), _dateTimeRange);
+    _futureDraw!.then((value) => widget.generatedGameResolver(
+        value.frequencies.map((e) => e.number).join('|')));
+    _futureDraw!.then((value) => _savedGameService
+        .existsSavedGame(
+            widget._contest, value.frequencies.map((e) => e.number).toList())
         .then((value) => widget.notifyParent(value)));
-    _futureSorteio!.then((value) async {
+    _futureDraw!.then((value) async {
       await FirebaseAnalytics.instance.logEvent(
         name: Constants.ev_gameGenerated,
         parameters: {
           Constants.pm_Contest: widget._contest.name,
-          Constants.pm_type: estrategiaGeracao.name,
-          Constants.pm_from: formatarData(_dateTimeRange.start),
-          Constants.pm_to: formatarData(_dateTimeRange.end),
-          Constants.pm_showFrequencies: _showFrequencia.toString(),
-          Constants.pm_game: truncate(value.frequencias.map((e) => e.dezena).join('|'), 100),
-          Constants.pm_size: value.frequencias.length,
+          Constants.pm_type: generationStrategy.name,
+          Constants.pm_from: formatBrDate(_dateTimeRange.start),
+          Constants.pm_to: formatBrDate(_dateTimeRange.end),
+          Constants.pm_showFrequencies: _showFrequency.toString(),
+          Constants.pm_game:
+              truncate(value.frequencies.map((e) => e.number).join('|'), 100),
+          Constants.pm_size: value.frequencies.length,
         },
       );
     });
-
-
   }
 
-  void sortearComAnuncio(double increment) {
+  void _generateGuessWithAds(double increment) {
     setState(() {
-      _sortear(increment);
+      _generateGuess(increment);
       _chance++;
       if (_chance >= 5) {
-        AdMobService.showSorteioInterstitialAd();
+        AdMobService.showGenerateGuessInterstitialAd();
         _chance = 0;
       }
     });
@@ -86,12 +90,12 @@ class _TabSorteioState extends State<TabSorteio>
   @override
   void initState() {
     super.initState();
-    AdMobService.createSorteioInterstitialAd();
+    AdMobService.createGenerateGuessInterstitialAd();
     _buttonGroupController.selectIndex(0);
-    _numeroDeDezenasASortear = widget._contest.minSize.toDouble();
-    _sortear(0);
-    _updateDateTimeRange(_dropdownValueFiltroPeriodo.startDate,
-        _dropdownValueFiltroPeriodo.endDate);
+    _guessNumberQuantityToRaffle = widget._contest.minSize.toDouble();
+    _generateGuess(0);
+    _updateDateTimeRange(_dropdownValuePeriodFilter.startDate,
+        _dropdownValuePeriodFilter.endDate);
   }
 
   @override
@@ -128,12 +132,13 @@ class _TabSorteioState extends State<TabSorteio>
           onSelected: (value, index, isSelected) {
             _buttonGroupController.unselectAll();
             _buttonGroupController.selectIndex(index);
-            estrategiaGeracao = EstrategiaGeracao.values[index];
-            _sorteioGenerator = estrategiaGeracao.sorteioGenerator;
-            _showFrequencia = estrategiaGeracao != EstrategiaGeracao.ALEATORIO;
-            sortearComAnuncio(0);
+            generationStrategy = GenerationStrategy.values[index];
+            _guessGenerator = generationStrategy.guessGenerator;
+            _showFrequency = generationStrategy != GenerationStrategy.RANDOM;
+            _generateGuessWithAds(0);
           },
-          buttons: EstrategiaGeracao.values.map((e) => e.displayTitle).toList(),
+          buttons:
+              GenerationStrategy.values.map((e) => e.displayTitle).toList(),
           options: GroupButtonOptions(
             selectedShadow: const [],
             selectedTextStyle: TextStyle(
@@ -159,7 +164,7 @@ class _TabSorteioState extends State<TabSorteio>
 
   _buildPeriodSelector() {
     return Visibility(
-      visible: estrategiaGeracao != EstrategiaGeracao.ALEATORIO,
+      visible: generationStrategy != GenerationStrategy.RANDOM,
       child: Column(
         children: [
           SingleChildScrollView(
@@ -172,34 +177,34 @@ class _TabSorteioState extends State<TabSorteio>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(_dropdownValueFiltroPeriodo.labelValue),
-                      DropdownButton<FiltroPeriodo>(
-                        value: _dropdownValueFiltroPeriodo,
+                      Text(_dropdownValuePeriodFilter.labelValue),
+                      DropdownButton<PeriodFilter>(
+                        value: _dropdownValuePeriodFilter,
                         icon: const Icon(Icons.keyboard_arrow_down),
                         elevation: 16,
                         underline: Container(
                           height: 2,
                           color: widget._contest.getColor(context),
                         ),
-                        onChanged: (FiltroPeriodo? newValue) {
+                        onChanged: (PeriodFilter? newValue) {
                           setState(() {
-                            _dropdownValueFiltroPeriodo = newValue!;
-                            if (_dropdownValueFiltroPeriodo ==
-                                FiltroPeriodo.CUSTOMIZADO) {
+                            _dropdownValuePeriodFilter = newValue!;
+                            if (_dropdownValuePeriodFilter ==
+                                PeriodFilter.CUSTOM) {
                               _updateDateTimeRange(
                                   _dateTimeRange.start, _dateTimeRange.end);
                             } else {
                               _updateDateTimeRange(
-                                  _dropdownValueFiltroPeriodo.startDate,
-                                  _dropdownValueFiltroPeriodo.endDate);
+                                  _dropdownValuePeriodFilter.startDate,
+                                  _dropdownValuePeriodFilter.endDate);
                             }
-                            sortearComAnuncio(0);
+                            _generateGuessWithAds(0);
                           });
                         },
-                        items: FiltroPeriodo.values
-                            .map<DropdownMenuItem<FiltroPeriodo>>(
-                                (FiltroPeriodo value) {
-                          return DropdownMenuItem<FiltroPeriodo>(
+                        items: PeriodFilter.values
+                            .map<DropdownMenuItem<PeriodFilter>>(
+                                (PeriodFilter value) {
+                          return DropdownMenuItem<PeriodFilter>(
                             value: value,
                             child: Text(value.displayTitle),
                           );
@@ -212,8 +217,8 @@ class _TabSorteioState extends State<TabSorteio>
                     children: [
                       Text("Mostrar frequências"),
                       Switch(
-                          value: _showFrequencia,
-                          onChanged: (value) => _onChangeShowFrequencia(value)),
+                          value: _showFrequency,
+                          onChanged: (value) => _onChangeShowFrequency(value)),
                     ],
                   ),
                 ],
@@ -221,7 +226,7 @@ class _TabSorteioState extends State<TabSorteio>
             ),
           ),
           Visibility(
-            visible: _dropdownValueFiltroPeriodo == FiltroPeriodo.CUSTOMIZADO,
+            visible: _dropdownValuePeriodFilter == PeriodFilter.CUSTOM,
             child: Row(
               children: [
                 Expanded(
@@ -239,7 +244,7 @@ class _TabSorteioState extends State<TabSorteio>
                           firstDate: DateTime(1990),
                           lastDate: _dateTimeRange.end);
                       _updateDateTimeRange(pickedDate!, _dateTimeRange.end);
-                      sortearComAnuncio(0);
+                      _generateGuessWithAds(0);
                     },
                   ),
                 ),
@@ -258,7 +263,7 @@ class _TabSorteioState extends State<TabSorteio>
                           //DateTime.now() - not to allow to choose before today.
                           lastDate: DateTime.now());
                       _updateDateTimeRange(_dateTimeRange.start, pickedDate!);
-                      sortearComAnuncio(0);
+                      _generateGuessWithAds(0);
                     },
                   ),
                 )
@@ -282,27 +287,27 @@ class _TabSorteioState extends State<TabSorteio>
               maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
-              visible: _numeroDeDezenasASortear > widget._contest.minSize,
+              visible: _guessNumberQuantityToRaffle > widget._contest.minSize,
               child: IconButton(
                 onPressed: () => setState(() {
-                  _sortear(-1);
+                  _generateGuess(-1);
                 }),
                 icon: Icon(Icons.exposure_neg_1),
                 style: DefaultThemes.flatButtonStyle(context),
               ),
             ),
             Text(
-              _numeroDeDezenasASortear.toInt().toString(),
+              _guessNumberQuantityToRaffle.toInt().toString(),
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Visibility(
               maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
-              visible: _numeroDeDezenasASortear < widget._contest.maxSize,
+              visible: _guessNumberQuantityToRaffle < widget._contest.maxSize,
               child: IconButton(
                 onPressed: () => setState(() {
-                  _sortear(1);
+                  _generateGuess(1);
                 }),
                 icon: Icon(Icons.exposure_plus_1),
                 style: DefaultThemes.flatButtonStyle(context),
@@ -318,28 +323,28 @@ class _TabSorteioState extends State<TabSorteio>
     var width = MediaQuery.of(context).size.width;
     double textScale = MediaQuery.of(context).textScaleFactor;
     return Expanded(
-      child: FutureBuilder<SorteioFrequencia>(
-        future: _futureSorteio,
+      child: FutureBuilder<FrequencyDraw>(
+        future: _futureDraw,
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
-            SorteioFrequencia sorteioFrequencia = snapshot.data!;
-            List<Dezena> dezenas = sorteioFrequencia.frequencias
-                .map((value) => Dezena(
-                      value.dezena.toString(),
+            FrequencyDraw frequencyDraw = snapshot.data!;
+            List<GuessNumberWidget> guessNumbers = frequencyDraw.frequencies
+                .map((value) => GuessNumberWidget(
+                      value.number.toString(),
                       widget._contest.getColor(context),
-                      _showFrequencia,
-                      value.quantidade,
+                      _showFrequency,
+                      value.quantity,
                     ))
                 .toList();
-            List<Dezena> dezenas2 = [];
-            if (sorteioFrequencia.frequencias2 != null) {
-              dezenas2 = sorteioFrequencia.frequencias2!
-                  .map((value) => Dezena(
-                        value.dezena.toString(),
+            List<GuessNumberWidget> guessNumbers2 = [];
+            if (frequencyDraw.frequencies_2 != null) {
+              guessNumbers2 = frequencyDraw.frequencies_2!
+                  .map((value) => GuessNumberWidget(
+                        value.number.toString(),
                         widget._contest.getColor(context),
-                        _showFrequencia,
-                        value.quantidade,
+                        _showFrequency,
+                        value.quantity,
                       ))
                   .toList();
             }
@@ -352,7 +357,7 @@ class _TabSorteioState extends State<TabSorteio>
                     maxCrossAxisExtent: (width * textScale) / 5,
                     shrinkWrap: true,
                     padding: EdgeInsets.all(10),
-                    children: dezenas,
+                    children: guessNumbers,
                   ),
                   flex: 1,
                 ),
@@ -368,11 +373,11 @@ class _TabSorteioState extends State<TabSorteio>
                         maxCrossAxisExtent: (width * textScale) / 5,
                         shrinkWrap: true,
                         padding: EdgeInsets.all(10),
-                        children: dezenas2,
+                        children: guessNumbers2,
                       ),
                     )),
                 Visibility(
-                  visible: sorteioFrequencia.qtdConcursos > 0,
+                  visible: frequencyDraw.contestQuantity > 0,
                   child: Column(
                     children: [
                       RichText(
@@ -381,7 +386,7 @@ class _TabSorteioState extends State<TabSorteio>
                             TextSpan(text: 'Com base em ', style: textStyle),
                             TextSpan(
                                 text:
-                                    '${formatNumber(sorteioFrequencia.qtdConcursos)}',
+                                    '${formatNumber(frequencyDraw.contestQuantity)}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: textColor)),
@@ -392,13 +397,13 @@ class _TabSorteioState extends State<TabSorteio>
                           text: TextSpan(children: <TextSpan>[
                             TextSpan(text: 'De ', style: textStyle),
                             TextSpan(
-                                text: '${formatarData(_dateTimeRange.start)}',
+                                text: '${formatBrDate(_dateTimeRange.start)}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: textColor)),
                             TextSpan(text: ' a ', style: textStyle),
                             TextSpan(
-                                text: '${formatarData(_dateTimeRange.end)}',
+                                text: '${formatBrDate(_dateTimeRange.end)}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: textColor)),
@@ -418,7 +423,7 @@ class _TabSorteioState extends State<TabSorteio>
           }
           return Column(
             children: <Widget>[
-              DezenasLoading(_numeroDeDezenasASortear.toInt(), widget._contest),
+              GuessNumberLoading(_guessNumberQuantityToRaffle.toInt(), widget._contest),
               Visibility(
                   visible: widget._contest.name == "D. SENA",
                   child: Divider(
@@ -426,8 +431,8 @@ class _TabSorteioState extends State<TabSorteio>
                   )),
               Visibility(
                   visible: widget._contest.name == "D. SENA",
-                  child: DezenasLoading(
-                      _numeroDeDezenasASortear.toInt(), widget._contest)),
+                  child: GuessNumberLoading(
+                      _guessNumberQuantityToRaffle.toInt(), widget._contest)),
             ],
           );
         },
@@ -444,7 +449,7 @@ class _TabSorteioState extends State<TabSorteio>
       ),
     );
     return Visibility(
-      visible: estrategiaGeracao == EstrategiaGeracao.ALEATORIO,
+      visible: generationStrategy == GenerationStrategy.RANDOM,
       child: ElevatedButton(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -462,22 +467,22 @@ class _TabSorteioState extends State<TabSorteio>
                 ),
               ]),
         ),
-        onPressed: () => sortearComAnuncio(0),
+        onPressed: () => _generateGuessWithAds(0),
         style: style,
       ),
     );
   }
 
-  _onChangeShowFrequencia(bool value) {
+  _onChangeShowFrequency(bool value) {
     setState(() {
-      _showFrequencia = value;
+      _showFrequency = value;
     });
   }
 
   void _updateDateTimeRange(DateTime startDate, DateTime endDate) {
     _dateTimeRange = DateTimeRange(start: startDate, end: endDate);
-    _startDateController.text = formatarData(_dateTimeRange.start);
-    _endDateController.text = formatarData(_dateTimeRange.end);
+    _startDateController.text = formatBrDate(_dateTimeRange.start);
+    _endDateController.text = formatBrDate(_dateTimeRange.end);
   }
 
   @override

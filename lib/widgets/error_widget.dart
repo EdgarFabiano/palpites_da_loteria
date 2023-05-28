@@ -1,9 +1,6 @@
-
-
 import 'package:flutter/material.dart';
 
 class ErrorWidget extends StatelessWidget {
-  
   final String _message;
 
   ErrorWidget(this._message);
@@ -20,5 +17,4 @@ class ErrorWidget extends StatelessWidget {
       ),
     );
   }
-
 }

@@ -2,26 +2,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
-import 'package:palpites_da_loteria/pages/sorteio_resultado_page.dart';
+import 'package:palpites_da_loteria/pages/generate_guess_result_page.dart';
 
-class CardConcursos extends StatefulWidget {
+class ContestCard extends StatefulWidget {
   final Contest _contest;
 
-  const CardConcursos(this._contest, {Key? key}) : super(key: key);
+  const ContestCard(this._contest, {Key? key}) : super(key: key);
 
   @override
-  _CardConcursosState createState() => _CardConcursosState();
+  _ContestCardState createState() => _ContestCardState();
 }
 
-class _CardConcursosState extends State<CardConcursos> {
+class _ContestCardState extends State<ContestCard> {
   Widget build(BuildContext context) {
-    var loteriasIconAssetPath = Constants.loteriasIconAssetPath;
+    var lotteryIconAssetPath = Constants.lotteryIconAssetPath;
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) => SorteioResultadoPage(widget._contest),
+            builder: (context) => GenerateGuessResult(widget._contest),
           ),
         );
       },
@@ -38,7 +38,7 @@ class _CardConcursosState extends State<CardConcursos> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Image.asset(
-                    loteriasIconAssetPath,
+                    lotteryIconAssetPath,
                     height: maxWidth / 2,
                     width: maxWidth / 2,
                   ),

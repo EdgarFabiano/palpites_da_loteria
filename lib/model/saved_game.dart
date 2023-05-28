@@ -9,14 +9,13 @@ class SavedGame {
   String? title;
   String? notes;
 
-  SavedGame({
-    this.id,
-    required this.contestId,
-    this.createdAt,
-    required this.numbers,
-    this.title,
-    this.notes
-  }) {
+  SavedGame(
+      {this.id,
+      required this.contestId,
+      this.createdAt,
+      required this.numbers,
+      this.title,
+      this.notes}) {
     if (this.createdAt == null) {
       this.createdAt = DateTime.now();
     }

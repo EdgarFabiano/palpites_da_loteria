@@ -5,8 +5,8 @@ import '../defaults/defaults_export.dart';
 import '../model/loteria_banner_ad.dart';
 import '../model/model_export.dart';
 import '../service/admob_service.dart';
-import '../widgets/card_concursos.dart';
-import '../widgets/concursos_settings_change_notifier.dart';
+import '../widgets/contest_card.dart';
+import '../widgets/contests_settings_change_notifier.dart';
 import 'app_drawer.dart';
 import 'home_loading_page.dart';
 
@@ -16,10 +16,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<CardConcursos>? cards;
-  ConcursosSettingsChangeNotifier? concursosProvider;
-  LoteriaBannerAd _bannerAd =
-      AdMobService.getBannerAd(AdMobService.concursosBannerId);
+  List<ContestCard>? cards;
+  ContestsSettingsChangeNotifier? contestsProvider;
+  LotteryBannerAd _bannerAd =
+      AdMobService.getBannerAd(AdMobService.contestsBannerId);
 
   @override
   void initState() {
@@ -54,13 +54,13 @@ class _HomePageState extends State<HomePage> {
 
     var spacing = mediaQueryData.size.height / 100;
 
-    concursosProvider = Provider.of<ConcursosSettingsChangeNotifier>(context);
-    _contests = concursosProvider?.getContests();
+    contestsProvider = Provider.of<ContestsSettingsChangeNotifier>(context);
+    _contests = contestsProvider?.getContests();
 
-    if (concursosProvider != null && _contests != null) {
+    if (contestsProvider != null && _contests != null) {
       cards = _contests
           .where((element) => element.enabled)
-          .map((concurso) => CardConcursos(concurso))
+          .map((c) => ContestCard(c))
           .toList();
 
       return Scaffold(
@@ -88,30 +88,31 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               if (cards!.isEmpty)
-              Expanded(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.refresh,
-                              color: DefaultThemes.textColor(context),
-                            ),
-                            Text(
-                              "Recarregar",
-                              style: TextStyle(color: DefaultThemes.textColor(context)),
-                            ),
-                          ]),
+                Expanded(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.refresh,
+                                color: DefaultThemes.textColor(context),
+                              ),
+                              Text(
+                                "Recarregar",
+                                style: TextStyle(
+                                    color: DefaultThemes.textColor(context)),
+                              ),
+                            ]),
+                      ),
+                      onPressed: () => setState(() {}),
                     ),
-                    onPressed: () => setState(() {}),
                   ),
                 ),
-              ),
               AdMobService.getBannerAdWidget(_bannerAd),
             ],
           ),

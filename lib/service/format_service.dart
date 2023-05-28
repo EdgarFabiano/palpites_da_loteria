@@ -9,23 +9,23 @@ String truncate(String? string, int maxLenght) {
   }
 }
 
-String formatarDezena(String dezena) {
-  String text = dezena;
-  if (int.tryParse(dezena) != null && int.parse(dezena) < 10) {
-    text = "0" + dezena;
+String formatGuessNumber(String guessNumber) {
+  String text = guessNumber;
+  if (int.tryParse(guessNumber) != null && int.parse(guessNumber) < 10) {
+    text = "0" + guessNumber;
   }
   return text;
 }
 
-String formatarData(DateTime? date) {
-  if (date != null){
+String formatBrDate(DateTime? date) {
+  if (date != null) {
     return formatDate(date, [dd, '/', mm, '/', yyyy]).toString();
   } else {
     return '';
   }
 }
 
-String formatarDataHora(DateTime? date) {
+String formatBrDateTime(DateTime? date) {
   if (date != null) {
     return formatDate(date, [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn, ':', ss])
         .toString();
@@ -42,16 +42,16 @@ String formatCurrency(dynamic valor) {
   return 'R\$ ' + NumberFormat.compactLong(locale: 'pt_BR').format(valor);
 }
 
-String getDezenasResultadoDisplayValue(List<String> resultado) {
+String getGuessNumberResultDisplayValue(List<String> result) {
   var value = "";
-  if (resultado.length <= 7) {
-    resultado.forEach((element) {
+  if (result.length <= 7) {
+    result.forEach((element) {
       value += value == "" ? element : " | " + element;
     });
   } else {
     var count = 0;
-    var iterator = resultado.iterator;
-    resultado.forEach((element) {
+    var iterator = result.iterator;
+    result.forEach((element) {
       value += value == "" || value.endsWith("\n") ? element : " | " + element;
       count++;
       if (count >= 5) {
