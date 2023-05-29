@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 
 class DefaultThemes {
 
-  static ThemeData appTheme() {
+  static ThemeData appTheme(useMaterial3) {
     return ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.indigo,
-        useMaterial3: true);
+        useMaterial3: useMaterial3);
   }
 
-  static ThemeData darkTheme() {
+  static ThemeData darkTheme(useMaterial3) {
     return ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.teal,
-        useMaterial3: true);
+        useMaterial3: useMaterial3);
   }
 
   static Color textColor(BuildContext context) {
