@@ -48,9 +48,7 @@ class _MySavedGamesTabItemState extends State<MySavedGamesTabItem> {
           );
         } else {
           body = ListView.separated(
-            separatorBuilder: (context, index) => Divider(
-              color: Colors.black,
-            ),
+            separatorBuilder: (context, index) => Divider(),
             itemCount: this._savedGames.length,
             itemBuilder: (context, index) =>
                 _itemToListTile(this._savedGames[index]),

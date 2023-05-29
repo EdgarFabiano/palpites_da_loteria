@@ -36,8 +36,8 @@ class ContestsMaterialApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: Strings.appName,
-      theme: DefaultThemes.appTheme(true),
-      darkTheme: DefaultThemes.darkTheme(true),
+      theme: DefaultThemes.appTheme(),
+      darkTheme: DefaultThemes.darkTheme(),
       themeMode: EasyDynamicTheme.of(context).themeMode,
       home: HomePage(),
       debugShowCheckedModeBanner: false,

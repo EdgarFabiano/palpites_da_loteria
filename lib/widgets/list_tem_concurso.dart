@@ -19,7 +19,7 @@ class ListItemContest extends StatefulWidget {
 class _ListItemContestState extends State<ListItemContest> {
   late ContestsSettingsChangeNotifier _contestsProvider;
 
-  void changeEnabled() {
+  void _changeEnabled() {
     setState(() {
       widget._contest.enabled = !widget._contest.enabled;
     });
@@ -37,30 +37,30 @@ class _ListItemContestState extends State<ListItemContest> {
     return ListTile(
       key: Key(widget._contest.name),
       leading: Icon(Icons.reorder),
-      title: GestureDetector(
-        onTap: changeEnabled,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Image.asset(
-                  Constants.lotteryIconAssetPath,
-                  width: 25,
-                  color: widget._contest.getColor(context),
-                  colorBlendMode: BlendMode.modulate,
-                ),
-                Text("    "),
-                Text(widget._contest.name)
-              ],
-            ),
-            Switch(
-              value: widget._contest.enabled,
-              onChanged: (value) => changeEnabled(),
-            )
-          ],
-        ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Image.asset(
+                Constants.lotteryIconAssetPath,
+                width: 25,
+                color: widget._contest.enabled
+                    ? widget._contest.getColor(context)
+                    : Colors.grey,
+              ),
+              Text("    "),
+              Text(widget._contest.name)
+            ],
+          ),
+          Switch(
+            value: widget._contest.enabled,
+            onChanged: (value) => _changeEnabled(),
+            activeColor: widget._contest.getColor(context),
+          )
+        ],
       ),
+      onTap: _changeEnabled,
     );
   }
 }

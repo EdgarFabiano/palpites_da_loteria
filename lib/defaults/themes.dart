@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 
 class DefaultThemes {
-
-  static ThemeData appTheme(useMaterial3) {
+  static ThemeData appTheme() {
     return ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.indigo,
-        useMaterial3: useMaterial3);
+        primarySwatch: Colors.indigo, brightness: Brightness.light,
+        // colorScheme: ColorScheme.fromSwatch(
+        //     primarySwatch: Colors.teal, brightness: Brightness.light, backgroundColor: Colors.white),
+        useMaterial3: true);
   }
 
-  static ThemeData darkTheme(useMaterial3) {
+  static ThemeData darkTheme() {
     return ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.teal,
-        useMaterial3: useMaterial3);
+        primarySwatch: Colors.teal, brightness: Brightness.dark,
+        // colorScheme: ColorScheme.fromSwatch(
+        //     primarySwatch: Colors.teal, brightness: Brightness.dark),
+        useMaterial3: true);
   }
 
   static Color textColor(BuildContext context) {
@@ -29,5 +30,4 @@ class DefaultThemes {
       foregroundColor: textColor(context),
     );
   }
-
 }

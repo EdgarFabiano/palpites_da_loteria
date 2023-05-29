@@ -134,8 +134,11 @@ class _MySavedGamesState extends State<MySavedGames>
                         itemCount: _contestsWithSavedGames.length,
                         colorBuilder: (context, index) =>
                             _contestsWithSavedGames[index].getColor(context),
-                        tabBuilder: (context, index) =>
-                            Tab(text: _contestsWithSavedGames[index].name),
+                        tabBuilder: (context, index) => Tab(
+                          child: Padding(
+                              padding: EdgeInsets.only(left: 15, right: 15),
+                              child: Text(_contestsWithSavedGames[index].name)),
+                        ),
                         pageBuilder: (context, index) => MySavedGamesTabItem(
                             contest: _contestsWithSavedGames[index],
                             notifyParent: _updateUI),

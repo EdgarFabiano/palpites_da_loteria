@@ -110,8 +110,11 @@ class _CustomTabsState extends State<CustomTabView>
             labelColor: Colors.white,
             unselectedLabelColor: Theme.of(context).hintColor,
             indicator: BoxDecoration(
-                color: widget.colorBuilder(context, _currentPosition!),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
+              color: widget.colorBuilder(context, _currentPosition!),
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
             tabs: List.generate(
               widget.itemCount,
               (index) => widget.tabBuilder(context, index),

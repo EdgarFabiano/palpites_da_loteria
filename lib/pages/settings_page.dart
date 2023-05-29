@@ -121,9 +121,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     selectedTextStyle: TextStyle(
                       color: Colors.white,
                     ),
-                    unselectedTextStyle: TextStyle(
-                      color: _isDark ? Colors.white : Colors.black,
-                    ),
+                    unselectedTextStyle: Theme.of(context).textTheme.bodyMedium,
                     borderRadius: BorderRadius.circular(10),
                     mainGroupAlignment: MainGroupAlignment.start,
                     crossGroupAlignment: CrossGroupAlignment.start,

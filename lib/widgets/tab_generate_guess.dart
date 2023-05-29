@@ -145,17 +145,8 @@ class _TabGenerateGuessState extends State<TabGenerateGuess>
               color: Colors.white,
             ),
             selectedColor: widget._contest.getColor(context),
-            unselectedTextStyle: Theme.of(context).textTheme.bodyLarge,
+            unselectedTextStyle: Theme.of(context).textTheme.bodyMedium,
             borderRadius: BorderRadius.circular(10),
-            groupingType: GroupingType.wrap,
-            direction: Axis.horizontal,
-            mainGroupAlignment: MainGroupAlignment.start,
-            crossGroupAlignment: CrossGroupAlignment.start,
-            groupRunAlignment: GroupRunAlignment.start,
-            textAlign: TextAlign.center,
-            textPadding: EdgeInsets.zero,
-            alignment: Alignment.center,
-            elevation: 2,
           ),
         ),
       ),
@@ -217,8 +208,10 @@ class _TabGenerateGuessState extends State<TabGenerateGuess>
                     children: [
                       Text("Mostrar frequências"),
                       Switch(
-                          value: _showFrequency,
-                          onChanged: (value) => _onChangeShowFrequency(value)),
+                        value: _showFrequency,
+                        onChanged: (value) => _onChangeShowFrequency(value),
+                        activeColor: widget._contest.getColor(context),
+                      ),
                     ],
                   ),
                 ],
@@ -423,7 +416,8 @@ class _TabGenerateGuessState extends State<TabGenerateGuess>
           }
           return Column(
             children: <Widget>[
-              GuessNumberLoading(_guessNumberQuantityToRaffle.toInt(), widget._contest),
+              GuessNumberLoading(
+                  _guessNumberQuantityToRaffle.toInt(), widget._contest),
               Visibility(
                   visible: widget._contest.name == "D. SENA",
                   child: Divider(
