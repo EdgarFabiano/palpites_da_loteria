@@ -1,5 +1,6 @@
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:group_button/group_button.dart';
 import 'package:provider/provider.dart';
 
 import '../defaults/strings.dart';
@@ -14,13 +15,24 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   List<ListItemContest> _items = [];
+  GroupButtonController _buttonGroupController = GroupButtonController();
+  var _isDark = false;
 
-  bool _isDarkMode = false;
-
-  void _switchTheme(BuildContext context) {
-    EasyDynamicTheme.of(context).changeTheme();
+  void _switchTheme(BuildContext context, String value) {
     setState(() {
-      _isDarkMode = Theme.of(context).brightness == Brightness.dark;
+      var dynamicTheme = EasyDynamicTheme.of(context);
+      switch (value) {
+        case 'Claro':
+          dynamicTheme.changeTheme(dark: false);
+          break;
+        case 'Escuro':
+          dynamicTheme.changeTheme(dark: true);
+          break;
+        default:
+          dynamicTheme.changeTheme(dynamic: true);
+          break;
+      }
+      _isDark = Theme.of(context).brightness == Brightness.dark;
     });
   }
 
@@ -52,15 +64,15 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    var index = EasyDynamicTheme.of(context).themeMode!.index;
+    _buttonGroupController.selectIndex(index);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
   }
 
   @override
   Widget build(BuildContext context) {
     var reorderableListView;
-
-    var contestProvider =
-        Provider.of<ContestsSettingsChangeNotifier>(context);
+    var contestProvider = Provider.of<ContestsSettingsChangeNotifier>(context);
     List<Contest> _contests = contestProvider.getContests();
 
     _items = _contests
@@ -89,24 +101,33 @@ class _SettingsPageState extends State<SettingsPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Theme.of(context).brightness == Brightness.dark
-                    ? Icons.brightness_3
-                    : Icons.brightness_high),
+                leading:
+                    Icon(_isDark ? Icons.brightness_3 : Icons.brightness_high),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("Modo noturno"),
-                    Switch(
-                      value: _isDarkMode,
-                      onChanged: (value) {
-                        _switchTheme(context);
-                      },
-                    ),
+                    Text("Tema"),
                   ],
                 ),
-                onTap: () {
-                  _switchTheme(context);
-                },
+                subtitle: GroupButton(
+                  controller: _buttonGroupController,
+                  onSelected: (value, index, isSelected) {
+                    _buttonGroupController.unselectAll();
+                    _buttonGroupController.selectIndex(index);
+                    _switchTheme(context, value);
+                  },
+                  buttons: ['Auto', 'Claro', 'Escuro'],
+                  options: GroupButtonOptions(
+                    selectedTextStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                    unselectedTextStyle: Theme.of(context).textTheme.bodyMedium,
+                    borderRadius: BorderRadius.circular(10),
+                    mainGroupAlignment: MainGroupAlignment.start,
+                    crossGroupAlignment: CrossGroupAlignment.start,
+                    groupRunAlignment: GroupRunAlignment.start,
+                  ),
+                ),
               ),
               Divider(),
               ListTile(

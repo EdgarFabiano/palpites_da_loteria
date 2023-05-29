@@ -25,8 +25,8 @@ class GenerateGuessResult extends StatefulWidget {
 class _GenerateGuessResultState extends State<GenerateGuessResult>
     with SingleTickerProviderStateMixin {
   List<Tab> _tabs = <Tab>[
-    Tab(child: Text("Sorteio")),
-    Tab(child: Text("Resultado")),
+    Tab(text: "Sorteio",),
+    Tab(text: "Resultado",),
   ];
   int _activeTabIndex = 0;
   TabController? _tabController;
@@ -79,6 +79,9 @@ class _GenerateGuessResultState extends State<GenerateGuessResult>
           bottom: TabBar(
             controller: _tabController,
             tabs: _tabs,
+            indicator: UnderlineTabIndicator(borderRadius: BorderRadius.all(Radius.circular(10))),
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white,
           ),
           title: Text(widget.contest.name),
           actions: <Widget>[

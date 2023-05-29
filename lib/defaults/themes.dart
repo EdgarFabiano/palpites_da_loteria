@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
 class DefaultThemes {
-
   static ThemeData appTheme() {
     return ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.indigo,
+        primarySwatch: Colors.indigo, brightness: Brightness.light,
+        // colorScheme: ColorScheme.fromSwatch(
+        //     primarySwatch: Colors.teal, brightness: Brightness.light, backgroundColor: Colors.white),
         useMaterial3: true);
   }
 
   static ThemeData darkTheme() {
     return ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.teal,
+        primarySwatch: Colors.teal, brightness: Brightness.dark,
+        // colorScheme: ColorScheme.fromSwatch(
+        //     primarySwatch: Colors.teal, brightness: Brightness.dark),
         useMaterial3: true);
   }
 
@@ -29,5 +30,4 @@ class DefaultThemes {
       foregroundColor: textColor(context),
     );
   }
-
 }
