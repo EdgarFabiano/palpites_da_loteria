@@ -8,15 +8,21 @@ import 'package:flutter/foundation.dart';
 import 'package:palpites_da_loteria/model/model_export.dart';
 
 import '../defaults/constants.dart';
+import '../model/device_info.dart';
 import 'format_service.dart';
 
 LotteryAPIResult parseResult(Map<String, dynamic> responseBody) {
   return LotteryAPIResult.fromJson(responseBody);
 }
 
+RegisterDeviceInfo parseRegisterDeviceInfoResult(
+    Map<String, dynamic> responseBody) {
+  return RegisterDeviceInfo.fromJson(responseBody);
+}
+
 class LotteryAPIService {
   final String _server =
-      'https://edgar.outsystemscloud.com/LoteriaService/rest/Resultado';
+      'https://edgar.outsystemscloud.com/LoteriaService/rest';
   final String _username = 'loteria_service';
   final String _password = 'E862415l!';
   late final String _basicAuth;
@@ -39,8 +45,10 @@ class LotteryAPIService {
     _options.headers = {'Authorization': _basicAuth};
   }
 
-  Future<LotteryAPIResult> fetchResult(Contest contest, int contestNumber) async {
-    var url = _server + "/Loteria/${contest.getEnpoint()}/$contestNumber";
+  Future<LotteryAPIResult> fetchResult(
+      Contest contest, int contestNumber) async {
+    var url =
+        _server + "/Resultado/Loteria/${contest.getEnpoint()}/$contestNumber";
     await FirebaseAnalytics.instance.logEvent(
       name: Constants.ev_contestResult,
       parameters: {
@@ -60,7 +68,7 @@ class LotteryAPIService {
   }
 
   Future<LotteryAPIResult> fetchLatestResult(Contest contest) async {
-    var url = _server + "/Loteria/${contest.getEnpoint()}/Latest";
+    var url = _server + "/Resultado/Loteria/${contest.getEnpoint()}/Latest";
     await FirebaseAnalytics.instance.logEvent(
       name: Constants.ev_contestResult,
       parameters: {
@@ -76,5 +84,18 @@ class LotteryAPIService {
       return compute(parseResult, response.data as Map<String, dynamic>);
     }
     return Future.value(LotteryAPIResult());
+  }
+
+  Future<RegisterDeviceInfo> registerDevice(DeviceInfo deviceInfo) async {
+    var url = _server + "/CloudMessaging/RegisterDevice";
+
+    Response response =
+        await _dio.post(url, options: _options, data: deviceInfo.toJson());
+
+    if (response.statusCode == 200 && response.data is Map) {
+      return compute(
+          parseRegisterDeviceInfoResult, response.data as Map<String, dynamic>);
+    }
+    return Future.value(RegisterDeviceInfo());
   }
 }

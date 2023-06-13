@@ -1,4 +1,5 @@
 import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
 import 'package:provider/provider.dart';
@@ -59,6 +60,13 @@ class _SettingsPageState extends State<SettingsPage> {
         _items[current] = startItem;
       }
     });
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    FirebaseMessaging.instance.requestPermission();
+    FirebaseMessaging.instance.subscribeToTopic("topico");
   }
 
   @override
