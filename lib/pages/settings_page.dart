@@ -63,10 +63,9 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     FirebaseMessaging.instance.requestPermission();
-    FirebaseMessaging.instance.subscribeToTopic("topico");
   }
 
   @override

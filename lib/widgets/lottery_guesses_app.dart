@@ -67,7 +67,8 @@ class LotteryGuessesApp extends StatelessWidget {
         .initContests()
         .then((value) => contestsSettingsChangeNotifier.contests = value);
 
-    _setupToken();
+    //No need to store token anywhere, just topics subscription for now
+    //_setupToken();
 
     return EasyDynamicThemeWidget(
       child: MultiProvider(
