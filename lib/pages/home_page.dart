@@ -1,3 +1,5 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +10,7 @@ import '../service/admob_service.dart';
 import '../widgets/contest_card.dart';
 import '../widgets/contests_settings_change_notifier.dart';
 import 'app_drawer.dart';
+import 'generate_guess_result_page.dart';
 import 'home_loading_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,9 +24,40 @@ class _HomePageState extends State<HomePage> {
   LotteryBannerAd _bannerAd =
       AdMobService.getBannerAd(AdMobService.contestsBannerId);
 
+  Future<void> setupInteractedMessage() async {
+    // Get any messages which caused the application to open from
+    // a terminated state.
+    RemoteMessage? initialMessage =
+    await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    // Also handle any interaction when the app is in the background via a
+    // Stream listener
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    var lottery = message.data['lottery'];
+    if (lottery != '' && contestsProvider != null) {
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) {
+            List<Contest> contests = contestsProvider!.getContests();
+            return GenerateGuessResult(contests.firstWhere((element) => element.getEndpoint() == lottery), initialTab: 1,);
+          },
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    setupInteractedMessage();
     if (Constants.showAds) {
       _bannerAd.load();
     }

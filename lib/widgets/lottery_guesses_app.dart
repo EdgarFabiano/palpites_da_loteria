@@ -5,6 +5,7 @@ import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:palpites_da_loteria/defaults/defaults_export.dart';
 import 'package:palpites_da_loteria/model/device_info.dart';
 import 'package:palpites_da_loteria/pages/home_page.dart';
@@ -12,10 +13,13 @@ import 'package:palpites_da_loteria/service/lottery_api_service.dart';
 import 'package:palpites_da_loteria/widgets/contests_settings_change_notifier.dart';
 import 'package:provider/provider.dart';
 
+import '../model/contest.dart';
 import '../service/contest_service.dart';
 
 class LotteryGuessesApp extends StatelessWidget {
   final ContestService _contestService = ContestService();
+  late final ContestsSettingsChangeNotifier contestsSettingsChangeNotifier =
+  ContestsSettingsChangeNotifier();
 
   Future<String> _getDeviceId() async {
     var deviceInfo = DeviceInfoPlugin();
@@ -59,13 +63,14 @@ class LotteryGuessesApp extends StatelessWidget {
     FirebaseMessaging.instance.onTokenRefresh.listen(_saveTokenToDatabase);
   }
 
+  Future<void> initContests() async {
+    contestsSettingsChangeNotifier.contests = await _contestService.initContests();
+  }
+
   @override
   Widget build(BuildContext context) {
-    ContestsSettingsChangeNotifier contestsSettingsChangeNotifier =
-        ContestsSettingsChangeNotifier();
-    _contestService
-        .initContests()
-        .then((value) => contestsSettingsChangeNotifier.contests = value);
+    initContests();
+    _createNotificationChannels(contestsSettingsChangeNotifier.getContests());
 
     //No need to store token anywhere, just topics subscription for now
     //_setupToken();
@@ -80,6 +85,33 @@ class LotteryGuessesApp extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _createNotificationChannels(List<Contest> contests) async {
+    NotificationSettings notificationSettings =
+        await FirebaseMessaging.instance.requestPermission();
+    if (notificationSettings.authorizationStatus ==
+        AuthorizationStatus.authorized) {
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+          FlutterLocalNotificationsPlugin();
+      AndroidNotificationChannel? channel;
+      contests.forEach((element) {
+        channel = AndroidNotificationChannel(
+          element.getEndpoint(),
+          element.name,
+          description:
+              'Este canal é utilizado para notificações dos concursos da ${element.name}.',
+          importance: Importance.high,
+        );
+
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.createNotificationChannel(channel!);
+        element.updateTopicSubscription();
+
+      });
+    }
   }
 }
 

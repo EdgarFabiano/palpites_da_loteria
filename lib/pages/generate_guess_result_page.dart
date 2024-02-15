@@ -15,8 +15,9 @@ import 'my_saved_games.dart';
 
 class GenerateGuessResult extends StatefulWidget {
   final Contest contest;
+  final int initialTab;
 
-  GenerateGuessResult(this.contest, {Key? key}) : super(key: key);
+  GenerateGuessResult(this.contest, {Key? key, this.initialTab = 0}) : super(key: key);
 
   @override
   _GenerateGuessResultState createState() => _GenerateGuessResultState();
@@ -54,6 +55,7 @@ class _GenerateGuessResultState extends State<GenerateGuessResult>
     super.initState();
     _tabController = TabController(vsync: this, length: _tabs.length);
     _tabController!.addListener(_setActiveTabIndex);
+    _tabController!.index = widget.initialTab;
     if (Constants.showAds) {
       _bannerAd.load();
     }

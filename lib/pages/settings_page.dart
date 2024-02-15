@@ -138,7 +138,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               Divider(),
               ListTile(
-                title: Text("Tela inicial"),
+                title: Text("Tela inicial e Notificações"),
               ),
               Divider(),
               SizedBox(

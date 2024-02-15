@@ -27,7 +27,7 @@ class FrequencyGuessGenerator implements AbstractGuessGenerator {
 
   Future<FrequencyDraw> fetchResult(
       Contest contest, int gameSize, DateTimeRange? dateTimeRange) async {
-    var url = '$_server/${contest.getEnpoint()}?IsAscending=$isAscending' +
+    var url = '$_server/${contest.getEndpoint()}?IsAscending=$isAscending' +
         (dateTimeRange != null
             ? '&StartDate=${dateTimeRange.start.year}-${dateTimeRange.start.month}-${dateTimeRange.start.day}'
                 '&EndDate=${dateTimeRange.end.year}-${dateTimeRange.end.month}-${dateTimeRange.end.day}'

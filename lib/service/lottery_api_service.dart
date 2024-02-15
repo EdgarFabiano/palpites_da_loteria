@@ -48,7 +48,7 @@ class LotteryAPIService {
   Future<LotteryAPIResult> fetchResult(
       Contest contest, int contestNumber) async {
     var url =
-        _server + "/Resultado/Loteria/${contest.getEnpoint()}/$contestNumber";
+        _server + "/Resultado/Loteria/${contest.getEndpoint()}/$contestNumber";
     await FirebaseAnalytics.instance.logEvent(
       name: Constants.ev_contestResult,
       parameters: {
@@ -68,7 +68,7 @@ class LotteryAPIService {
   }
 
   Future<LotteryAPIResult> fetchLatestResult(Contest contest) async {
-    var url = _server + "/Resultado/Loteria/${contest.getEnpoint()}/Latest";
+    var url = _server + "/Resultado/Loteria/${contest.getEndpoint()}/Latest";
     await FirebaseAnalytics.instance.logEvent(
       name: Constants.ev_contestResult,
       parameters: {
