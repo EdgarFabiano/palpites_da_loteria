@@ -18,7 +18,7 @@ import '../service/contest_service.dart';
 
 class LotteryGuessesApp extends StatelessWidget {
   final ContestService _contestService = ContestService();
-  late final ContestsSettingsChangeNotifier contestsSettingsChangeNotifier =
+  final ContestsSettingsChangeNotifier contestsSettingsChangeNotifier =
   ContestsSettingsChangeNotifier();
 
   Future<String> _getDeviceId() async {

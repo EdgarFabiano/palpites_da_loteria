@@ -11,7 +11,7 @@ class ContestsSettingsChangeNotifier with ChangeNotifier {
 
   ContestsSettingsChangeNotifier();
 
-  getContests() => _contests;
+  List<Contest> getContests() => _contests;
 
   set contests(List<Contest> value) {
     _contests = value;
