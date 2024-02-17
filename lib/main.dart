@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:palpites_da_loteria/defaults/constants.dart';
 
 import 'firebase_options.dart';
@@ -18,3 +18,4 @@ void main() async {
   MobileAds.instance.initialize();
   runApp(LotteryGuessesApp());
 }
+

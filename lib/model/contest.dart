@@ -1,5 +1,5 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class Contest {
   int id;
@@ -59,7 +59,7 @@ class Contest {
     return 'Contest{id: $id, name: $name, enabled: $enabled, sortOrder: $sortOrder}';
   }
 
-  String getEnpoint() {
+  String getEndpoint() {
     switch (this.name) {
       case 'MEGA-SENA':
       case 'MG. SENA':
@@ -109,4 +109,12 @@ class Contest {
 
   @override
   int get hashCode => this.id;
+
+  void updateTopicSubscription() {
+    if (this.enabled) {
+      FirebaseMessaging.instance.subscribeToTopic(this.getEndpoint());
+    } else {
+      FirebaseMessaging.instance.unsubscribeFromTopic(this.getEndpoint());
+    }
+  }
 }

@@ -22,6 +22,7 @@ class _ListItemContestState extends State<ListItemContest> {
   void _changeEnabled() {
     setState(() {
       widget._contest.enabled = !widget._contest.enabled;
+      widget._contest.updateTopicSubscription();
     });
     _contestsProvider.updateContest(widget._contest);
   }
