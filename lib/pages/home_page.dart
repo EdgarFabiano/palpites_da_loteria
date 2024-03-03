@@ -67,8 +67,12 @@ class _HomePageState extends State<HomePage> {
   Future<void> _updateContests() async {
     contestsProvider = Provider.of<ContestsSettingsChangeNotifier>(context);
     _contests = contestsProvider?.getContests();
-    if(_contests != null && _contests!.isEmpty) {
+  }
+
+  Future<void> _initContests() async {
+    if (_contests!.isEmpty) {
       _contests = await _contestService.initContests();
+      setState(() {});
     }
   }
 
@@ -76,6 +80,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _setupInteractedMessage();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initContests());
     if (Constants.showAds) {
       _bannerAd.load();
     }

@@ -63,14 +63,14 @@ class LotteryGuessesApp extends StatelessWidget {
     FirebaseMessaging.instance.onTokenRefresh.listen(_saveTokenToDatabase);
   }
 
-  Future<void> initContests() async {
+  Future<void> _initContests() async {
     contestsSettingsChangeNotifier.contests = await _contestService.initContests();
   }
 
   @override
   Widget build(BuildContext context) {
-    initContests();
-    _createNotificationChannels(contestsSettingsChangeNotifier.getContests());
+    _initContests();
+    _createNotificationChannels();
 
     //No need to store token anywhere, just topics subscription for now
     //_setupToken();
@@ -87,7 +87,8 @@ class LotteryGuessesApp extends StatelessWidget {
     );
   }
 
-  Future<void> _createNotificationChannels(List<Contest> contests) async {
+  Future<void> _createNotificationChannels() async {
+    List<Contest> contests = await _contestService.initContests();
     NotificationSettings notificationSettings =
         await FirebaseMessaging.instance.requestPermission();
     if (notificationSettings.authorizationStatus ==
@@ -109,7 +110,6 @@ class LotteryGuessesApp extends StatelessWidget {
                 AndroidFlutterLocalNotificationsPlugin>()
             ?.createNotificationChannel(channel!);
         element.updateTopicSubscription();
-
       });
     }
   }
