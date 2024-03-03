@@ -47,7 +47,7 @@ dependencies:
   share_plus: ^6.3.2
   shared_preferences: ^2.1.0
   sqflite: ^2.2.6
-  firebase_auth: ^4.6.2
+
 
 dev_dependencies:
   flutter_test:
