@@ -6,8 +6,8 @@
 
 #import "GeneratedPluginRegistrant.h"
 
-#if __has_include(<device_info_plus/FLTDeviceInfoPlusPlugin.h>)
-#import <device_info_plus/FLTDeviceInfoPlusPlugin.h>
+#if __has_include(<device_info_plus/FPPDeviceInfoPlusPlugin.h>)
+#import <device_info_plus/FPPDeviceInfoPlusPlugin.h>
 #else
 @import device_info_plus;
 #endif
@@ -66,8 +66,8 @@
 @import path_provider_foundation;
 #endif
 
-#if __has_include(<share_plus/FLTSharePlusPlugin.h>)
-#import <share_plus/FLTSharePlusPlugin.h>
+#if __has_include(<share_plus/FPPSharePlusPlugin.h>)
+#import <share_plus/FPPSharePlusPlugin.h>
 #else
 @import share_plus;
 #endif
@@ -84,16 +84,22 @@
 @import sqflite;
 #endif
 
-#if __has_include(<url_launcher_ios/FLTURLLauncherPlugin.h>)
-#import <url_launcher_ios/FLTURLLauncherPlugin.h>
+#if __has_include(<url_launcher_ios/URLLauncherPlugin.h>)
+#import <url_launcher_ios/URLLauncherPlugin.h>
 #else
 @import url_launcher_ios;
+#endif
+
+#if __has_include(<webview_flutter_wkwebview/FLTWebViewFlutterPlugin.h>)
+#import <webview_flutter_wkwebview/FLTWebViewFlutterPlugin.h>
+#else
+@import webview_flutter_wkwebview;
 #endif
 
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
-  [FLTDeviceInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTDeviceInfoPlusPlugin"]];
+  [FPPDeviceInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPDeviceInfoPlusPlugin"]];
   [FLTFirebaseAnalyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAnalyticsPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FLTFirebaseCrashlyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCrashlyticsPlugin"]];
@@ -103,10 +109,11 @@
   [FLTGoogleMobileAdsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleMobileAdsPlugin"]];
   [InAppReviewPlugin registerWithRegistrar:[registry registrarForPlugin:@"InAppReviewPlugin"]];
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
-  [FLTSharePlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharePlusPlugin"]];
+  [FPPSharePlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPSharePlusPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
-  [FLTURLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTURLLauncherPlugin"]];
+  [URLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"URLLauncherPlugin"]];
+  [FLTWebViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTWebViewFlutterPlugin"]];
 }
 
 @end
